@@ -1826,6 +1826,54 @@ abstract class AppLocalizations {
   /// **'INFOS SERVEUR'**
   String get settingsSectionServerInfo;
 
+  /// No description provided for @navHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get navHome;
+
+  /// No description provided for @navLibrary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bibliothèque'**
+  String get navLibrary;
+
+  /// No description provided for @navSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche'**
+  String get navSearch;
+
+  /// No description provided for @navCalendar.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calendrier'**
+  String get navCalendar;
+
+  /// No description provided for @navDownloads.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléchargements'**
+  String get navDownloads;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres'**
+  String get navSettings;
+
+  /// No description provided for @navMenuTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Menu'**
+  String get navMenuTooltip;
+
+  /// No description provided for @syncFlushedSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{{count} action synchronisée avec Jellyfin} other{{count} actions synchronisées avec Jellyfin}}'**
+  String syncFlushedSnack(int count);
+
   /// No description provided for @seerrAvailabilityAvailable.
   ///
   /// In fr, this message translates to:

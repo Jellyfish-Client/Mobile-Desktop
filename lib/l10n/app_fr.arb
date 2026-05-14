@@ -705,6 +705,26 @@
   "@settingsSectionContent": {},
   "settingsSectionServerInfo": "INFOS SERVEUR",
   "@settingsSectionServerInfo": {},
+  "navHome": "Accueil",
+  "@navHome": {},
+  "navLibrary": "Bibliothèque",
+  "@navLibrary": {},
+  "navSearch": "Recherche",
+  "@navSearch": {},
+  "navCalendar": "Calendrier",
+  "@navCalendar": {},
+  "navDownloads": "Téléchargements",
+  "@navDownloads": {},
+  "navSettings": "Paramètres",
+  "@navSettings": {},
+  "navMenuTooltip": "Menu",
+  "@navMenuTooltip": {},
+  "syncFlushedSnack": "{count, plural, one{{count} action synchronisée avec Jellyfin} other{{count} actions synchronisées avec Jellyfin}}",
+  "@syncFlushedSnack": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "seerrAvailabilityAvailable": "Disponible",
   "@seerrAvailabilityAvailable": {},
   "seerrAvailabilityPartial": "Partiel",

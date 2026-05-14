@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/theme/breakpoints.dart';
 import '../../core/sync/sync_service.dart';
+import '../../l10n/app_localizations.dart';
+import '../../l10n/l10n_extension.dart';
 
 class MainScaffold extends ConsumerStatefulWidget {
   const MainScaffold({required this.navigationShell, super.key});
@@ -15,42 +17,46 @@ class MainScaffold extends ConsumerStatefulWidget {
   /// alive across tab switches.
   final StatefulNavigationShell navigationShell;
 
-  static const _tabs = [
-    _TabSpec(
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
-      label: 'Home',
-    ),
-    _TabSpec(
-      icon: Icons.video_library_outlined,
-      selectedIcon: Icons.video_library,
-      label: 'Library',
-    ),
-    _TabSpec(
-      icon: Icons.search_outlined,
-      selectedIcon: Icons.search,
-      label: 'Recherche',
-    ),
-    _TabSpec(
-      icon: Icons.calendar_month_outlined,
-      selectedIcon: Icons.calendar_month,
-      label: 'Calendrier',
-    ),
-    _TabSpec(
-      icon: Icons.download_outlined,
-      selectedIcon: Icons.download,
-      label: 'Downloads',
-    ),
-    _TabSpec(
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings,
-      label: 'Settings',
-    ),
-  ];
-
   @override
   ConsumerState<MainScaffold> createState() => _MainScaffoldState();
 }
+
+/// Icon trios for each tab. Labels are resolved from [AppLocalizations] at
+/// build time so the bottom nav follows the active locale — this used to be
+/// a `static const` with hardcoded French/English strings, which left the
+/// menu in the wrong language after a runtime locale switch.
+List<_TabSpec> _tabsOf(AppLocalizations l10n) => [
+  _TabSpec(
+    icon: Icons.home_outlined,
+    selectedIcon: Icons.home,
+    label: l10n.navHome,
+  ),
+  _TabSpec(
+    icon: Icons.video_library_outlined,
+    selectedIcon: Icons.video_library,
+    label: l10n.navLibrary,
+  ),
+  _TabSpec(
+    icon: Icons.search_outlined,
+    selectedIcon: Icons.search,
+    label: l10n.navSearch,
+  ),
+  _TabSpec(
+    icon: Icons.calendar_month_outlined,
+    selectedIcon: Icons.calendar_month,
+    label: l10n.navCalendar,
+  ),
+  _TabSpec(
+    icon: Icons.download_outlined,
+    selectedIcon: Icons.download,
+    label: l10n.navDownloads,
+  ),
+  _TabSpec(
+    icon: Icons.settings_outlined,
+    selectedIcon: Icons.settings,
+    label: l10n.navSettings,
+  ),
+];
 
 class _MainScaffoldState extends ConsumerState<MainScaffold> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -79,12 +85,9 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     if (event.flushedCount <= 0) return;
     final messenger = _messengerKey.currentState;
     if (messenger == null) return;
-    final n = event.flushedCount;
     messenger.showSnackBar(
       SnackBar(
-        content: Text(
-          '$n action${n > 1 ? 's' : ''} synchronisée${n > 1 ? 's' : ''} avec Jellyfin',
-        ),
+        content: Text(context.l10n.syncFlushedSnack(event.flushedCount)),
         duration: const Duration(seconds: 3),
       ),
     );
@@ -95,6 +98,8 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     final shell = widget.navigationShell;
     final index = shell.currentIndex;
     final width = MediaQuery.sizeOf(context).width;
+    final l10n = context.l10n;
+    final tabs = _tabsOf(l10n);
 
     // Tapping the already-selected tab resets that branch to its initial
     // location — same behaviour the official go_router shell sample uses.
@@ -116,9 +121,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
             return Scaffold(
               body: shell,
               floatingActionButton: _NavBurgerFab(
-                tabs: MainScaffold._tabs,
+                tabs: tabs,
                 currentIndex: index,
                 onSelected: onSelected,
+                tooltip: l10n.navMenuTooltip,
               ),
             );
           }
@@ -140,7 +146,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
                           ? NavigationRailLabelType.none
                           : NavigationRailLabelType.all,
                       destinations: [
-                        for (final tab in MainScaffold._tabs)
+                        for (final tab in tabs)
                           NavigationRailDestination(
                             icon: Icon(tab.icon),
                             selectedIcon: Icon(tab.selectedIcon),
@@ -175,17 +181,19 @@ class _NavBurgerFab extends StatelessWidget {
     required this.tabs,
     required this.currentIndex,
     required this.onSelected,
+    required this.tooltip,
   });
 
   final List<_TabSpec> tabs;
   final int currentIndex;
   final void Function(int) onSelected;
+  final String tooltip;
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
       heroTag: 'nav_burger',
-      tooltip: 'Menu',
+      tooltip: tooltip,
       onPressed: () => _open(context),
       child: const Icon(Icons.menu),
     );

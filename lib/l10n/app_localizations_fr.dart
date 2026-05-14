@@ -993,6 +993,38 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsSectionServerInfo => 'INFOS SERVEUR';
 
   @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navLibrary => 'Bibliothèque';
+
+  @override
+  String get navSearch => 'Recherche';
+
+  @override
+  String get navCalendar => 'Calendrier';
+
+  @override
+  String get navDownloads => 'Téléchargements';
+
+  @override
+  String get navSettings => 'Paramètres';
+
+  @override
+  String get navMenuTooltip => 'Menu';
+
+  @override
+  String syncFlushedSnack(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count actions synchronisées avec Jellyfin',
+      one: '$count action synchronisée avec Jellyfin',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get seerrAvailabilityAvailable => 'Disponible';
 
   @override

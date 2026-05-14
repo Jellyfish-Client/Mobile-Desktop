@@ -983,6 +983,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSectionServerInfo => 'SERVER INFO';
 
   @override
+  String get navHome => 'Home';
+
+  @override
+  String get navLibrary => 'Library';
+
+  @override
+  String get navSearch => 'Search';
+
+  @override
+  String get navCalendar => 'Calendar';
+
+  @override
+  String get navDownloads => 'Downloads';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get navMenuTooltip => 'Menu';
+
+  @override
+  String syncFlushedSnack(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count actions synced with Jellyfin',
+      one: '$count action synced with Jellyfin',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get seerrAvailabilityAvailable => 'Available';
 
   @override
