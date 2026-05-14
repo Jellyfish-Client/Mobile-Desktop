@@ -3169,6 +3169,1152 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Nouvelles bandes-annonces'**
   String get libraryRailNewTrailers;
+
+  /// No description provided for @adminSessions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sessions actives'**
+  String get adminSessions;
+
+  /// No description provided for @adminSessionsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clients en lecture'**
+  String get adminSessionsSubtitle;
+
+  /// No description provided for @adminSessionsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune session active'**
+  String get adminSessionsEmpty;
+
+  /// No description provided for @adminSessionsIdle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inactif'**
+  String get adminSessionsIdle;
+
+  /// No description provided for @adminSessionsPlaying.
+  ///
+  /// In fr, this message translates to:
+  /// **'En lecture : {title}'**
+  String adminSessionsPlaying(String title);
+
+  /// No description provided for @adminSessionsBadgeActive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actif'**
+  String get adminSessionsBadgeActive;
+
+  /// No description provided for @adminSessionsSendMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer un message'**
+  String get adminSessionsSendMessage;
+
+  /// No description provided for @adminSessionsStopPlayback.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter la lecture'**
+  String get adminSessionsStopPlayback;
+
+  /// No description provided for @adminSessionsMessageDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer un message'**
+  String get adminSessionsMessageDialogTitle;
+
+  /// No description provided for @adminSessionsMessageDialogLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message'**
+  String get adminSessionsMessageDialogLabel;
+
+  /// No description provided for @adminSessionsMessageDialogHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'S\'affichera sur l\'écran de l\'utilisateur'**
+  String get adminSessionsMessageDialogHint;
+
+  /// No description provided for @adminSessionsMessageDialogSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get adminSessionsMessageDialogSend;
+
+  /// No description provided for @adminSessionsMessageSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message envoyé'**
+  String get adminSessionsMessageSent;
+
+  /// No description provided for @adminSessionsStopConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter la lecture ?'**
+  String get adminSessionsStopConfirmTitle;
+
+  /// No description provided for @adminSessionsStopConfirmMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'La lecture en cours de l\'utilisateur sera interrompue.'**
+  String get adminSessionsStopConfirmMessage;
+
+  /// No description provided for @adminSessionsStopSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture arrêtée'**
+  String get adminSessionsStopSnack;
+
+  /// No description provided for @adminDevices.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appareils enregistrés'**
+  String get adminDevices;
+
+  /// No description provided for @adminDevicesSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clients connectés à ce serveur'**
+  String get adminDevicesSubtitle;
+
+  /// No description provided for @adminDevicesEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun appareil enregistré'**
+  String get adminDevicesEmpty;
+
+  /// No description provided for @adminDevicesRename.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer'**
+  String get adminDevicesRename;
+
+  /// No description provided for @adminDevicesDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get adminDevicesDelete;
+
+  /// No description provided for @adminDevicesRenameDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer l\'appareil'**
+  String get adminDevicesRenameDialogTitle;
+
+  /// No description provided for @adminDevicesRenameDialogLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom personnalisé'**
+  String get adminDevicesRenameDialogLabel;
+
+  /// No description provided for @adminDevicesRenameDialogSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get adminDevicesRenameDialogSave;
+
+  /// No description provided for @adminDevicesRenameSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appareil renommé'**
+  String get adminDevicesRenameSnack;
+
+  /// No description provided for @adminDevicesDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cet appareil ?'**
+  String get adminDevicesDeleteConfirmTitle;
+
+  /// No description provided for @adminDevicesDeleteConfirmMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'utilisateur devra se reconnecter sur cet appareil.'**
+  String get adminDevicesDeleteConfirmMessage;
+
+  /// No description provided for @adminDevicesDeleteSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appareil supprimé'**
+  String get adminDevicesDeleteSnack;
+
+  /// No description provided for @adminActivityLog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Journal d\'activité'**
+  String get adminActivityLog;
+
+  /// No description provided for @adminActivityLogSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique des événements serveur'**
+  String get adminActivityLogSubtitle;
+
+  /// No description provided for @adminActivityEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune activité à afficher'**
+  String get adminActivityEmpty;
+
+  /// No description provided for @adminActivityFiltersTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtres'**
+  String get adminActivityFiltersTooltip;
+
+  /// No description provided for @adminActivityFiltersTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtres'**
+  String get adminActivityFiltersTitle;
+
+  /// No description provided for @adminActivityFilterLast7Days.
+  ///
+  /// In fr, this message translates to:
+  /// **'7 derniers jours uniquement'**
+  String get adminActivityFilterLast7Days;
+
+  /// No description provided for @adminActivityFilterUserOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actions utilisateur uniquement'**
+  String get adminActivityFilterUserOnly;
+
+  /// No description provided for @adminServerLogs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Logs du serveur'**
+  String get adminServerLogs;
+
+  /// No description provided for @adminServerLogsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consulter les fichiers de log'**
+  String get adminServerLogsSubtitle;
+
+  /// No description provided for @adminServerLogsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun fichier de log disponible'**
+  String get adminServerLogsEmpty;
+
+  /// No description provided for @adminLogViewerCopy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier'**
+  String get adminLogViewerCopy;
+
+  /// No description provided for @adminLogViewerCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Log copié dans le presse-papiers'**
+  String get adminLogViewerCopied;
+
+  /// No description provided for @adminLogViewerEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce fichier de log est vide'**
+  String get adminLogViewerEmpty;
+
+  /// No description provided for @adminPlugins.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plugins'**
+  String get adminPlugins;
+
+  /// No description provided for @adminPluginsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer les plugins du serveur'**
+  String get adminPluginsSubtitle;
+
+  /// No description provided for @adminPluginsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun plugin n\'est installé sur ce serveur.'**
+  String get adminPluginsEmpty;
+
+  /// No description provided for @adminPluginsUninstall.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désinstaller'**
+  String get adminPluginsUninstall;
+
+  /// No description provided for @adminPluginsUninstallConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désinstaller le plugin ?'**
+  String get adminPluginsUninstallConfirmTitle;
+
+  /// No description provided for @adminPluginsUninstallConfirmMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plugin « {name} » sera supprimé définitivement. Le serveur devra peut-être redémarrer pour que le changement prenne effet.'**
+  String adminPluginsUninstallConfirmMessage(String name);
+
+  /// No description provided for @adminPluginsUninstallConfirmLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désinstaller'**
+  String get adminPluginsUninstallConfirmLabel;
+
+  /// No description provided for @adminPluginsStatusActive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actif'**
+  String get adminPluginsStatusActive;
+
+  /// No description provided for @adminPluginsStatusDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactivé'**
+  String get adminPluginsStatusDisabled;
+
+  /// No description provided for @adminPluginsStatusRestart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Redémarrage requis'**
+  String get adminPluginsStatusRestart;
+
+  /// No description provided for @adminPluginsStatusMalfunctioned.
+  ///
+  /// In fr, this message translates to:
+  /// **'Défaillant'**
+  String get adminPluginsStatusMalfunctioned;
+
+  /// No description provided for @adminPluginsStatusNotSupported.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non supporté'**
+  String get adminPluginsStatusNotSupported;
+
+  /// No description provided for @adminPluginsStatusDeleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimé'**
+  String get adminPluginsStatusDeleted;
+
+  /// No description provided for @adminPluginsStatusSuperseded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacé'**
+  String get adminPluginsStatusSuperseded;
+
+  /// No description provided for @adminPluginsVersionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'v{version}'**
+  String adminPluginsVersionLabel(String version);
+
+  /// No description provided for @adminPluginsEnableTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer le plugin'**
+  String get adminPluginsEnableTooltip;
+
+  /// No description provided for @adminPluginsDisableTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactiver le plugin'**
+  String get adminPluginsDisableTooltip;
+
+  /// No description provided for @adminApiKeys.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clés API'**
+  String get adminApiKeys;
+
+  /// No description provided for @adminApiKeysSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer les jetons applicatifs'**
+  String get adminApiKeysSubtitle;
+
+  /// No description provided for @adminApiKeysEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune clé API n\'a encore été créée.'**
+  String get adminApiKeysEmpty;
+
+  /// No description provided for @adminApiKeysCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer'**
+  String get adminApiKeysCreate;
+
+  /// No description provided for @adminApiKeysCreateDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle clé API'**
+  String get adminApiKeysCreateDialogTitle;
+
+  /// No description provided for @adminApiKeysAppNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom de l\'application'**
+  String get adminApiKeysAppNameLabel;
+
+  /// No description provided for @adminApiKeysAppNameHelper.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aide à identifier l\'intégration qui utilise cette clé.'**
+  String get adminApiKeysAppNameHelper;
+
+  /// No description provided for @adminApiKeysAppNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom de l\'application est requis.'**
+  String get adminApiKeysAppNameRequired;
+
+  /// No description provided for @adminApiKeysCreateButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer la clé'**
+  String get adminApiKeysCreateButton;
+
+  /// No description provided for @adminApiKeysCreateSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clé API créée. Elle est désormais visible dans la liste.'**
+  String get adminApiKeysCreateSuccess;
+
+  /// No description provided for @adminApiKeysCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get adminApiKeysCancel;
+
+  /// No description provided for @adminApiKeysCopy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le jeton'**
+  String get adminApiKeysCopy;
+
+  /// No description provided for @adminApiKeysCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jeton copié dans le presse-papiers.'**
+  String get adminApiKeysCopied;
+
+  /// No description provided for @adminApiKeysRevoke.
+  ///
+  /// In fr, this message translates to:
+  /// **'Révoquer'**
+  String get adminApiKeysRevoke;
+
+  /// No description provided for @adminApiKeysRevokeConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Révoquer la clé API ?'**
+  String get adminApiKeysRevokeConfirmTitle;
+
+  /// No description provided for @adminApiKeysRevokeConfirmMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'La clé pour « {app} » sera révoquée immédiatement. Tout client qui l\'utilise sera déconnecté.'**
+  String adminApiKeysRevokeConfirmMessage(String app);
+
+  /// No description provided for @adminApiKeysRevokeConfirmLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Révoquer'**
+  String get adminApiKeysRevokeConfirmLabel;
+
+  /// No description provided for @adminApiKeysCreatedAt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créée le {date}'**
+  String adminApiKeysCreatedAt(String date);
+
+  /// No description provided for @adminLibrariesAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une bibliothèque'**
+  String get adminLibrariesAdd;
+
+  /// No description provided for @adminLibrariesActionsTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actions'**
+  String get adminLibrariesActionsTooltip;
+
+  /// No description provided for @adminLibrariesMenuScan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner'**
+  String get adminLibrariesMenuScan;
+
+  /// No description provided for @adminLibrariesMenuRename.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer'**
+  String get adminLibrariesMenuRename;
+
+  /// No description provided for @adminLibrariesMenuAddPath.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un chemin'**
+  String get adminLibrariesMenuAddPath;
+
+  /// No description provided for @adminLibrariesMenuManagePaths.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer les chemins'**
+  String get adminLibrariesMenuManagePaths;
+
+  /// No description provided for @adminLibrariesMenuDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get adminLibrariesMenuDelete;
+
+  /// No description provided for @adminLibraryEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle bibliothèque'**
+  String get adminLibraryEditTitle;
+
+  /// No description provided for @adminLibraryNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get adminLibraryNameLabel;
+
+  /// No description provided for @adminLibraryNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom est requis'**
+  String get adminLibraryNameRequired;
+
+  /// No description provided for @adminLibraryTypeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Type de collection'**
+  String get adminLibraryTypeLabel;
+
+  /// No description provided for @adminLibraryPathsLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get adminLibraryPathsLabel;
+
+  /// No description provided for @adminLibraryNoPaths.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun dossier ajouté.'**
+  String get adminLibraryNoPaths;
+
+  /// No description provided for @adminLibraryAddPath.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un chemin'**
+  String get adminLibraryAddPath;
+
+  /// No description provided for @adminLibraryRemovePath.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le chemin'**
+  String get adminLibraryRemovePath;
+
+  /// No description provided for @adminLibraryRefreshAfter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner la bibliothèque après création'**
+  String get adminLibraryRefreshAfter;
+
+  /// No description provided for @adminLibraryRefreshAfterSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lance un scan initial une fois la bibliothèque créée.'**
+  String get adminLibraryRefreshAfterSubtitle;
+
+  /// No description provided for @adminLibraryCreateButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer la bibliothèque'**
+  String get adminLibraryCreateButton;
+
+  /// No description provided for @adminLibraryPathsRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez au moins un dossier avant de créer la bibliothèque.'**
+  String get adminLibraryPathsRequired;
+
+  /// No description provided for @adminLibraryCreatedSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bibliothèque créée.'**
+  String get adminLibraryCreatedSnack;
+
+  /// No description provided for @adminLibraryTypeMovies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Films'**
+  String get adminLibraryTypeMovies;
+
+  /// No description provided for @adminLibraryTypeTvshows.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séries'**
+  String get adminLibraryTypeTvshows;
+
+  /// No description provided for @adminLibraryTypeMusic.
+  ///
+  /// In fr, this message translates to:
+  /// **'Musique'**
+  String get adminLibraryTypeMusic;
+
+  /// No description provided for @adminLibraryTypeMusicvideos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clips musicaux'**
+  String get adminLibraryTypeMusicvideos;
+
+  /// No description provided for @adminLibraryTypeHomevideos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vidéos personnelles'**
+  String get adminLibraryTypeHomevideos;
+
+  /// No description provided for @adminLibraryTypeBoxsets.
+  ///
+  /// In fr, this message translates to:
+  /// **'Collections'**
+  String get adminLibraryTypeBoxsets;
+
+  /// No description provided for @adminLibraryTypeBooks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Livres'**
+  String get adminLibraryTypeBooks;
+
+  /// No description provided for @adminLibraryTypeMixed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mixte'**
+  String get adminLibraryTypeMixed;
+
+  /// No description provided for @adminLibraryRenameTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer la bibliothèque'**
+  String get adminLibraryRenameTitle;
+
+  /// No description provided for @adminLibraryRenameCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get adminLibraryRenameCancel;
+
+  /// No description provided for @adminLibraryRenameConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer'**
+  String get adminLibraryRenameConfirm;
+
+  /// No description provided for @adminLibraryRenamedSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bibliothèque renommée en {name}.'**
+  String adminLibraryRenamedSnack(String name);
+
+  /// No description provided for @adminLibraryDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la bibliothèque'**
+  String get adminLibraryDeleteTitle;
+
+  /// No description provided for @adminLibraryDeleteMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer définitivement la bibliothèque « {name} » ? Les fichiers sur le disque sont conservés.'**
+  String adminLibraryDeleteMessage(String name);
+
+  /// No description provided for @adminLibraryDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get adminLibraryDeleteConfirm;
+
+  /// No description provided for @adminLibraryDeletedSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bibliothèque « {name} » supprimée.'**
+  String adminLibraryDeletedSnack(String name);
+
+  /// No description provided for @adminLibraryPathAddedSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chemin ajouté : {path}'**
+  String adminLibraryPathAddedSnack(String path);
+
+  /// No description provided for @adminLibraryPathRemovedSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chemin retiré : {path}'**
+  String adminLibraryPathRemovedSnack(String path);
+
+  /// No description provided for @adminLibraryManagePathsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chemins de « {name} »'**
+  String adminLibraryManagePathsTitle(String name);
+
+  /// No description provided for @adminLibraryRemovePathTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le chemin'**
+  String get adminLibraryRemovePathTitle;
+
+  /// No description provided for @adminLibraryRemovePathMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer « {path} » de cette bibliothèque ? Les fichiers sur le disque sont conservés.'**
+  String adminLibraryRemovePathMessage(String path);
+
+  /// No description provided for @adminLibraryRemovePathConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get adminLibraryRemovePathConfirm;
+
+  /// No description provided for @adminLibraryPathPickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un dossier'**
+  String get adminLibraryPathPickerTitle;
+
+  /// No description provided for @adminLibraryPathPickerClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get adminLibraryPathPickerClose;
+
+  /// No description provided for @adminLibraryPathPickerUp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remonter'**
+  String get adminLibraryPathPickerUp;
+
+  /// No description provided for @adminLibraryPathPickerRoot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disques'**
+  String get adminLibraryPathPickerRoot;
+
+  /// No description provided for @adminLibraryPathPickerValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser ce dossier'**
+  String get adminLibraryPathPickerValidate;
+
+  /// No description provided for @adminLibraryPathPickerEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce dossier est vide.'**
+  String get adminLibraryPathPickerEmpty;
+
+  /// No description provided for @adminLibraryPathPickerSelect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionner'**
+  String get adminLibraryPathPickerSelect;
+
+  /// No description provided for @adminLibraryPathValidationWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avertissement de validation : {error}'**
+  String adminLibraryPathValidationWarning(String error);
+
+  /// No description provided for @adminServerConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Configuration serveur'**
+  String get adminServerConfig;
+
+  /// No description provided for @adminServerConfigSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identité, chemins, comportement'**
+  String get adminServerConfigSubtitle;
+
+  /// No description provided for @adminServerConfigIdentitySection.
+  ///
+  /// In fr, this message translates to:
+  /// **'IDENTITÉ'**
+  String get adminServerConfigIdentitySection;
+
+  /// No description provided for @adminServerConfigServerName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du serveur'**
+  String get adminServerConfigServerName;
+
+  /// No description provided for @adminServerConfigUiCulture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue de l\'interface serveur'**
+  String get adminServerConfigUiCulture;
+
+  /// No description provided for @adminServerConfigPathsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'CHEMINS'**
+  String get adminServerConfigPathsSection;
+
+  /// No description provided for @adminServerConfigCachePath.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chemin du cache'**
+  String get adminServerConfigCachePath;
+
+  /// No description provided for @adminServerConfigMetadataPath.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chemin des métadonnées'**
+  String get adminServerConfigMetadataPath;
+
+  /// No description provided for @adminServerConfigStartupWizard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Assistant d\'installation'**
+  String get adminServerConfigStartupWizard;
+
+  /// No description provided for @adminServerConfigStartupWizardDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get adminServerConfigStartupWizardDone;
+
+  /// No description provided for @adminServerConfigStartupWizardPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente'**
+  String get adminServerConfigStartupWizardPending;
+
+  /// No description provided for @adminServerConfigBehaviorSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'COMPORTEMENT'**
+  String get adminServerConfigBehaviorSection;
+
+  /// No description provided for @adminServerConfigQuickConnect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quick Connect'**
+  String get adminServerConfigQuickConnect;
+
+  /// No description provided for @adminServerConfigEnableMetrics.
+  ///
+  /// In fr, this message translates to:
+  /// **'Métriques Prometheus'**
+  String get adminServerConfigEnableMetrics;
+
+  /// No description provided for @adminServerConfigEnableMetricsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Expose les métriques sur /metrics'**
+  String get adminServerConfigEnableMetricsHint;
+
+  /// No description provided for @adminServerConfigNormalizedIds.
+  ///
+  /// In fr, this message translates to:
+  /// **'IDs normalisés (item-by-name)'**
+  String get adminServerConfigNormalizedIds;
+
+  /// No description provided for @adminServerConfigNormalizedIdsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommandé sur les nouveaux serveurs'**
+  String get adminServerConfigNormalizedIdsHint;
+
+  /// No description provided for @adminServerConfigDiagnosticsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'DIAGNOSTICS'**
+  String get adminServerConfigDiagnosticsSection;
+
+  /// No description provided for @adminServerConfigLogRetention.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rétention des logs (jours)'**
+  String get adminServerConfigLogRetention;
+
+  /// No description provided for @adminServerConfigSlowResponse.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avertir si réponse lente'**
+  String get adminServerConfigSlowResponse;
+
+  /// No description provided for @adminServerConfigSlowResponseThreshold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuil de réponse lente (ms)'**
+  String get adminServerConfigSlowResponseThreshold;
+
+  /// No description provided for @adminServerConfigCorsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'CORS'**
+  String get adminServerConfigCorsSection;
+
+  /// No description provided for @adminServerConfigCorsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hôtes autorisés à appeler l\'API depuis le navigateur. Utilisez * pour tout autoriser.'**
+  String get adminServerConfigCorsHint;
+
+  /// No description provided for @adminServerConfigCorsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun hôte CORS configuré.'**
+  String get adminServerConfigCorsEmpty;
+
+  /// No description provided for @adminServerConfigCorsAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un hôte'**
+  String get adminServerConfigCorsAdd;
+
+  /// No description provided for @adminServerConfigCorsAddTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un hôte CORS'**
+  String get adminServerConfigCorsAddTitle;
+
+  /// No description provided for @adminServerConfigCorsAddHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'https://exemple.com'**
+  String get adminServerConfigCorsAddHint;
+
+  /// No description provided for @adminServerConfigCorsAddCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get adminServerConfigCorsAddCancel;
+
+  /// No description provided for @adminServerConfigCorsAddConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get adminServerConfigCorsAddConfirm;
+
+  /// No description provided for @adminServerConfigSaveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer la configuration'**
+  String get adminServerConfigSaveButton;
+
+  /// No description provided for @adminServerConfigSaveSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Configuration enregistrée'**
+  String get adminServerConfigSaveSnack;
+
+  /// No description provided for @adminBranding.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identité visuelle'**
+  String get adminBranding;
+
+  /// No description provided for @adminBrandingSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mention de connexion, CSS personnalisé, splashscreen'**
+  String get adminBrandingSubtitle;
+
+  /// No description provided for @adminBrandingMessagesSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'MESSAGES'**
+  String get adminBrandingMessagesSection;
+
+  /// No description provided for @adminBrandingLoginDisclaimer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mention de connexion'**
+  String get adminBrandingLoginDisclaimer;
+
+  /// No description provided for @adminBrandingLoginDisclaimerHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichée sur l\'écran de connexion'**
+  String get adminBrandingLoginDisclaimerHint;
+
+  /// No description provided for @adminBrandingAppearanceSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'APPARENCE'**
+  String get adminBrandingAppearanceSection;
+
+  /// No description provided for @adminBrandingSplashscreenEnabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer l\'écran de démarrage'**
+  String get adminBrandingSplashscreenEnabled;
+
+  /// No description provided for @adminBrandingSplashscreenEnabledHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser un écran de démarrage personnalisé sur les clients compatibles'**
+  String get adminBrandingSplashscreenEnabledHint;
+
+  /// No description provided for @adminBrandingCustomCss.
+  ///
+  /// In fr, this message translates to:
+  /// **'CSS personnalisé'**
+  String get adminBrandingCustomCss;
+
+  /// No description provided for @adminBrandingCustomCssHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Injecté dans le client web'**
+  String get adminBrandingCustomCssHint;
+
+  /// No description provided for @adminBrandingSaveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer l\'identité'**
+  String get adminBrandingSaveButton;
+
+  /// No description provided for @adminBrandingSaveSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identité enregistrée'**
+  String get adminBrandingSaveSnack;
+
+  /// No description provided for @adminBackup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde & restauration'**
+  String get adminBackup;
+
+  /// No description provided for @adminBackupSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer et restaurer les sauvegardes du serveur'**
+  String get adminBackupSubtitle;
+
+  /// No description provided for @adminBackupListSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'SAUVEGARDES DISPONIBLES'**
+  String get adminBackupListSection;
+
+  /// No description provided for @adminBackupEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sauvegarde trouvée.'**
+  String get adminBackupEmpty;
+
+  /// No description provided for @adminBackupCreateSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer une sauvegarde'**
+  String get adminBackupCreateSectionTitle;
+
+  /// No description provided for @adminBackupCreateHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Archive la base du serveur et les contenus sélectionnés. L\'opération peut prendre plusieurs minutes.'**
+  String get adminBackupCreateHint;
+
+  /// No description provided for @adminBackupCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer une sauvegarde maintenant'**
+  String get adminBackupCreate;
+
+  /// No description provided for @adminBackupCreating.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde en cours…'**
+  String get adminBackupCreating;
+
+  /// No description provided for @adminBackupCreateSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde créée'**
+  String get adminBackupCreateSnack;
+
+  /// No description provided for @adminBackupVersionPrefix.
+  ///
+  /// In fr, this message translates to:
+  /// **'Serveur v{version}'**
+  String adminBackupVersionPrefix(String version);
+
+  /// No description provided for @adminBackupContentMetadata.
+  ///
+  /// In fr, this message translates to:
+  /// **'Métadonnées'**
+  String get adminBackupContentMetadata;
+
+  /// No description provided for @adminBackupContentDatabase.
+  ///
+  /// In fr, this message translates to:
+  /// **'Base de données'**
+  String get adminBackupContentDatabase;
+
+  /// No description provided for @adminBackupContentSubtitles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous-titres'**
+  String get adminBackupContentSubtitles;
+
+  /// No description provided for @adminBackupContentTrickplay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trickplay'**
+  String get adminBackupContentTrickplay;
+
+  /// No description provided for @adminBackupRestoreTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer cette sauvegarde'**
+  String get adminBackupRestoreTooltip;
+
+  /// No description provided for @adminBackupRestoreConfirm1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer cette sauvegarde ?'**
+  String get adminBackupRestoreConfirm1Title;
+
+  /// No description provided for @adminBackupRestoreConfirm1Message.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le serveur va redémarrer et revenir à la sauvegarde sélectionnée. Toutes les modifications depuis cette sauvegarde seront perdues.'**
+  String get adminBackupRestoreConfirm1Message;
+
+  /// No description provided for @adminBackupRestoreConfirm1Confirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get adminBackupRestoreConfirm1Confirm;
+
+  /// No description provided for @adminBackupRestoreConfirm2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vraiment confirmer ?'**
+  String get adminBackupRestoreConfirm2Title;
+
+  /// No description provided for @adminBackupRestoreConfirm2Message.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est irréversible. Le serveur sera indisponible pendant quelques minutes.'**
+  String get adminBackupRestoreConfirm2Message;
+
+  /// No description provided for @adminBackupRestoreConfirm2Confirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui, restaurer'**
+  String get adminBackupRestoreConfirm2Confirm;
+
+  /// No description provided for @adminBackupRestoreSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restauration lancée ; le serveur redémarre…'**
+  String get adminBackupRestoreSnack;
 }
 
 class _AppLocalizationsDelegate

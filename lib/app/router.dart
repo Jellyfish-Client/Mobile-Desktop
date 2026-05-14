@@ -7,9 +7,20 @@ import 'package:go_router/go_router.dart';
 import '../core/auth/auth_controller.dart';
 import '../core/auth/reauth_events.dart';
 import '../features/accounts/accounts_screen.dart';
+import '../features/admin/activity/activity_log_screen.dart';
 import '../features/admin/admin_hub_screen.dart';
+import '../features/admin/api_keys/api_keys_screen.dart';
+import '../features/admin/backup/backup_screen.dart';
 import '../features/admin/dashboard/dashboard_screen.dart';
+import '../features/admin/devices/devices_screen.dart';
 import '../features/admin/libraries/libraries_screen.dart';
+import '../features/admin/libraries/library_edit_screen.dart';
+import '../features/admin/logs/log_file_viewer_screen.dart';
+import '../features/admin/logs/server_logs_screen.dart';
+import '../features/admin/plugins/plugins_screen.dart';
+import '../features/admin/server_config/server_branding_screen.dart';
+import '../features/admin/server_config/server_config_screen.dart';
+import '../features/admin/sessions/sessions_screen.dart';
 import '../features/admin/tasks/tasks_screen.dart';
 import '../features/admin/users/user_create_screen.dart';
 import '../features/admin/users/user_edit_screen.dart';
@@ -303,6 +314,63 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, state) =>
             AdminUserEditScreen(userId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/settings/admin/sessions',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminSessionsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/devices',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminDevicesScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/activity',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminActivityLogScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/logs',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminServerLogsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/logs/:name',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, state) => LogFileViewerScreen(
+          name: Uri.decodeComponent(state.pathParameters['name']!),
+        ),
+      ),
+      GoRoute(
+        path: '/settings/admin/plugins',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminPluginsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/api-keys',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminApiKeysScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/libraries/new',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const LibraryEditScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/server-config',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminServerConfigScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/branding',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminBrandingScreen(),
+      ),
+      GoRoute(
+        path: '/settings/admin/backup',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AdminBackupScreen(),
       ),
       GoRoute(
         path: '/watch-provider/:type/:id',

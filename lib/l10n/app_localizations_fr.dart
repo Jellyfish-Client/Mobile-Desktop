@@ -1752,4 +1752,628 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get libraryRailNewTrailers => 'Nouvelles bandes-annonces';
+
+  @override
+  String get adminSessions => 'Sessions actives';
+
+  @override
+  String get adminSessionsSubtitle => 'Clients en lecture';
+
+  @override
+  String get adminSessionsEmpty => 'Aucune session active';
+
+  @override
+  String get adminSessionsIdle => 'Inactif';
+
+  @override
+  String adminSessionsPlaying(String title) {
+    return 'En lecture : $title';
+  }
+
+  @override
+  String get adminSessionsBadgeActive => 'Actif';
+
+  @override
+  String get adminSessionsSendMessage => 'Envoyer un message';
+
+  @override
+  String get adminSessionsStopPlayback => 'Arrêter la lecture';
+
+  @override
+  String get adminSessionsMessageDialogTitle => 'Envoyer un message';
+
+  @override
+  String get adminSessionsMessageDialogLabel => 'Message';
+
+  @override
+  String get adminSessionsMessageDialogHint =>
+      'S\'affichera sur l\'écran de l\'utilisateur';
+
+  @override
+  String get adminSessionsMessageDialogSend => 'Envoyer';
+
+  @override
+  String get adminSessionsMessageSent => 'Message envoyé';
+
+  @override
+  String get adminSessionsStopConfirmTitle => 'Arrêter la lecture ?';
+
+  @override
+  String get adminSessionsStopConfirmMessage =>
+      'La lecture en cours de l\'utilisateur sera interrompue.';
+
+  @override
+  String get adminSessionsStopSnack => 'Lecture arrêtée';
+
+  @override
+  String get adminDevices => 'Appareils enregistrés';
+
+  @override
+  String get adminDevicesSubtitle => 'Clients connectés à ce serveur';
+
+  @override
+  String get adminDevicesEmpty => 'Aucun appareil enregistré';
+
+  @override
+  String get adminDevicesRename => 'Renommer';
+
+  @override
+  String get adminDevicesDelete => 'Supprimer';
+
+  @override
+  String get adminDevicesRenameDialogTitle => 'Renommer l\'appareil';
+
+  @override
+  String get adminDevicesRenameDialogLabel => 'Nom personnalisé';
+
+  @override
+  String get adminDevicesRenameDialogSave => 'Enregistrer';
+
+  @override
+  String get adminDevicesRenameSnack => 'Appareil renommé';
+
+  @override
+  String get adminDevicesDeleteConfirmTitle => 'Supprimer cet appareil ?';
+
+  @override
+  String get adminDevicesDeleteConfirmMessage =>
+      'L\'utilisateur devra se reconnecter sur cet appareil.';
+
+  @override
+  String get adminDevicesDeleteSnack => 'Appareil supprimé';
+
+  @override
+  String get adminActivityLog => 'Journal d\'activité';
+
+  @override
+  String get adminActivityLogSubtitle => 'Historique des événements serveur';
+
+  @override
+  String get adminActivityEmpty => 'Aucune activité à afficher';
+
+  @override
+  String get adminActivityFiltersTooltip => 'Filtres';
+
+  @override
+  String get adminActivityFiltersTitle => 'Filtres';
+
+  @override
+  String get adminActivityFilterLast7Days => '7 derniers jours uniquement';
+
+  @override
+  String get adminActivityFilterUserOnly => 'Actions utilisateur uniquement';
+
+  @override
+  String get adminServerLogs => 'Logs du serveur';
+
+  @override
+  String get adminServerLogsSubtitle => 'Consulter les fichiers de log';
+
+  @override
+  String get adminServerLogsEmpty => 'Aucun fichier de log disponible';
+
+  @override
+  String get adminLogViewerCopy => 'Copier';
+
+  @override
+  String get adminLogViewerCopied => 'Log copié dans le presse-papiers';
+
+  @override
+  String get adminLogViewerEmpty => 'Ce fichier de log est vide';
+
+  @override
+  String get adminPlugins => 'Plugins';
+
+  @override
+  String get adminPluginsSubtitle => 'Gérer les plugins du serveur';
+
+  @override
+  String get adminPluginsEmpty =>
+      'Aucun plugin n\'est installé sur ce serveur.';
+
+  @override
+  String get adminPluginsUninstall => 'Désinstaller';
+
+  @override
+  String get adminPluginsUninstallConfirmTitle => 'Désinstaller le plugin ?';
+
+  @override
+  String adminPluginsUninstallConfirmMessage(String name) {
+    return 'Le plugin « $name » sera supprimé définitivement. Le serveur devra peut-être redémarrer pour que le changement prenne effet.';
+  }
+
+  @override
+  String get adminPluginsUninstallConfirmLabel => 'Désinstaller';
+
+  @override
+  String get adminPluginsStatusActive => 'Actif';
+
+  @override
+  String get adminPluginsStatusDisabled => 'Désactivé';
+
+  @override
+  String get adminPluginsStatusRestart => 'Redémarrage requis';
+
+  @override
+  String get adminPluginsStatusMalfunctioned => 'Défaillant';
+
+  @override
+  String get adminPluginsStatusNotSupported => 'Non supporté';
+
+  @override
+  String get adminPluginsStatusDeleted => 'Supprimé';
+
+  @override
+  String get adminPluginsStatusSuperseded => 'Remplacé';
+
+  @override
+  String adminPluginsVersionLabel(String version) {
+    return 'v$version';
+  }
+
+  @override
+  String get adminPluginsEnableTooltip => 'Activer le plugin';
+
+  @override
+  String get adminPluginsDisableTooltip => 'Désactiver le plugin';
+
+  @override
+  String get adminApiKeys => 'Clés API';
+
+  @override
+  String get adminApiKeysSubtitle => 'Gérer les jetons applicatifs';
+
+  @override
+  String get adminApiKeysEmpty => 'Aucune clé API n\'a encore été créée.';
+
+  @override
+  String get adminApiKeysCreate => 'Créer';
+
+  @override
+  String get adminApiKeysCreateDialogTitle => 'Nouvelle clé API';
+
+  @override
+  String get adminApiKeysAppNameLabel => 'Nom de l\'application';
+
+  @override
+  String get adminApiKeysAppNameHelper =>
+      'Aide à identifier l\'intégration qui utilise cette clé.';
+
+  @override
+  String get adminApiKeysAppNameRequired =>
+      'Le nom de l\'application est requis.';
+
+  @override
+  String get adminApiKeysCreateButton => 'Créer la clé';
+
+  @override
+  String get adminApiKeysCreateSuccess =>
+      'Clé API créée. Elle est désormais visible dans la liste.';
+
+  @override
+  String get adminApiKeysCancel => 'Annuler';
+
+  @override
+  String get adminApiKeysCopy => 'Copier le jeton';
+
+  @override
+  String get adminApiKeysCopied => 'Jeton copié dans le presse-papiers.';
+
+  @override
+  String get adminApiKeysRevoke => 'Révoquer';
+
+  @override
+  String get adminApiKeysRevokeConfirmTitle => 'Révoquer la clé API ?';
+
+  @override
+  String adminApiKeysRevokeConfirmMessage(String app) {
+    return 'La clé pour « $app » sera révoquée immédiatement. Tout client qui l\'utilise sera déconnecté.';
+  }
+
+  @override
+  String get adminApiKeysRevokeConfirmLabel => 'Révoquer';
+
+  @override
+  String adminApiKeysCreatedAt(String date) {
+    return 'Créée le $date';
+  }
+
+  @override
+  String get adminLibrariesAdd => 'Ajouter une bibliothèque';
+
+  @override
+  String get adminLibrariesActionsTooltip => 'Actions';
+
+  @override
+  String get adminLibrariesMenuScan => 'Scanner';
+
+  @override
+  String get adminLibrariesMenuRename => 'Renommer';
+
+  @override
+  String get adminLibrariesMenuAddPath => 'Ajouter un chemin';
+
+  @override
+  String get adminLibrariesMenuManagePaths => 'Gérer les chemins';
+
+  @override
+  String get adminLibrariesMenuDelete => 'Supprimer';
+
+  @override
+  String get adminLibraryEditTitle => 'Nouvelle bibliothèque';
+
+  @override
+  String get adminLibraryNameLabel => 'Nom';
+
+  @override
+  String get adminLibraryNameRequired => 'Le nom est requis';
+
+  @override
+  String get adminLibraryTypeLabel => 'Type de collection';
+
+  @override
+  String get adminLibraryPathsLabel => 'Dossiers';
+
+  @override
+  String get adminLibraryNoPaths => 'Aucun dossier ajouté.';
+
+  @override
+  String get adminLibraryAddPath => 'Ajouter un chemin';
+
+  @override
+  String get adminLibraryRemovePath => 'Retirer le chemin';
+
+  @override
+  String get adminLibraryRefreshAfter =>
+      'Scanner la bibliothèque après création';
+
+  @override
+  String get adminLibraryRefreshAfterSubtitle =>
+      'Lance un scan initial une fois la bibliothèque créée.';
+
+  @override
+  String get adminLibraryCreateButton => 'Créer la bibliothèque';
+
+  @override
+  String get adminLibraryPathsRequired =>
+      'Ajoutez au moins un dossier avant de créer la bibliothèque.';
+
+  @override
+  String get adminLibraryCreatedSnack => 'Bibliothèque créée.';
+
+  @override
+  String get adminLibraryTypeMovies => 'Films';
+
+  @override
+  String get adminLibraryTypeTvshows => 'Séries';
+
+  @override
+  String get adminLibraryTypeMusic => 'Musique';
+
+  @override
+  String get adminLibraryTypeMusicvideos => 'Clips musicaux';
+
+  @override
+  String get adminLibraryTypeHomevideos => 'Vidéos personnelles';
+
+  @override
+  String get adminLibraryTypeBoxsets => 'Collections';
+
+  @override
+  String get adminLibraryTypeBooks => 'Livres';
+
+  @override
+  String get adminLibraryTypeMixed => 'Mixte';
+
+  @override
+  String get adminLibraryRenameTitle => 'Renommer la bibliothèque';
+
+  @override
+  String get adminLibraryRenameCancel => 'Annuler';
+
+  @override
+  String get adminLibraryRenameConfirm => 'Renommer';
+
+  @override
+  String adminLibraryRenamedSnack(String name) {
+    return 'Bibliothèque renommée en $name.';
+  }
+
+  @override
+  String get adminLibraryDeleteTitle => 'Supprimer la bibliothèque';
+
+  @override
+  String adminLibraryDeleteMessage(String name) {
+    return 'Supprimer définitivement la bibliothèque « $name » ? Les fichiers sur le disque sont conservés.';
+  }
+
+  @override
+  String get adminLibraryDeleteConfirm => 'Supprimer';
+
+  @override
+  String adminLibraryDeletedSnack(String name) {
+    return 'Bibliothèque « $name » supprimée.';
+  }
+
+  @override
+  String adminLibraryPathAddedSnack(String path) {
+    return 'Chemin ajouté : $path';
+  }
+
+  @override
+  String adminLibraryPathRemovedSnack(String path) {
+    return 'Chemin retiré : $path';
+  }
+
+  @override
+  String adminLibraryManagePathsTitle(String name) {
+    return 'Chemins de « $name »';
+  }
+
+  @override
+  String get adminLibraryRemovePathTitle => 'Retirer le chemin';
+
+  @override
+  String adminLibraryRemovePathMessage(String path) {
+    return 'Retirer « $path » de cette bibliothèque ? Les fichiers sur le disque sont conservés.';
+  }
+
+  @override
+  String get adminLibraryRemovePathConfirm => 'Retirer';
+
+  @override
+  String get adminLibraryPathPickerTitle => 'Choisir un dossier';
+
+  @override
+  String get adminLibraryPathPickerClose => 'Fermer';
+
+  @override
+  String get adminLibraryPathPickerUp => 'Remonter';
+
+  @override
+  String get adminLibraryPathPickerRoot => 'Disques';
+
+  @override
+  String get adminLibraryPathPickerValidate => 'Utiliser ce dossier';
+
+  @override
+  String get adminLibraryPathPickerEmpty => 'Ce dossier est vide.';
+
+  @override
+  String get adminLibraryPathPickerSelect => 'Sélectionner';
+
+  @override
+  String adminLibraryPathValidationWarning(String error) {
+    return 'Avertissement de validation : $error';
+  }
+
+  @override
+  String get adminServerConfig => 'Configuration serveur';
+
+  @override
+  String get adminServerConfigSubtitle => 'Identité, chemins, comportement';
+
+  @override
+  String get adminServerConfigIdentitySection => 'IDENTITÉ';
+
+  @override
+  String get adminServerConfigServerName => 'Nom du serveur';
+
+  @override
+  String get adminServerConfigUiCulture => 'Langue de l\'interface serveur';
+
+  @override
+  String get adminServerConfigPathsSection => 'CHEMINS';
+
+  @override
+  String get adminServerConfigCachePath => 'Chemin du cache';
+
+  @override
+  String get adminServerConfigMetadataPath => 'Chemin des métadonnées';
+
+  @override
+  String get adminServerConfigStartupWizard => 'Assistant d\'installation';
+
+  @override
+  String get adminServerConfigStartupWizardDone => 'Terminé';
+
+  @override
+  String get adminServerConfigStartupWizardPending => 'En attente';
+
+  @override
+  String get adminServerConfigBehaviorSection => 'COMPORTEMENT';
+
+  @override
+  String get adminServerConfigQuickConnect => 'Quick Connect';
+
+  @override
+  String get adminServerConfigEnableMetrics => 'Métriques Prometheus';
+
+  @override
+  String get adminServerConfigEnableMetricsHint =>
+      'Expose les métriques sur /metrics';
+
+  @override
+  String get adminServerConfigNormalizedIds => 'IDs normalisés (item-by-name)';
+
+  @override
+  String get adminServerConfigNormalizedIdsHint =>
+      'Recommandé sur les nouveaux serveurs';
+
+  @override
+  String get adminServerConfigDiagnosticsSection => 'DIAGNOSTICS';
+
+  @override
+  String get adminServerConfigLogRetention => 'Rétention des logs (jours)';
+
+  @override
+  String get adminServerConfigSlowResponse => 'Avertir si réponse lente';
+
+  @override
+  String get adminServerConfigSlowResponseThreshold =>
+      'Seuil de réponse lente (ms)';
+
+  @override
+  String get adminServerConfigCorsSection => 'CORS';
+
+  @override
+  String get adminServerConfigCorsHint =>
+      'Hôtes autorisés à appeler l\'API depuis le navigateur. Utilisez * pour tout autoriser.';
+
+  @override
+  String get adminServerConfigCorsEmpty => 'Aucun hôte CORS configuré.';
+
+  @override
+  String get adminServerConfigCorsAdd => 'Ajouter un hôte';
+
+  @override
+  String get adminServerConfigCorsAddTitle => 'Ajouter un hôte CORS';
+
+  @override
+  String get adminServerConfigCorsAddHint => 'https://exemple.com';
+
+  @override
+  String get adminServerConfigCorsAddCancel => 'Annuler';
+
+  @override
+  String get adminServerConfigCorsAddConfirm => 'Ajouter';
+
+  @override
+  String get adminServerConfigSaveButton => 'Enregistrer la configuration';
+
+  @override
+  String get adminServerConfigSaveSnack => 'Configuration enregistrée';
+
+  @override
+  String get adminBranding => 'Identité visuelle';
+
+  @override
+  String get adminBrandingSubtitle =>
+      'Mention de connexion, CSS personnalisé, splashscreen';
+
+  @override
+  String get adminBrandingMessagesSection => 'MESSAGES';
+
+  @override
+  String get adminBrandingLoginDisclaimer => 'Mention de connexion';
+
+  @override
+  String get adminBrandingLoginDisclaimerHint =>
+      'Affichée sur l\'écran de connexion';
+
+  @override
+  String get adminBrandingAppearanceSection => 'APPARENCE';
+
+  @override
+  String get adminBrandingSplashscreenEnabled =>
+      'Activer l\'écran de démarrage';
+
+  @override
+  String get adminBrandingSplashscreenEnabledHint =>
+      'Utiliser un écran de démarrage personnalisé sur les clients compatibles';
+
+  @override
+  String get adminBrandingCustomCss => 'CSS personnalisé';
+
+  @override
+  String get adminBrandingCustomCssHint => 'Injecté dans le client web';
+
+  @override
+  String get adminBrandingSaveButton => 'Enregistrer l\'identité';
+
+  @override
+  String get adminBrandingSaveSnack => 'Identité enregistrée';
+
+  @override
+  String get adminBackup => 'Sauvegarde & restauration';
+
+  @override
+  String get adminBackupSubtitle =>
+      'Créer et restaurer les sauvegardes du serveur';
+
+  @override
+  String get adminBackupListSection => 'SAUVEGARDES DISPONIBLES';
+
+  @override
+  String get adminBackupEmpty => 'Aucune sauvegarde trouvée.';
+
+  @override
+  String get adminBackupCreateSectionTitle => 'Créer une sauvegarde';
+
+  @override
+  String get adminBackupCreateHint =>
+      'Archive la base du serveur et les contenus sélectionnés. L\'opération peut prendre plusieurs minutes.';
+
+  @override
+  String get adminBackupCreate => 'Créer une sauvegarde maintenant';
+
+  @override
+  String get adminBackupCreating => 'Sauvegarde en cours…';
+
+  @override
+  String get adminBackupCreateSnack => 'Sauvegarde créée';
+
+  @override
+  String adminBackupVersionPrefix(String version) {
+    return 'Serveur v$version';
+  }
+
+  @override
+  String get adminBackupContentMetadata => 'Métadonnées';
+
+  @override
+  String get adminBackupContentDatabase => 'Base de données';
+
+  @override
+  String get adminBackupContentSubtitles => 'Sous-titres';
+
+  @override
+  String get adminBackupContentTrickplay => 'Trickplay';
+
+  @override
+  String get adminBackupRestoreTooltip => 'Restaurer cette sauvegarde';
+
+  @override
+  String get adminBackupRestoreConfirm1Title => 'Restaurer cette sauvegarde ?';
+
+  @override
+  String get adminBackupRestoreConfirm1Message =>
+      'Le serveur va redémarrer et revenir à la sauvegarde sélectionnée. Toutes les modifications depuis cette sauvegarde seront perdues.';
+
+  @override
+  String get adminBackupRestoreConfirm1Confirm => 'Continuer';
+
+  @override
+  String get adminBackupRestoreConfirm2Title => 'Vraiment confirmer ?';
+
+  @override
+  String get adminBackupRestoreConfirm2Message =>
+      'Cette action est irréversible. Le serveur sera indisponible pendant quelques minutes.';
+
+  @override
+  String get adminBackupRestoreConfirm2Confirm => 'Oui, restaurer';
+
+  @override
+  String get adminBackupRestoreSnack =>
+      'Restauration lancée ; le serveur redémarre…';
 }
