@@ -25,6 +25,22 @@ class PipService {
     await f.enable(const ImmediatePiP());
   }
 
+  /// Arms Android's auto-enter PiP so the OS shrinks the activity into a
+  /// floating window when the user gestures Home / Recent. Best-effort —
+  /// no-op on unsupported devices.
+  Future<void> enableAutoEnter() async {
+    final f = _floating;
+    if (f == null) return;
+    if (!await f.isPipAvailable) return;
+    await f.enable(const OnLeavePiP());
+  }
+
+  Future<void> disableAutoEnter() async {
+    final f = _floating;
+    if (f == null) return;
+    await f.cancelOnLeavePiP();
+  }
+
   Stream<PiPStatus>? get statusStream => _floating?.pipStatusStream;
 
   void dispose() {}

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,8 +18,11 @@ import '../../core/auth/auth_controller.dart';
 import '../../core/downloads/download_manager.dart';
 import '../../core/downloads/download_settings.dart';
 import '../../core/jellyfin/jellyfin_client.dart';
+import '../../core/jellyfin/jellyfin_url_service.dart';
+import '../../core/jellyfin/models/jellyfin_item.dart';
 import '../../core/network/offline_mode_provider.dart';
 import '../../core/platform/platform_capabilities.dart';
+import '../../core/playback/media_session_service.dart';
 import '../../core/playback/media_source_resolver.dart';
 import '../../core/playback/next_up_provider.dart';
 import '../../core/playback/pip_service.dart';
@@ -103,6 +107,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
   bool _initialized = false;
   bool _disposed = false;
+  bool _attachedToAudioHandler = false;
 
   bool _inPip = false;
   StreamSubscription<PiPStatus>? _pipSub;
@@ -131,7 +136,24 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       if (!mounted) return;
       final inPip = status == PiPStatus.enabled;
       if (inPip != _inPip) {
-        if (inPip) _controlsController.hide();
+        if (inPip) {
+          _controlsController.hide();
+          // PiP owns the system overlay — pull the MediaItem so we don't
+          // expose two parallel control surfaces.
+          if (_attachedToAudioHandler) {
+            ref.read(audioHandlerProvider).detachBackend();
+            _attachedToAudioHandler = false;
+          }
+        } else {
+          // PiP exit → re-attach so lockscreen / shade controls come back.
+          final item = ref.read(playerItemProvider(widget.itemId)).valueOrNull;
+          if (item != null) {
+            _attachAudioHandler(
+              item: item,
+              backend: ref.read(playerBackendProvider),
+            );
+          }
+        }
         setState(() => _inPip = inPip);
       }
     });
@@ -180,6 +202,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
       await backend.open(resolved.streamUrl, startPosition: startPos);
 
+      _attachAudioHandler(item: item, backend: backend);
+      unawaited(ref.read(pipServiceProvider).enableAutoEnter());
+
       _reporting = PlaybackReportingService(
         sink: _buildSink(client, resolved.mediaSourceId),
         positionTicksProvider: () => backend.position.inMicroseconds * 10,
@@ -203,8 +228,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   /// progress is sent to Jellyfin when online, or queued in Drift when not.
   Future<void> _initFromLocal(String localPath) async {
     var startPos = Duration.zero;
+    JellyfinItem? localItem;
     try {
       final item = await ref.read(playerItemProvider(widget.itemId).future);
+      localItem = item;
       final resumeTicks = item.playbackPositionTicks ?? 0;
       if (resumeTicks > 0 && !(item.played ?? false)) {
         startPos = Duration(microseconds: resumeTicks ~/ 10);
@@ -222,6 +249,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     _wireBackendListeners(backend);
     await backend.open(localPath, startPosition: startPos);
 
+    if (localItem != null) {
+      _attachAudioHandler(item: localItem, backend: backend);
+    }
+    unawaited(ref.read(pipServiceProvider).enableAutoEnter());
+
     // Even with a local file, we still want to track progress: route it
     // through a sink that picks online (direct API) vs offline (SyncQueue)
     // based on current connectivity.
@@ -231,6 +263,37 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       positionTicksProvider: () => backend.position.inMicroseconds * 10,
     );
     await _reporting!.start(startTicks: startPos.inMicroseconds * 10);
+  }
+
+  void _attachAudioHandler({
+    required JellyfinItem item,
+    required PlayerBackend backend,
+  }) {
+    // PiP owns its own native controls — don't surface a duplicate notif.
+    if (_inPip) return;
+    final urlService = ref.read(jellyfinUrlServiceProvider);
+    final posterUrl = urlService.imageUrl(item, type: 'Primary', maxWidth: 512);
+    final mediaItem = MediaItem(
+      id: widget.itemId,
+      title: item.name ?? '',
+      artist: item.seriesName ?? '',
+      album: item.seriesName,
+      duration: backend.duration > Duration.zero ? backend.duration : null,
+      artUri: posterUrl != null ? Uri.parse(posterUrl) : null,
+    );
+    ref.read(audioHandlerProvider).attachBackend(
+      backend: backend,
+      item: mediaItem,
+      onSkipNext: _hasNextUp() ? _playNextUp : null,
+    );
+    _attachedToAudioHandler = true;
+  }
+
+  bool _hasNextUp() {
+    final item = ref.read(playerItemProvider(widget.itemId)).valueOrNull;
+    final seriesId = item?.seriesId;
+    if (seriesId == null) return false;
+    return ref.read(playerNextUpProvider(seriesId)).valueOrNull != null;
   }
 
   PlaybackEventSink _buildSink(JellyfinClient client, String mediaSourceId) {
@@ -261,6 +324,15 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
         if (_resumeFrom > Duration.zero) {
           _resumeToastController.show(from: _resumeFrom);
         }
+      }
+      // Forward play/pause transitions to Jellyfin reporting so a system
+      // notification or BT-key pause stays in sync with the server. The
+      // audio handler triggers pause through backend.pause(), which lands
+      // here — no parallel reporting path.
+      if (s == BackendState.playing) {
+        _reporting?.onPauseChanged(paused: false);
+      } else if (s == BackendState.paused) {
+        _reporting?.onPauseChanged(paused: true);
       }
     });
     _errorSub = backend.errorStream.listen((msg) {
@@ -388,6 +460,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     if (item?.type != BaseItemKind.episode || seriesId == null) return;
     final next = ref.read(playerNextUpProvider(seriesId)).valueOrNull;
     if (next == null) return;
+    // Surface the system "Next" control now that we have a real next-up.
+    if (_attachedToAudioHandler) {
+      ref.read(audioHandlerProvider).updateSkipNext(_playNextUp);
+    }
     setState(() => _showNextUp = true);
   }
 
@@ -481,14 +557,22 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
         : ref.read(playerNextUpProvider(seriesId)).valueOrNull;
     if (next == null || !mounted) return;
     await _reporting?.stop();
+    if (_attachedToAudioHandler) {
+      // Clear the notification cleanly so the next route's _initialize can
+      // attach with fresh metadata instead of stale title/poster.
+      await ref.read(audioHandlerProvider).detachBackend();
+      _attachedToAudioHandler = false;
+    }
     if (!mounted) return;
     context.pushReplacement('/play/${next.id}');
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
+    // Keep playback alive on paused/inactive — that's the whole point of
+    // the system media session. We still pause on `detached` (process going
+    // away) so libmpv doesn't keep decoding after the engine tears down.
+    if (state == AppLifecycleState.detached) {
       final backend = ref.read(playerBackendProvider);
       if (backend.isPlaying) {
         backend.pause();
@@ -515,6 +599,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   @override
   void dispose() {
     _disposed = true;
+    if (_attachedToAudioHandler) {
+      // Fire-and-forget — detach cancels its subs internally and emits an
+      // idle PlaybackState that clears the system notification.
+      ref.read(audioHandlerProvider).detachBackend();
+      _attachedToAudioHandler = false;
+    }
+    unawaited(ref.read(pipServiceProvider).disableAutoEnter());
     WidgetsBinding.instance.removeObserver(this);
     _controlsController.dispose();
     _doubleTapController.dispose();

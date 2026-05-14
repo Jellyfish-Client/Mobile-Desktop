@@ -79,6 +79,7 @@ dependencies:
   workmanager: ^0.9.0+3
   timezone: ^0.11.0
   floating: ^6.0.0
+  audio_service: ^0.18.16
 
 dev_dependencies:
   flutter_test:

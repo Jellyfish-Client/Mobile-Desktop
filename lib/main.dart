@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
@@ -8,6 +9,7 @@ import 'app/app.dart';
 import 'core/app_settings/app_locale_settings.dart';
 import 'core/auth/auth_controller.dart';
 import 'core/downloads/download_manager.dart';
+import 'core/playback/media_session_service.dart';
 import 'core/storage/device_id.dart';
 import 'features/home/home_providers.dart';
 import 'features/home/home_sections_controller.dart';
@@ -23,7 +25,40 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
 
-  final container = ProviderContainer();
+  // Boot the system media session once. The handler outlives every
+  // PlayerScreen — PlayerScreen attaches its short-lived backend on mount.
+  // If init fails (rare — usually a manifest / native plugin misconfig),
+  // we fall through with no override: any later read of audioHandlerProvider
+  // throws, but the rest of the app keeps booting so the user can see the
+  // home screen and a logged error instead of a black launch.
+  JellyfishAudioHandler? audioHandler;
+  try {
+    audioHandler = await AudioService.init<JellyfishAudioHandler>(
+      builder: JellyfishAudioHandler.new,
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.jellyfish.audio',
+        androidNotificationChannelName: 'Jellyfish',
+        androidNotificationChannelDescription: 'Playback controls',
+        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidStopForegroundOnPause: true,
+        androidNotificationOngoing: true,
+        preloadArtwork: true,
+      ),
+    );
+  } on Object catch (e, st) {
+    // Logger sinks aren't wired until runApp runs; print is the only
+    // reliable channel pre-boot. Failure is silent for the user but the
+    // notification feature will be inert until app restart.
+    // ignore: avoid_print
+    print('AudioService.init failed: $e\n$st');
+  }
+
+  final container = ProviderContainer(
+    overrides: [
+      if (audioHandler != null)
+        audioHandlerProvider.overrideWithValue(audioHandler),
+    ],
+  );
   await container.read(deviceIdProvider.future);
   // Resolve the persisted session before runApp so the router sees a settled
   // auth state on the first frame — otherwise the redirect briefly sends an
