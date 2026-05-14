@@ -6,8 +6,10 @@ import 'package:jellyfin_api/jellyfin_api.dart' show BaseItemDto;
 import '../../core/jellyfin/jellyfin_client.dart';
 import '../../core/jellyfin/mappers/base_item_dto_mapper.dart';
 import '../../core/jellyfin/models/jellyfin_item.dart';
+import '../../core/jellyfin/root_kinds.dart';
 import '../../core/seerr/models.dart';
 import '../../core/seerr/seerr_client.dart';
+import 'search_ranking.dart';
 
 class SearchState {
   const SearchState({
@@ -55,7 +57,10 @@ class SearchState {
 
 class SearchNotifier extends AutoDisposeNotifier<SearchState> {
   static const _debounceMs = 350;
-  static const _jellyfinLimit = 30;
+  // Pulled wider than the on-screen result count: server-side ordering is
+  // SortName, so the most relevant match (re-ranked client-side) might sit
+  // past the first 30. Capping at 60 keeps payload modest.
+  static const _jellyfinLimit = 60;
 
   Timer? _debounce;
   int _requestId = 0;
@@ -99,11 +104,20 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     final seerrClient = ref.read(seerrClientProvider);
 
     final jellyfinFuture = _safe<List<JellyfinItem>>(() async {
+      // Without includeItemTypes, recursive=true makes queryItems descend into
+      // Series → Seasons → Episodes, polluting search results with "Saison 1",
+      // "Saison 2", etc. Restrict to the same root kinds the Library screen
+      // surfaces (rootKindsProvider), then re-rank by relevance client-side
+      // since the server orders by SortName, not match quality.
+      final kinds = await ref.read(rootKindsProvider.future);
       final res = await jellyfinClient.queryItems(
         searchTerm: query,
+        includeItemTypes: kinds,
         limit: _jellyfinLimit,
       );
-      return (res.items?.toList() ?? const <BaseItemDto>[]).toDomainList();
+      final items = (res.items?.toList() ?? const <BaseItemDto>[])
+          .toDomainList();
+      return rankByRelevance(items, query);
     }, fallback: const []);
 
     final seerrFuture = seerrClient.isLinked

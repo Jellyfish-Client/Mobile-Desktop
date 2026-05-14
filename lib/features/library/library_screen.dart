@@ -8,6 +8,7 @@ import '../../app/theme/app_spacing.dart';
 import '../../app/theme/breakpoints.dart';
 import '../../core/jellyfin/jellyfin_url_service.dart';
 import '../../core/jellyfin/models/jellyfin_item.dart';
+import '../../core/jellyfin/user_views_provider.dart';
 import '../../core/network/offline_mode_provider.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../shared/widgets/widgets.dart';

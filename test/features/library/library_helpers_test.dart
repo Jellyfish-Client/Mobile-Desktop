@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 import 'package:jellyfish/core/jellyfin/models/jellyfin_item.dart';
+import 'package:jellyfish/core/jellyfin/root_kinds.dart';
 import 'package:jellyfish/features/library/library_providers.dart';
 import 'package:jellyfish/l10n/app_localizations_en.dart';
 

@@ -4,14 +4,8 @@ import 'package:jellyfin_api/jellyfin_api.dart';
 import '../../core/jellyfin/jellyfin_client.dart';
 import '../../core/jellyfin/mappers/base_item_dto_mapper.dart';
 import '../../core/jellyfin/models/jellyfin_item.dart';
+import '../../core/jellyfin/root_kinds.dart';
 import '../../l10n/app_localizations.dart';
-
-final userViewsProvider = FutureProvider.autoDispose<List<JellyfinItem>>((
-  ref,
-) async {
-  final dtos = await ref.read(jellyfinClientProvider).userViews();
-  return dtos.toDomainList();
-});
 
 class LibraryState {
   const LibraryState({
@@ -67,10 +61,6 @@ class LibraryNotifier extends AutoDisposeNotifier<LibraryState> {
   // prevents stale results from leaking into a newer scope.
   int _gen = 0;
 
-  // Cached kinds derived from userViews; survives userViewsProvider's
-  // autoDispose so loadMore() doesn't trigger a network refetch.
-  List<BaseItemKind>? _cachedRootKinds;
-
   @override
   LibraryState build() {
     Future.microtask(fetch);
@@ -88,13 +78,9 @@ class LibraryNotifier extends AutoDisposeNotifier<LibraryState> {
       // view's collectionType to keep only top-level items in the grid.
       return (parentId: view.id, kinds: rootKindsForViews([view]));
     }
-    final cached = _cachedRootKinds;
-    if (cached != null) {
-      return (parentId: null, kinds: cached);
-    }
-    final views = await ref.read(userViewsProvider.future);
-    final kinds = rootKindsForViews(views);
-    _cachedRootKinds = kinds;
+    // rootKindsProvider is non-autoDispose: cached for the session, so
+    // loadMore() doesn't trigger a userViews refetch.
+    final kinds = await ref.read(rootKindsProvider.future);
     return (parentId: null, kinds: kinds);
   }
 
@@ -182,48 +168,6 @@ final libraryNotifierProvider =
     AutoDisposeNotifierProvider<LibraryNotifier, LibraryState>(
       LibraryNotifier.new,
     );
-
-/// Maps the user's libraries to the set of top-level item kinds that should
-/// appear when no library is selected. Excludes Season/Episode so series stay
-/// grouped under their parent.
-List<BaseItemKind> rootKindsForViews(List<JellyfinItem> views) {
-  final kinds = <BaseItemKind>{};
-  var sawUnknown = false;
-  for (final v in views) {
-    final type = v.collectionType;
-    if (type == CollectionType.movies) {
-      kinds.add(BaseItemKind.movie);
-    } else if (type == CollectionType.tvshows) {
-      kinds.add(BaseItemKind.series);
-    } else if (type == CollectionType.boxsets) {
-      kinds.add(BaseItemKind.boxSet);
-    } else if (type == CollectionType.music) {
-      kinds.add(BaseItemKind.musicAlbum);
-    } else if (type == CollectionType.books) {
-      kinds.add(BaseItemKind.book);
-    } else if (type == CollectionType.homevideos) {
-      kinds
-        ..add(BaseItemKind.video)
-        ..add(BaseItemKind.photo);
-    } else if (type == CollectionType.musicvideos) {
-      kinds.add(BaseItemKind.musicVideo);
-    } else if (type == CollectionType.photos) {
-      kinds.add(BaseItemKind.photo);
-    } else if (type == CollectionType.trailers) {
-      kinds.add(BaseItemKind.trailer);
-    } else if (type == CollectionType.playlists) {
-      kinds.add(BaseItemKind.playlist);
-    } else {
-      sawUnknown = true;
-    }
-  }
-  if (sawUnknown || kinds.isEmpty) {
-    kinds
-      ..add(BaseItemKind.movie)
-      ..add(BaseItemKind.series);
-  }
-  return kinds.toList();
-}
 
 /// One entry per rail to display on Home for a given Jellyfin library view.
 /// For TV shows we surface two distinct rails — newly added episodes and
