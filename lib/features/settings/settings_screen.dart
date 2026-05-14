@@ -6,6 +6,7 @@ import '../../app/theme/app_spacing.dart';
 import '../../core/app_settings/app_locale_settings.dart';
 import '../../core/auth/accounts_repository.dart';
 import '../../core/auth/auth_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n_extension.dart';
 import '../admin/admin_providers.dart';
 import 'widgets/settings_section.dart';
@@ -28,6 +29,9 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
         children: [
+          // COMPTE — actions liées à l'identité de l'utilisateur (profil,
+          // switch, déconnexion). Les infos read-only du serveur ont migré
+          // plus bas dans INFOS SERVEUR pour ne pas mélanger lecture/action.
           SettingsSection(
             label: l10n.settingsAccount,
             tiles: [
@@ -37,16 +41,6 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: Text(l10n.settingsMyProfileSubtitle),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push('/settings/profile'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.dns_outlined),
-                title: Text(l10n.settingsServer),
-                subtitle: Text(session?.serverUrl ?? '—'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: Text(l10n.settingsUser),
-                subtitle: Text(session?.userName ?? '—'),
               ),
               _AccountSwitcherTile(onTap: () => context.push('/accounts')),
               ListTile(
@@ -72,8 +66,31 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
+
+          // APPLICATION — préférences globales de l'app (langue, lecture).
           SettingsSection(
-            label: l10n.settingsDownloads,
+            label: l10n.settingsSectionApp,
+            tiles: [
+              ListTile(
+                leading: const Icon(Icons.language_outlined),
+                title: Text(l10n.settingsLanguage),
+                subtitle: Text(_languageLabel(l10n, currentLocale)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/settings/language'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.play_circle_outline),
+                title: Text(l10n.settingsPlaybackTitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/settings/playback'),
+              ),
+            ],
+          ),
+
+          // CONTENU — actions sur le contenu (téléchargements locaux,
+          // demandes Jellyseerr).
+          SettingsSection(
+            label: l10n.settingsSectionContent,
             tiles: [
               ListTile(
                 leading: const Icon(Icons.download_outlined),
@@ -82,11 +99,6 @@ class SettingsScreen extends ConsumerWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push('/settings/downloads'),
               ),
-            ],
-          ),
-          SettingsSection(
-            label: l10n.settingsDiscovery,
-            tiles: [
               ListTile(
                 leading: const Icon(Icons.add_circle_outline),
                 title: Text(l10n.settingsRequests),
@@ -96,17 +108,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          SettingsSection(
-            label: l10n.settingsPlayback,
-            tiles: [
-              ListTile(
-                leading: const Icon(Icons.play_circle_outline),
-                title: Text(l10n.settingsPlaybackTitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push('/settings/playback'),
-              ),
-            ],
-          ),
+
           if (isAdmin)
             SettingsSection(
               label: l10n.settingsAdmin,
@@ -120,30 +122,27 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
+
+          // INFOS SERVEUR — read-only. Pas d'action, juste un rappel de
+          // l'identité de la connexion courante (URL + user). Posé en bas
+          // car ce sont des infos de debug/diagnostic, pas un point d'entrée
+          // récurrent.
           SettingsSection(
-            label: l10n.settingsLanguageSection,
+            label: l10n.settingsSectionServerInfo,
             tiles: [
-              RadioGroup<String>(
-                groupValue: currentLocale,
-                onChanged: (v) => ref
-                    .read(appLocaleSettingsProvider.notifier)
-                    .setLanguage(v ?? ''),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    RadioListTile<String>(
-                      value: 'fr',
-                      title: Text(l10n.settingsLanguageFrench),
-                    ),
-                    RadioListTile<String>(
-                      value: 'en',
-                      title: Text(l10n.settingsLanguageEnglish),
-                    ),
-                  ],
-                ),
+              ListTile(
+                leading: const Icon(Icons.dns_outlined),
+                title: Text(l10n.settingsServer),
+                subtitle: Text(session?.serverUrl ?? '—'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.person_outline),
+                title: Text(l10n.settingsUser),
+                subtitle: Text(session?.userName ?? '—'),
               ),
             ],
           ),
+
           SettingsSection(
             label: l10n.settingsAbout,
             tiles: [
@@ -159,6 +158,14 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+String _languageLabel(AppLocalizations l10n, String languageCode) {
+  return switch (languageCode) {
+    'fr' => l10n.settingsLanguageFrench,
+    'en' => l10n.settingsLanguageEnglish,
+    _ => l10n.settingsLanguageSystem,
+  };
 }
 
 class _AccountSwitcherTile extends ConsumerWidget {

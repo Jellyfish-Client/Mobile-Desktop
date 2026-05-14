@@ -28,6 +28,7 @@ import '../features/requests/requests_screen.dart';
 import '../features/search/search_screen.dart';
 import '../features/settings/about_settings_screen.dart';
 import '../features/settings/downloads_settings_screen.dart';
+import '../features/settings/language_settings_screen.dart';
 import '../features/settings/playback_settings_screen.dart';
 import '../features/settings/profile/profile_screen.dart';
 import '../features/settings/settings_screen.dart';
@@ -251,6 +252,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/settings/playback',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, __) => const PlaybackSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/language',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const LanguageSettingsScreen(),
       ),
       GoRoute(
         path: '/settings/about',

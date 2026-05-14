@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 import 'package:jellyfish/core/jellyfin/models/jellyfin_item.dart';
 import 'package:jellyfish/features/library/library_providers.dart';
+import 'package:jellyfish/l10n/app_localizations_en.dart';
 
 JellyfinItem _view({required String id, CollectionType? type}) =>
     JellyfinItem(id: id, name: id, collectionType: type);
@@ -68,18 +69,22 @@ void main() {
   });
 
   group('latestRailKindsForView', () {
-    test('movies view yields a single "Nouveaux films" rail', () {
+    final l10n = AppLocalizationsEn();
+
+    test('movies view yields a single "New movies" rail', () {
       final rails = latestRailKindsForView(
         _view(id: 'a', type: CollectionType.movies),
+        l10n,
       );
       expect(rails, hasLength(1));
       expect(rails.single.kind, BaseItemKind.movie);
-      expect(rails.single.suffix, 'Nouveaux films');
+      expect(rails.single.suffix, l10n.libraryRailNewMovies);
     });
 
     test('tvshows view yields both episodes and series rails in order', () {
       final rails = latestRailKindsForView(
         _view(id: 'a', type: CollectionType.tvshows),
+        l10n,
       );
       expect(rails, hasLength(2));
       expect(rails[0].kind, BaseItemKind.episode);
@@ -87,7 +92,7 @@ void main() {
     });
 
     test('unknown collectionType yields no rails', () {
-      expect(latestRailKindsForView(_view(id: 'a')), isEmpty);
+      expect(latestRailKindsForView(_view(id: 'a'), l10n), isEmpty);
     });
   });
 }

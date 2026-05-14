@@ -1784,6 +1784,18 @@ abstract class AppLocalizations {
   /// **'LANGUE'**
   String get settingsLanguageSection;
 
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsLanguageSystem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Système'**
+  String get settingsLanguageSystem;
+
   /// No description provided for @settingsLanguageFrench.
   ///
   /// In fr, this message translates to:
@@ -1795,6 +1807,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Anglais'**
   String get settingsLanguageEnglish;
+
+  /// No description provided for @settingsSectionApp.
+  ///
+  /// In fr, this message translates to:
+  /// **'APPLICATION'**
+  String get settingsSectionApp;
+
+  /// No description provided for @settingsSectionContent.
+  ///
+  /// In fr, this message translates to:
+  /// **'CONTENU'**
+  String get settingsSectionContent;
+
+  /// No description provided for @settingsSectionServerInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'INFOS SERVEUR'**
+  String get settingsSectionServerInfo;
 
   /// No description provided for @seerrAvailabilityAvailable.
   ///
@@ -2875,6 +2905,222 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get adminUserEditDeleteConfirm;
+
+  /// No description provided for @homeRailContinueWatching.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer à regarder'**
+  String get homeRailContinueWatching;
+
+  /// No description provided for @homeRailNextUp.
+  ///
+  /// In fr, this message translates to:
+  /// **'À finir'**
+  String get homeRailNextUp;
+
+  /// No description provided for @homeHeaderJellyfin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos contenus'**
+  String get homeHeaderJellyfin;
+
+  /// No description provided for @homeRailLatest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveautés'**
+  String get homeRailLatest;
+
+  /// No description provided for @homeRailLatestSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouts récents'**
+  String get homeRailLatestSubtitle;
+
+  /// No description provided for @homeRailForYou.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour vous'**
+  String get homeRailForYou;
+
+  /// No description provided for @homeRailGems.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pépites'**
+  String get homeRailGems;
+
+  /// No description provided for @homeRailQuickPicks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vite vu'**
+  String get homeRailQuickPicks;
+
+  /// No description provided for @homeRailBecauseYouLiked.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parce que vous avez aimé…'**
+  String get homeRailBecauseYouLiked;
+
+  /// No description provided for @homeRailUpcomingMovies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Films à venir'**
+  String get homeRailUpcomingMovies;
+
+  /// No description provided for @homeRailUpcomingEpisodes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Épisodes à venir'**
+  String get homeRailUpcomingEpisodes;
+
+  /// No description provided for @homeHeaderSeer.
+  ///
+  /// In fr, this message translates to:
+  /// **'À découvrir'**
+  String get homeHeaderSeer;
+
+  /// No description provided for @homeRailWatchProvidersMovies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible sur…'**
+  String get homeRailWatchProvidersMovies;
+
+  /// No description provided for @homeRailTrending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tendance aujourd\'hui'**
+  String get homeRailTrending;
+
+  /// No description provided for @homeRailPopularSeries.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séries qui cartonnent'**
+  String get homeRailPopularSeries;
+
+  /// No description provided for @homeRailWatchlist.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre watchlist'**
+  String get homeRailWatchlist;
+
+  /// No description provided for @homeRailGenreSliderMovies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Films par genre'**
+  String get homeRailGenreSliderMovies;
+
+  /// No description provided for @homeRailGenreSliderTv.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séries par genre'**
+  String get homeRailGenreSliderTv;
+
+  /// No description provided for @homeRailWatchProvidersTv.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séries par service'**
+  String get homeRailWatchProvidersTv;
+
+  /// No description provided for @homeRailBecauseYouWatched.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parce que vous avez regardé {title}'**
+  String homeRailBecauseYouWatched(String title);
+
+  /// No description provided for @homeRailSimilarTo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comme {title}'**
+  String homeRailSimilarTo(String title);
+
+  /// No description provided for @homeMoodComedy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour rire un bon coup'**
+  String get homeMoodComedy;
+
+  /// No description provided for @homeMoodThrills.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour frissonner ce soir'**
+  String get homeMoodThrills;
+
+  /// No description provided for @homeMoodTearjerker.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour pleurer un bon coup'**
+  String get homeMoodTearjerker;
+
+  /// No description provided for @homeMoodEscape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour s\'évader'**
+  String get homeMoodEscape;
+
+  /// No description provided for @homeMoodAcclaimed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Acclamés par la critique'**
+  String get homeMoodAcclaimed;
+
+  /// No description provided for @libraryRailNewMovies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveaux films'**
+  String get libraryRailNewMovies;
+
+  /// No description provided for @libraryRailNewEpisodes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveaux épisodes'**
+  String get libraryRailNewEpisodes;
+
+  /// No description provided for @libraryRailNewSeries.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelles séries'**
+  String get libraryRailNewSeries;
+
+  /// No description provided for @libraryRailNewBoxsets.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveaux coffrets'**
+  String get libraryRailNewBoxsets;
+
+  /// No description provided for @libraryRailNewAlbums.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveaux albums'**
+  String get libraryRailNewAlbums;
+
+  /// No description provided for @libraryRailNewMusicVideos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveaux clips'**
+  String get libraryRailNewMusicVideos;
+
+  /// No description provided for @libraryRailNewBooks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveaux livres'**
+  String get libraryRailNewBooks;
+
+  /// No description provided for @libraryRailNewVideos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelles vidéos'**
+  String get libraryRailNewVideos;
+
+  /// No description provided for @libraryRailNewPhotos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelles photos'**
+  String get libraryRailNewPhotos;
+
+  /// No description provided for @libraryRailNewTrailers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelles bandes-annonces'**
+  String get libraryRailNewTrailers;
 }
 
 class _AppLocalizationsDelegate

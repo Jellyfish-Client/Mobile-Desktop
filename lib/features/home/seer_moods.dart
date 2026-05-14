@@ -2,14 +2,16 @@ import 'dart:convert';
 
 import '../../core/cache/seerr_serialization.dart';
 import '../../core/seerr/models.dart';
+import '../../l10n/app_localizations.dart';
 import 'home_section.dart';
 
-/// Static recipe behind each [SeerMoodId]: title and eyebrow drive the rail
-/// header; the remaining fields are forwarded to `SeerrClient.discoverMovies`
-/// to shape the TMDB query.
+/// Static recipe behind each [SeerMoodId]: a [titleOf] callback resolves the
+/// rail header from the current [AppLocalizations] so the strings track the
+/// app language. The remaining fields are forwarded to
+/// `SeerrClient.discoverMovies` to shape the TMDB query.
 class SeerMoodSpec {
   const SeerMoodSpec({
-    required this.title,
+    required this.titleOf,
     required this.eyebrow,
     required this.sortBy,
     this.genres = const [],
@@ -17,7 +19,7 @@ class SeerMoodSpec {
     this.voteAverageGte,
   });
 
-  final String title;
+  final String Function(AppLocalizations l10n) titleOf;
   final String eyebrow;
   final String sortBy;
   final List<int> genres;
@@ -36,39 +38,39 @@ const _kGenreAdventure = 12;
 const _kGenreFantasy = 14;
 const _kGenreSciFi = 878;
 
-const Map<SeerMoodId, SeerMoodSpec> kSeerMoods = {
+final Map<SeerMoodId, SeerMoodSpec> kSeerMoods = {
   SeerMoodId.pourRire: SeerMoodSpec(
-    title: 'Pour rire un bon coup',
+    titleOf: (l10n) => l10n.homeMoodComedy,
     eyebrow: 'EXTERNAL · SEER',
     sortBy: 'popularity.desc',
-    genres: [_kGenreComedy],
+    genres: const [_kGenreComedy],
     voteCountGte: 100,
   ),
   SeerMoodId.pourFrissonner: SeerMoodSpec(
-    title: 'Pour frissonner ce soir',
+    titleOf: (l10n) => l10n.homeMoodThrills,
     eyebrow: 'EXTERNAL · SEER',
     sortBy: 'popularity.desc',
-    genres: [_kGenreHorror, _kGenreThriller],
+    genres: const [_kGenreHorror, _kGenreThriller],
     voteCountGte: 100,
   ),
   SeerMoodId.pourPleurer: SeerMoodSpec(
-    title: 'Pour pleurer un bon coup',
+    titleOf: (l10n) => l10n.homeMoodTearjerker,
     eyebrow: 'EXTERNAL · SEER',
     sortBy: 'vote_average.desc',
-    genres: [_kGenreDrama, _kGenreRomance],
+    genres: const [_kGenreDrama, _kGenreRomance],
     voteCountGte: 500,
   ),
   SeerMoodId.pourSEvader: SeerMoodSpec(
-    title: "Pour s'évader",
+    titleOf: (l10n) => l10n.homeMoodEscape,
     eyebrow: 'EXTERNAL · SEER',
     sortBy: 'popularity.desc',
-    genres: [_kGenreAdventure, _kGenreFantasy, _kGenreSciFi],
+    genres: const [_kGenreAdventure, _kGenreFantasy, _kGenreSciFi],
     voteCountGte: 200,
   ),
   // No genre filter — broad acclaim only. Sits last so it absorbs any movie
   // that didn't get assigned to one of the more specific moods above.
   SeerMoodId.coupsDeCoeur: SeerMoodSpec(
-    title: 'Acclamés par la critique',
+    titleOf: (l10n) => l10n.homeMoodAcclaimed,
     eyebrow: 'EXTERNAL · SEER',
     sortBy: 'vote_average.desc',
     voteCountGte: 2000,
@@ -81,11 +83,11 @@ SeerMoodSpec moodSpec(SeerMoodId id) => kSeerMoods[id]!;
 /// Convenience constructor used by the Home catalog so the section id stays
 /// in sync with the enum and the title/eyebrow come from the single source
 /// of truth ([kSeerMoods]).
-HomeSeerRail buildSeerMoodRail(SeerMoodId id) {
+HomeSeerRail buildSeerMoodRail(SeerMoodId id, AppLocalizations l10n) {
   final spec = moodSpec(id);
   return HomeSeerRail(
     id: 'seer_mood_${id.name}',
-    title: spec.title,
+    title: spec.titleOf(l10n),
     eyebrow: spec.eyebrow,
     source: SeerMood(id),
   );

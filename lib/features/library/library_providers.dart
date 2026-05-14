@@ -4,6 +4,7 @@ import 'package:jellyfin_api/jellyfin_api.dart';
 import '../../core/jellyfin/jellyfin_client.dart';
 import '../../core/jellyfin/mappers/base_item_dto_mapper.dart';
 import '../../core/jellyfin/models/jellyfin_item.dart';
+import '../../l10n/app_localizations.dart';
 
 final userViewsProvider = FutureProvider.autoDispose<List<JellyfinItem>>((
   ref,
@@ -238,69 +239,84 @@ class HomeLibraryRailKind {
   final String suffix;
 }
 
-List<HomeLibraryRailKind> latestRailKindsForView(JellyfinItem view) {
+List<HomeLibraryRailKind> latestRailKindsForView(
+  JellyfinItem view,
+  AppLocalizations l10n,
+) {
   final type = view.collectionType;
   if (type == CollectionType.movies) {
-    return const [
-      HomeLibraryRailKind(kind: BaseItemKind.movie, suffix: 'Nouveaux films'),
+    return [
+      HomeLibraryRailKind(
+        kind: BaseItemKind.movie,
+        suffix: l10n.libraryRailNewMovies,
+      ),
     ];
   }
   if (type == CollectionType.tvshows) {
-    return const [
+    return [
       HomeLibraryRailKind(
         kind: BaseItemKind.episode,
-        suffix: 'Nouveaux épisodes',
+        suffix: l10n.libraryRailNewEpisodes,
       ),
       HomeLibraryRailKind(
         kind: BaseItemKind.series,
-        suffix: 'Nouvelles séries',
+        suffix: l10n.libraryRailNewSeries,
       ),
     ];
   }
   if (type == CollectionType.boxsets) {
-    return const [
+    return [
       HomeLibraryRailKind(
         kind: BaseItemKind.boxSet,
-        suffix: 'Nouveaux coffrets',
+        suffix: l10n.libraryRailNewBoxsets,
       ),
     ];
   }
   if (type == CollectionType.music) {
-    return const [
+    return [
       HomeLibraryRailKind(
         kind: BaseItemKind.musicAlbum,
-        suffix: 'Nouveaux albums',
+        suffix: l10n.libraryRailNewAlbums,
       ),
     ];
   }
   if (type == CollectionType.musicvideos) {
-    return const [
+    return [
       HomeLibraryRailKind(
         kind: BaseItemKind.musicVideo,
-        suffix: 'Nouveaux clips',
+        suffix: l10n.libraryRailNewMusicVideos,
       ),
     ];
   }
   if (type == CollectionType.books) {
-    return const [
-      HomeLibraryRailKind(kind: BaseItemKind.book, suffix: 'Nouveaux livres'),
+    return [
+      HomeLibraryRailKind(
+        kind: BaseItemKind.book,
+        suffix: l10n.libraryRailNewBooks,
+      ),
     ];
   }
   if (type == CollectionType.homevideos) {
-    return const [
-      HomeLibraryRailKind(kind: BaseItemKind.video, suffix: 'Nouvelles vidéos'),
+    return [
+      HomeLibraryRailKind(
+        kind: BaseItemKind.video,
+        suffix: l10n.libraryRailNewVideos,
+      ),
     ];
   }
   if (type == CollectionType.photos) {
-    return const [
-      HomeLibraryRailKind(kind: BaseItemKind.photo, suffix: 'Nouvelles photos'),
+    return [
+      HomeLibraryRailKind(
+        kind: BaseItemKind.photo,
+        suffix: l10n.libraryRailNewPhotos,
+      ),
     ];
   }
   if (type == CollectionType.trailers) {
-    return const [
+    return [
       HomeLibraryRailKind(
         kind: BaseItemKind.trailer,
-        suffix: 'Nouvelles bandes-annonces',
+        suffix: l10n.libraryRailNewTrailers,
       ),
     ];
   }

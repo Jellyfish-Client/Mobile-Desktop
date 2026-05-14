@@ -972,10 +972,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsLanguageSection => 'LANGUE';
 
   @override
+  String get settingsLanguage => 'Langue';
+
+  @override
+  String get settingsLanguageSystem => 'Système';
+
+  @override
   String get settingsLanguageFrench => 'Français';
 
   @override
   String get settingsLanguageEnglish => 'Anglais';
+
+  @override
+  String get settingsSectionApp => 'APPLICATION';
+
+  @override
+  String get settingsSectionContent => 'CONTENU';
+
+  @override
+  String get settingsSectionServerInfo => 'INFOS SERVEUR';
 
   @override
   String get seerrAvailabilityAvailable => 'Disponible';
@@ -1593,4 +1608,116 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get adminUserEditDeleteConfirm => 'Supprimer';
+
+  @override
+  String get homeRailContinueWatching => 'Continuer à regarder';
+
+  @override
+  String get homeRailNextUp => 'À finir';
+
+  @override
+  String get homeHeaderJellyfin => 'Vos contenus';
+
+  @override
+  String get homeRailLatest => 'Nouveautés';
+
+  @override
+  String get homeRailLatestSubtitle => 'Ajouts récents';
+
+  @override
+  String get homeRailForYou => 'Pour vous';
+
+  @override
+  String get homeRailGems => 'Pépites';
+
+  @override
+  String get homeRailQuickPicks => 'Vite vu';
+
+  @override
+  String get homeRailBecauseYouLiked => 'Parce que vous avez aimé…';
+
+  @override
+  String get homeRailUpcomingMovies => 'Films à venir';
+
+  @override
+  String get homeRailUpcomingEpisodes => 'Épisodes à venir';
+
+  @override
+  String get homeHeaderSeer => 'À découvrir';
+
+  @override
+  String get homeRailWatchProvidersMovies => 'Disponible sur…';
+
+  @override
+  String get homeRailTrending => 'Tendance aujourd\'hui';
+
+  @override
+  String get homeRailPopularSeries => 'Séries qui cartonnent';
+
+  @override
+  String get homeRailWatchlist => 'Votre watchlist';
+
+  @override
+  String get homeRailGenreSliderMovies => 'Films par genre';
+
+  @override
+  String get homeRailGenreSliderTv => 'Séries par genre';
+
+  @override
+  String get homeRailWatchProvidersTv => 'Séries par service';
+
+  @override
+  String homeRailBecauseYouWatched(String title) {
+    return 'Parce que vous avez regardé $title';
+  }
+
+  @override
+  String homeRailSimilarTo(String title) {
+    return 'Comme $title';
+  }
+
+  @override
+  String get homeMoodComedy => 'Pour rire un bon coup';
+
+  @override
+  String get homeMoodThrills => 'Pour frissonner ce soir';
+
+  @override
+  String get homeMoodTearjerker => 'Pour pleurer un bon coup';
+
+  @override
+  String get homeMoodEscape => 'Pour s\'évader';
+
+  @override
+  String get homeMoodAcclaimed => 'Acclamés par la critique';
+
+  @override
+  String get libraryRailNewMovies => 'Nouveaux films';
+
+  @override
+  String get libraryRailNewEpisodes => 'Nouveaux épisodes';
+
+  @override
+  String get libraryRailNewSeries => 'Nouvelles séries';
+
+  @override
+  String get libraryRailNewBoxsets => 'Nouveaux coffrets';
+
+  @override
+  String get libraryRailNewAlbums => 'Nouveaux albums';
+
+  @override
+  String get libraryRailNewMusicVideos => 'Nouveaux clips';
+
+  @override
+  String get libraryRailNewBooks => 'Nouveaux livres';
+
+  @override
+  String get libraryRailNewVideos => 'Nouvelles vidéos';
+
+  @override
+  String get libraryRailNewPhotos => 'Nouvelles photos';
+
+  @override
+  String get libraryRailNewTrailers => 'Nouvelles bandes-annonces';
 }

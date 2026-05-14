@@ -19,31 +19,39 @@ class JellyfishApp extends ConsumerWidget {
     // for accounts persisted before the flag existed.
     ref.watch(currentUserAdminRefresherProvider);
 
-    // App-level locale: empty `languageCode` means "follow the device" — pass
-    // `null` to MaterialApp in that case so Flutter resolves the best match
-    // from `supportedLocales`. Until the controller finishes its first load
-    // we use the defaults (= device locale), which matches how a fresh
-    // install behaves before the user ever opens Settings.
-    final localeAsync = ref.watch(appLocaleSettingsProvider);
+    // App-level locale: empty `languageCode` means "follow the device". We
+    // resolve the effective `Locale` ourselves (against the live OS locale
+    // list) so we can always pass a concrete, non-null `Locale` to
+    // `MaterialApp.router` AND back it with a `localeListResolutionCallback`
+    // that re-imposes the same value on every resolution pass. This is what
+    // forces `Localizations` to invalidate its descendants when the user
+    // switches language at runtime — passing `null` and relying on Flutter's
+    // default resolver does not consistently rebuild the Navigator subtree
+    // under `MaterialApp.router`.
+    const supportedLocales = <Locale>[Locale('en'), Locale('fr')];
     final localeSettings =
-        localeAsync.valueOrNull ?? AppLocaleSettings.defaults;
-    final locale = localeSettings.languageCode.isEmpty
-        ? null
-        : Locale(localeSettings.languageCode);
+        ref.watch(appLocaleSettingsProvider).valueOrNull ??
+        AppLocaleSettings.defaults;
+    final deviceLocales = WidgetsBinding.instance.platformDispatcher.locales;
+    final effectiveLocale = localeSettings.resolve(
+      deviceLocales,
+      supportedLocales,
+    );
 
     return MaterialApp.router(
       title: 'Jellyfish',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark(),
       routerConfig: router,
-      locale: locale,
+      locale: effectiveLocale,
+      localeListResolutionCallback: (_, _) => effectiveLocale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en'), Locale('fr')],
+      supportedLocales: supportedLocales,
     );
   }
 }

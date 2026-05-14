@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
 import 'app/app.dart';
+import 'core/app_settings/app_locale_settings.dart';
 import 'core/auth/auth_controller.dart';
 import 'core/downloads/download_manager.dart';
 import 'core/storage/device_id.dart';
@@ -32,6 +33,16 @@ Future<void> main() async {
   } on Object {
     // Keychain locked or storage corrupt: fall through with no session.
     // The router will land on /onboarding/server, which is the correct fallback.
+  }
+  // Resolve the app locale before runApp so the first frame is already in the
+  // right language. If we let the AsyncNotifier resolve mid-build, the initial
+  // frame uses the defaults (= follow device), then re-resolves to the saved
+  // preference — that transition can leave `MaterialApp.router`'s cached
+  // `Localizations` widget stale on some platforms.
+  try {
+    await container.read(appLocaleSettingsProvider.future);
+  } on Object {
+    // SharedPreferences corrupt / unavailable: fall through to defaults.
   }
   // Eagerly create the DownloadManager so it subscribes to update events
   // and resumes tracked tasks from previous app runs.

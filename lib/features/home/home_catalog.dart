@@ -1,6 +1,7 @@
 import 'package:jellyfin_api/jellyfin_api.dart' show BaseItemKind;
 
 import '../../core/jellyfin/models/jellyfin_item.dart';
+import '../../l10n/app_localizations.dart';
 import '../library/library_providers.dart';
 import 'home_section.dart';
 import 'reco_seeds.dart';
@@ -28,22 +29,23 @@ const String _kSeerrGroupId = 'header_seer';
 List<HomeSection> buildHomeCatalog({
   required List<JellyfinItem> views,
   required bool isSeerLinked,
+  required AppLocalizations l10n,
   List<RecoSeed> recoSeeds = const [],
 }) {
   final out = <HomeSection>[
-    const HomeJellyfinRail(
+    HomeJellyfinRail(
       id: 'continue',
-      title: 'Continuer à regarder',
+      title: l10n.homeRailContinueWatching,
       style: RailStyle.landscape,
     ),
-    const HomeJellyfinRail(
+    HomeJellyfinRail(
       id: 'next_up',
-      title: 'À finir',
+      title: l10n.homeRailNextUp,
       style: RailStyle.landscape,
     ),
-    const HomeSectionHeader(
+    HomeSectionHeader(
       id: _kJellyfinGroupId,
-      title: 'Vos contenus',
+      title: l10n.homeHeaderJellyfin,
       eyebrow: 'JELLYFIN',
     ),
     // Cross-library "what's new" rail. Always present so brand-new users
@@ -51,10 +53,10 @@ List<HomeSection> buildHomeCatalog({
     // and a useful overview for everyone else. Fed by `latestItemsProvider`
     // (limit=24, SWR-cached, warmed in main.dart) so it paints from disk
     // on cold start.
-    const HomeJellyfinRail(
+    HomeJellyfinRail(
       id: 'latest',
-      title: 'Nouveautés',
-      subtitle: 'Ajouts récents',
+      title: l10n.homeRailLatest,
+      subtitle: l10n.homeRailLatestSubtitle,
       style: RailStyle.landscape,
     ),
   ];
@@ -65,7 +67,7 @@ List<HomeSection> buildHomeCatalog({
   for (final view in views) {
     final name = view.name;
     if (name == null) continue;
-    final railKinds = latestRailKindsForView(view);
+    final railKinds = latestRailKindsForView(view, l10n);
     for (final rk in railKinds) {
       out.add(
         HomeLibraryRail(
@@ -86,35 +88,35 @@ List<HomeSection> buildHomeCatalog({
   // what the user has already asked the *arr stack to watch for, so it's
   // closer in spirit to "your stuff" than to discovery. Each upcoming rail
   // self-hides when its upstream is unavailable (cf. providers).
-  out.addAll(const [
+  out.addAll([
     HomeJellyfinRail(
       id: 'pour_vous',
-      title: 'Pour vous',
+      title: l10n.homeRailForYou,
       style: RailStyle.spotlightRow,
     ),
     HomeJellyfinRail(
       id: 'pepites',
-      title: 'Pépites',
+      title: l10n.homeRailGems,
       style: RailStyle.editorial,
     ),
     HomeJellyfinRail(
       id: 'vite_vu',
-      title: 'Vite vu',
+      title: l10n.homeRailQuickPicks,
       style: RailStyle.posterDense,
     ),
     HomeJellyfinRail(
       id: 'because_',
-      title: 'Parce que vous avez aimé…',
+      title: l10n.homeRailBecauseYouLiked,
       style: RailStyle.posterStandard,
     ),
     HomeUpcomingRail(
       id: 'upcoming_movies',
-      title: 'Films à venir',
+      title: l10n.homeRailUpcomingMovies,
       kind: HomeUpcomingKind.movies,
     ),
     HomeUpcomingRail(
       id: 'upcoming_episodes',
-      title: 'Épisodes à venir',
+      title: l10n.homeRailUpcomingEpisodes,
       kind: HomeUpcomingKind.episodes,
     ),
   ]);
@@ -127,68 +129,68 @@ List<HomeSection> buildHomeCatalog({
   if (!isSeerLinked) return out;
 
   out
-    ..addAll(const [
-    HomeSectionHeader(
-      id: _kSeerrGroupId,
-      title: 'À découvrir',
-      eyebrow: 'SEER',
-    ),
-    HomeSeerWatchProviders(
-      id: 'seer_watch_providers_movies',
-      title: 'Disponible sur…',
-      kind: HomeSeerWatchProvidersKind.movies,
-      eyebrow: 'EXTERNAL · SEER',
-    ),
-    HomeSeerRail(
-      id: 'seer_trending',
-      title: "Tendance aujourd'hui",
-      eyebrow: 'EXTERNAL · SEER',
-      source: SeerTrending(),
-    ),
-    HomeMiniHero(id: 'minihero_popular', source: SeerPopularMovies()),
-    HomeSeerRail(
-      id: 'seer_popular_series',
-      title: 'Séries qui cartonnent',
-      eyebrow: 'EXTERNAL · SEER',
-      source: SeerPopularSeries(),
-    ),
-    HomeSeerRail(
-      id: 'seer_watchlist',
-      title: 'Votre watchlist',
-      eyebrow: 'EXTERNAL · SEER',
-      source: SeerWatchlist(),
-    ),
-  ])
+    ..addAll([
+      HomeSectionHeader(
+        id: _kSeerrGroupId,
+        title: l10n.homeHeaderSeer,
+        eyebrow: 'SEER',
+      ),
+      HomeSeerWatchProviders(
+        id: 'seer_watch_providers_movies',
+        title: l10n.homeRailWatchProvidersMovies,
+        kind: HomeSeerWatchProvidersKind.movies,
+        eyebrow: 'EXTERNAL · SEER',
+      ),
+      HomeSeerRail(
+        id: 'seer_trending',
+        title: l10n.homeRailTrending,
+        eyebrow: 'EXTERNAL · SEER',
+        source: const SeerTrending(),
+      ),
+      const HomeMiniHero(id: 'minihero_popular', source: SeerPopularMovies()),
+      HomeSeerRail(
+        id: 'seer_popular_series',
+        title: l10n.homeRailPopularSeries,
+        eyebrow: 'EXTERNAL · SEER',
+        source: const SeerPopularSeries(),
+      ),
+      HomeSeerRail(
+        id: 'seer_watchlist',
+        title: l10n.homeRailWatchlist,
+        eyebrow: 'EXTERNAL · SEER',
+        source: const SeerWatchlist(),
+      ),
+    ])
     // Per-seed reco rails — picked at random per session by `recoSeedsProvider`
     // with an anime bias. Empty list when the user has zero history seeds and
     // the popular fallback hasn't loaded yet — in that case the whole reco
     // block disappears (no skeleton, no placeholder rail).
-    ..addAll(recoSeeds.map(_buildRecoRail))
-    ..addAll(const [
-    HomeSeerGenreSlider(
-      id: 'seer_genre_slider_movies',
-      title: 'Films par genre',
-      kind: HomeSeerGenreSliderKind.movies,
-      eyebrow: 'EXTERNAL · SEER',
-    ),
-    HomeSeerGenreSlider(
-      id: 'seer_genre_slider_tv',
-      title: 'Séries par genre',
-      kind: HomeSeerGenreSliderKind.tv,
-      eyebrow: 'EXTERNAL · SEER',
-    ),
-  ])
+    ..addAll(recoSeeds.map((seed) => _buildRecoRail(seed, l10n)))
+    ..addAll([
+      HomeSeerGenreSlider(
+        id: 'seer_genre_slider_movies',
+        title: l10n.homeRailGenreSliderMovies,
+        kind: HomeSeerGenreSliderKind.movies,
+        eyebrow: 'EXTERNAL · SEER',
+      ),
+      HomeSeerGenreSlider(
+        id: 'seer_genre_slider_tv',
+        title: l10n.homeRailGenreSliderTv,
+        kind: HomeSeerGenreSliderKind.tv,
+        eyebrow: 'EXTERNAL · SEER',
+      ),
+    ])
     // Mood-based rails replace the old per-genre rails (Action / Drames / …):
     // a single movie is usually tagged with multiple genres so those produced
     // the same 7 blockbusters in every list. Each mood combines genre + sort
     // + voteCount filters (see `seer_moods.dart`), and the aggregate provider
     // dedups items already shown by an earlier Seer rail or a previous mood
     // — so each rail surfaces fresh content.
-    ..addAll(SeerMoodId.values.map(buildSeerMoodRail))
+    ..addAll(SeerMoodId.values.map((id) => buildSeerMoodRail(id, l10n)))
     ..add(
-      const HomeSeerWatchProviders(
+      HomeSeerWatchProviders(
         id: 'seer_watch_providers_tv',
-        title: 'Séries par service',
+        title: l10n.homeRailWatchProvidersTv,
         kind: HomeSeerWatchProvidersKind.tv,
         eyebrow: 'EXTERNAL · SEER',
       ),
@@ -196,12 +198,12 @@ List<HomeSection> buildHomeCatalog({
   return out;
 }
 
-HomeSeerRail _buildRecoRail(RecoSeed seed) {
+HomeSeerRail _buildRecoRail(RecoSeed seed, AppLocalizations l10n) {
   return HomeSeerRail(
     id: 'seer_reco_${seed.type.name}_${seed.tmdbId}',
     title: seed.fromHistory
-        ? 'Parce que vous avez regardé ${seed.title}'
-        : 'Comme ${seed.title}',
+        ? l10n.homeRailBecauseYouWatched(seed.title)
+        : l10n.homeRailSimilarTo(seed.title),
     eyebrow: 'EXTERNAL · SEER',
     source: SeerSimilarToSeed(tmdbId: seed.tmdbId, type: seed.type),
   );

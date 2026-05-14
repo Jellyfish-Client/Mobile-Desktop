@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
+import '../../core/app_settings/app_locale_settings.dart';
 import '../../core/auth/auth_controller.dart';
 import '../../core/bridge/bridge_error_bus.dart';
 import '../../core/bridge/bridge_errors.dart';
@@ -276,11 +277,8 @@ final featuredCarouselItemsProvider =
     FutureProvider.autoDispose<List<HeroFeaturedItem>>((ref) async {
       ref.keepAlive();
       final pool = await ref.watch(featuredPoolProvider.future);
-      final jfPool =
-          pool
-              .where((i) => i.imageTags.containsKey('Logo'))
-              .toList()
-            ..shuffle();
+      final jfPool = pool.where((i) => i.imageTags.containsKey('Logo')).toList()
+        ..shuffle();
       return jfPool.take(6).map(HeroJellyfinItem.new).toList();
     });
 
@@ -783,9 +781,15 @@ final homeCatalogProvider = FutureProvider.autoDispose<List<HomeSection>>((
   final recoSeeds = services.jellyseerrAvailable
       ? await ref.watch(recoSeedsProvider.future)
       : const <RecoSeed>[];
+  // Watching the localizations provider here makes the catalog reactive to
+  // language switches: changing the app locale invalidates this provider so
+  // the rail titles ("Continue watching", "Pour vous", …) rebuild in the
+  // new language without restarting the app.
+  final l10n = ref.watch(appLocalizationsProvider);
   return buildHomeCatalog(
     views: views,
     isSeerLinked: services.jellyseerrAvailable,
     recoSeeds: recoSeeds,
+    l10n: l10n,
   );
 });

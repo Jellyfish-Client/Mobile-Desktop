@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart' show Locale, WidgetsBinding;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../auth/auth_controller.dart';
 import '../jellyfin/jellyfin_client.dart';
 import '../seerr/seerr_client.dart';
@@ -20,6 +22,25 @@ class AppLocaleSettings {
 
   AppLocaleSettings copyWith({String? languageCode}) =>
       AppLocaleSettings(languageCode: languageCode ?? this.languageCode);
+
+  /// Resolves the effective [Locale] to feed `MaterialApp.router`. When the
+  /// user has forced a language, that wins. Otherwise we walk the OS locale
+  /// list and return the first supported language-code match, falling back to
+  /// the first supported locale. This is the exact algorithm Flutter applies
+  /// by default — re-implementing it here lets us always pass a concrete,
+  /// non-null `Locale` to `MaterialApp`, which is the only configuration that
+  /// reliably propagates locale changes through `MaterialApp.router` +
+  /// `go_router` (passing `null` and letting Flutter resolve internally has
+  /// been observed to skip rebuilds of `Localizations` descendants).
+  Locale resolve(List<Locale> deviceLocales, List<Locale> supported) {
+    if (languageCode.isNotEmpty) return Locale(languageCode);
+    for (final dl in deviceLocales) {
+      for (final s in supported) {
+        if (s.languageCode == dl.languageCode) return s;
+      }
+    }
+    return supported.first;
+  }
 }
 
 /// Persists the locale preference in SharedPreferences and best-effort syncs
@@ -49,9 +70,7 @@ class AppLocaleSettingsController extends AsyncNotifier<AppLocaleSettings> {
   /// propagate errors back to the caller.
   Future<void> setLanguage(String languageCode) async {
     await _prefs.setString(_kLocale, languageCode);
-    state = AsyncData(
-      state.requireValue.copyWith(languageCode: languageCode),
-    );
+    state = AsyncData(state.requireValue.copyWith(languageCode: languageCode));
     // Skip remote syncs when the user wants the device locale: we don't have
     // a single language code to push, and re-aligning the server every launch
     // would be noisy.
@@ -67,8 +86,7 @@ class AppLocaleSettingsController extends AsyncNotifier<AppLocaleSettings> {
   /// app code on the way out.
   Future<void> _syncJellyfin(String languageCode) async {
     try {
-      final session =
-          ref.read(authControllerProvider).valueOrNull?.session;
+      final session = ref.read(authControllerProvider).valueOrNull?.session;
       if (session == null) return;
       final iso6392 = _toIso6392(languageCode);
       if (iso6392 == null) return;
@@ -121,3 +139,20 @@ final appLocaleSettingsProvider =
     AsyncNotifierProvider<AppLocaleSettingsController, AppLocaleSettings>(
       AppLocaleSettingsController.new,
     );
+
+/// `AppLocalizations` instance for the currently effective app locale.
+///
+/// Read this from Riverpod providers that need to produce translated strings
+/// outside of a `BuildContext` (e.g. building the Home rail catalog inside a
+/// FutureProvider). It watches [appLocaleSettingsProvider] so any switch in
+/// the Settings screen invalidates the downstream providers and forces them
+/// to rebuild their string output for the new language.
+final appLocalizationsProvider = Provider<AppLocalizations>((ref) {
+  const supported = <Locale>[Locale('en'), Locale('fr')];
+  final settings =
+      ref.watch(appLocaleSettingsProvider).valueOrNull ??
+      AppLocaleSettings.defaults;
+  final deviceLocales = WidgetsBinding.instance.platformDispatcher.locales;
+  final locale = settings.resolve(deviceLocales, supported);
+  return lookupAppLocalizations(locale);
+});
