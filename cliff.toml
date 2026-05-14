@@ -1,0 +1,38 @@
+# git-cliff configuration — generates the GitHub Release body at tag time.
+# Works with or without Conventional Commits; commits without a prefix land
+# under "Other changes". Run locally with: git cliff --latest
+
+[changelog]
+header = ""
+body = """
+{% if version -%}
+## What's changed in {{ version }}
+{% else -%}
+## Unreleased
+{% endif -%}
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits -%}
+- {{ commit.message | split(pat="\n") | first | trim }} ([`{{ commit.id | truncate(length=7, end="") }}`](../../commit/{{ commit.id }}))
+{% endfor -%}
+{% endfor %}
+"""
+trim = true
+
+[git]
+conventional_commits = false
+filter_unconventional = false
+split_commits = false
+commit_parsers = [
+  { message = "(?i)^fix", group = "Bug fixes" },
+  { message = "(?i)^feat", group = "Features" },
+  { message = "(?i)^perf", group = "Performance" },
+  { message = "(?i)^docs?", group = "Documentation" },
+  { message = "(?i)^test", group = "Tests" },
+  { message = "(?i)^refactor", group = "Refactor" },
+  { message = "(?i)^chore", group = "Chores" },
+  { message = ".*", group = "Other changes" },
+]
+filter_commits = false
+tag_pattern = "[0-9]+.[0-9]+.[0-9]+.*"
+sort_commits = "newest"

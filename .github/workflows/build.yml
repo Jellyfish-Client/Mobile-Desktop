@@ -148,7 +148,7 @@ jobs:
           if-no-files-found: error
 
   macos:
-    name: macOS (zip)
+    name: macOS (DMG)
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_all || inputs.macos }}
     needs: version
     runs-on: macos-latest
@@ -176,7 +176,7 @@ jobs:
       - name: Build macOS release
         run: flutter build macos --release
 
-      - name: Package .app into zip
+      - name: Package .app into DMG
         run: |
           VERSION=${{ needs.version.outputs.version }}
           APP_PATH=$(find build/macos/Build/Products/Release -maxdepth 1 -type d -name '*.app' | head -1)
@@ -184,16 +184,24 @@ jobs:
             echo "No .app produced"
             exit 1
           fi
-          (cd "$(dirname "$APP_PATH")" && zip -qry "$GITHUB_WORKSPACE/Jellyfish_macOS_v${VERSION}.zip" "$(basename "$APP_PATH")")
+          DMG_STAGING=$(mktemp -d)
+          cp -R "$APP_PATH" "$DMG_STAGING/"
+          ln -s /Applications "$DMG_STAGING/Applications"
+          hdiutil create \
+            -volname "Jellyfish" \
+            -srcfolder "$DMG_STAGING" \
+            -ov -format UDZO \
+            "Jellyfish_macOS_v${VERSION}.dmg"
+          rm -rf "$DMG_STAGING"
 
       - uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: Jellyfish_macOS_v*.zip
+          path: Jellyfish_macOS_v*.dmg
           if-no-files-found: error
 
   windows:
-    name: Windows (zip)
+    name: Windows (installer EXE)
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_all || inputs.windows }}
     needs: version
     runs-on: windows-latest
@@ -211,20 +219,34 @@ jobs:
       - name: Build Windows release
         run: flutter build windows --release
 
-      - name: Package as zip
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+
+      - name: Build installer with Inno Setup
         shell: pwsh
         run: |
           $version = "${{ needs.version.outputs.version }}"
-          $source = "build\windows\x64\runner\Release"
-          if (-not (Test-Path $source)) {
-            throw "Windows release output not found at $source"
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            throw "ISCC.exe not found at $iscc"
           }
-          Compress-Archive -Path "$source\*" -DestinationPath "Jellyfish_Windows_v$version.zip"
+          & $iscc /DAppVersion=$version windows\installer.iss
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup compilation failed with exit code $LASTEXITCODE"
+          }
+
+      - name: Verify installer
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path . -Filter "Jellyfish_Windows_v*_Setup.exe" -File | Select-Object -First 1
+          if (-not $exe) { throw "Installer EXE not found" }
+          Write-Host "Built: $($exe.Name) ($([math]::Round($exe.Length/1MB,1)) MB)"
 
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: Jellyfish_Windows_v*.zip
+          path: Jellyfish_Windows_v*_Setup.exe
           if-no-files-found: error
 
   release:
@@ -233,6 +255,19 @@ jobs:
     needs: [android, ios, macos, windows]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --latest --strip header
+        env:
+          OUTPUT: CHANGES.md
+
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
@@ -240,5 +275,11 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: Jellyfish_*
-          generate_release_notes: true
+          name: Jellyfish ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.content }}
+          files: |
+            Jellyfish_Android_v*.apk
+            Jellyfish_Android_v*.aab
+            Jellyfish_iOS_v*.ipa
+            Jellyfish_macOS_v*.dmg
+            Jellyfish_Windows_v*_Setup.exe
