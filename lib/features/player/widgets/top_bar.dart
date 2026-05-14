@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jellyfin_api/jellyfin_api.dart' show BaseItemKind;
+
+import '../../../core/jellyfin/models/jellyfin_item.dart';
+import '../../../core/playback/playback_providers.dart';
+import '../../../l10n/l10n_extension.dart';
+import '../../details/_format.dart';
+
+class TopBar extends ConsumerWidget {
+  const TopBar({
+    required this.itemId,
+    required this.onLock,
+    this.onPip,
+    super.key,
+  });
+
+  final String itemId;
+  final VoidCallback onLock;
+  final VoidCallback? onPip;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final item = ref.watch(playerItemProvider(itemId)).valueOrNull;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.black87, Colors.transparent],
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: () => context.pop(),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _titleFor(item),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (item != null && _subtitleFor(item).isNotEmpty)
+                    Text(
+                      _subtitleFor(item),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            if (onPip != null)
+              IconButton(
+                onPressed: onPip,
+                icon: const Icon(
+                  Icons.picture_in_picture_alt,
+                  color: Colors.white,
+                ),
+                tooltip: context.l10n.playerPictureInPicture,
+              ),
+            IconButton(
+              onPressed: onLock,
+              icon: const Icon(Icons.lock_outline, color: Colors.white),
+              tooltip: context.l10n.playerLockControls,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _titleFor(JellyfinItem? item) {
+    if (item == null) return '';
+    if (item.type == BaseItemKind.episode) {
+      return item.seriesName ?? item.name ?? '';
+    }
+    return item.name ?? '';
+  }
+
+  String _subtitleFor(JellyfinItem item) {
+    if (item.type == BaseItemKind.episode) {
+      final code = formatEpisodeCode(item);
+      final name = item.name ?? '';
+      if (code.isEmpty) return name;
+      return name.isEmpty ? code : '$code · $name';
+    }
+    return '';
+  }
+}

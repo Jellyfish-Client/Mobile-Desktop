@@ -1,0 +1,28 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+    - "packages/**"
+    - "lib/l10n/**"
+  errors:
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    # Relative imports inside lib/ are fine and consistent with most Flutter codebases.
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    # Pubspec sort is checked manually; not worth churn.
+    sort_pub_dependencies: false
+    # Free-form docs.
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    avoid_classes_with_only_static_members: false
+    one_member_abstracts: false
+    # We use factory constructors for parsing, not always-constructors-first.
+    sort_constructors_first: false
+    # Theme files explicitly state defaults for clarity.
+    avoid_redundant_argument_values: false

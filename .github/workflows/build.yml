@@ -1,0 +1,234 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_all:
+        description: Build all platforms
+        type: boolean
+        default: true
+      android:
+        description: Build Android
+        type: boolean
+        default: false
+      ios:
+        description: Build iOS
+        type: boolean
+        default: false
+      macos:
+        description: Build macOS
+        type: boolean
+        default: false
+      windows:
+        description: Build Windows
+        type: boolean
+        default: false
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+*'
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: '3.41.9'
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//' | cut -d'+' -f1 | tr -d '[:space:]')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VERSION"
+
+  android:
+    name: Android (APK + AAB)
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_all || inputs.android }}
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Set up release signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "ANDROID_KEYSTORE_BASE64 secret not set — falling back to debug signing."
+            exit 0
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release.keystore
+          cat > android/key.properties <<EOF
+          storeFile=release.keystore
+          storePassword=$ANDROID_STORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+          echo "Release keystore configured."
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Build AAB
+        run: flutter build appbundle --release
+
+      - name: Rename artifacts
+        run: |
+          VERSION=${{ needs.version.outputs.version }}
+          mv build/app/outputs/flutter-apk/app-release.apk "Jellyfish_Android_v${VERSION}.apk"
+          mv build/app/outputs/bundle/release/app-release.aab "Jellyfish_Android_v${VERSION}.aab"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: |
+            Jellyfish_Android_v*.apk
+            Jellyfish_Android_v*.aab
+          if-no-files-found: error
+
+  ios:
+    name: iOS (unsigned IPA)
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_all || inputs.ios }}
+    needs: version
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build unsigned IPA
+        run: |
+          VERSION=${{ needs.version.outputs.version }}
+          flutter build ipa --release --no-codesign
+
+          APP_PATH=$(find build/ios/archive -type d -path '*/Products/Applications/*.app' | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No .app found in archive"
+            exit 1
+          fi
+
+          TMPDIR=$(mktemp -d)
+          mkdir -p "$TMPDIR/Payload"
+          cp -R "$APP_PATH" "$TMPDIR/Payload/"
+          (cd "$TMPDIR" && zip -qry "$GITHUB_WORKSPACE/Jellyfish_iOS_v${VERSION}_unsigned.ipa" Payload)
+          rm -rf "$TMPDIR"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios
+          path: Jellyfish_iOS_v*.ipa
+          if-no-files-found: error
+
+  macos:
+    name: macOS (zip)
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_all || inputs.macos }}
+    needs: version
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build macOS release
+        run: flutter build macos --release
+
+      - name: Package .app into zip
+        run: |
+          VERSION=${{ needs.version.outputs.version }}
+          APP_PATH=$(find build/macos/Build/Products/Release -maxdepth 1 -type d -name '*.app' | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No .app produced"
+            exit 1
+          fi
+          (cd "$(dirname "$APP_PATH")" && zip -qry "$GITHUB_WORKSPACE/Jellyfish_macOS_v${VERSION}.zip" "$(basename "$APP_PATH")")
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: Jellyfish_macOS_v*.zip
+          if-no-files-found: error
+
+  windows:
+    name: Windows (zip)
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_all || inputs.windows }}
+    needs: version
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Package as zip
+        shell: pwsh
+        run: |
+          $version = "${{ needs.version.outputs.version }}"
+          $source = "build\windows\x64\runner\Release"
+          if (-not (Test-Path $source)) {
+            throw "Windows release output not found at $source"
+          }
+          Compress-Archive -Path "$source\*" -DestinationPath "Jellyfish_Windows_v$version.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: Jellyfish_Windows_v*.zip
+          if-no-files-found: error
+
+  release:
+    name: Draft GitHub Release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [android, ios, macos, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: Jellyfish_*
+          generate_release_notes: true

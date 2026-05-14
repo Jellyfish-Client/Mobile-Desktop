@@ -1,0 +1,1596 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for French (`fr`).
+class AppLocalizationsFr extends AppLocalizations {
+  AppLocalizationsFr([String locale = 'fr']) : super(locale);
+
+  @override
+  String get appTitle => 'Jellyfish';
+
+  @override
+  String get settingsTitle => 'Paramètres';
+
+  @override
+  String get settingsAccount => 'COMPTE';
+
+  @override
+  String get settingsMyProfile => 'Mon profil';
+
+  @override
+  String get settingsMyProfileSubtitle =>
+      'Nom d\'affichage, mot de passe, photo';
+
+  @override
+  String get settingsServer => 'Serveur';
+
+  @override
+  String get settingsUser => 'Utilisateur';
+
+  @override
+  String get settingsSwitchAccount => 'Changer de compte';
+
+  @override
+  String get settingsSwitchAccountSubtitleSingle =>
+      'Ajouter un compte ou un serveur';
+
+  @override
+  String settingsSwitchAccountSubtitleMultiple(int count) {
+    return '$count comptes enregistrés';
+  }
+
+  @override
+  String get settingsLogout => 'Se déconnecter de ce compte';
+
+  @override
+  String get settingsDownloads => 'TÉLÉCHARGEMENTS';
+
+  @override
+  String get settingsDownloadsTitle => 'Téléchargements';
+
+  @override
+  String get settingsDownloadsSubtitle => 'Wi-Fi only, arrière-plan, stockage';
+
+  @override
+  String get settingsDiscovery => 'DÉCOUVERTE';
+
+  @override
+  String get settingsRequests => 'Mes demandes';
+
+  @override
+  String get settingsRequestsSubtitle =>
+      'Suivi des films et séries demandés via Jellyseerr.';
+
+  @override
+  String get settingsPlayback => 'LECTURE';
+
+  @override
+  String get settingsPlaybackTitle => 'Lecture';
+
+  @override
+  String get settingsAdmin => 'ADMINISTRATION';
+
+  @override
+  String get settingsAdminTitle => 'Administration';
+
+  @override
+  String get settingsAdminSubtitle =>
+      'Serveur, utilisateurs, bibliothèques, tâches';
+
+  @override
+  String get settingsAbout => 'À PROPOS';
+
+  @override
+  String get settingsAboutTitle => 'À propos';
+
+  @override
+  String get playbackLanguages => 'LANGUES';
+
+  @override
+  String get playbackAudioLanguage => 'Langue audio préférée';
+
+  @override
+  String get playbackSubtitleLanguage => 'Langue des sous-titres préférée';
+
+  @override
+  String get playbackSubtitleMode => 'Mode sous-titres';
+
+  @override
+  String get playbackBehavior => 'COMPORTEMENT';
+
+  @override
+  String get playbackAutoNextEpisode => 'Lecture auto de l\'épisode suivant';
+
+  @override
+  String get playbackDefaultAudioTrack => 'Lire la piste audio par défaut';
+
+  @override
+  String get playbackDefaultAudioTrackDescription =>
+      'Sélectionne automatiquement la piste audio par défaut du fichier au lieu de votre langue préférée.';
+
+  @override
+  String get playbackRememberAudioSelections => 'Mémoriser les choix audio';
+
+  @override
+  String get playbackRememberSubtitleSelections =>
+      'Mémoriser les choix de sous-titres';
+
+  @override
+  String get playbackShowMissingEpisodes => 'Afficher les épisodes manquants';
+
+  @override
+  String get playbackAudioLanguageUpdated => 'Langue audio mise à jour.';
+
+  @override
+  String get playbackSubtitleLanguageUpdated =>
+      'Langue des sous-titres mise à jour.';
+
+  @override
+  String get playbackSubtitleModeUpdated => 'Mode sous-titres mis à jour.';
+
+  @override
+  String get playbackAutoPlayEnabled => 'Lecture auto activée.';
+
+  @override
+  String get playbackAutoPlayDisabled => 'Lecture auto désactivée.';
+
+  @override
+  String get playbackPreferenceSaved => 'Préférence enregistrée.';
+
+  @override
+  String get playbackLanguageNone => 'Aucune';
+
+  @override
+  String get playbackLanguageSearch => 'Rechercher une langue';
+
+  @override
+  String get playbackSubtitleModeDefault => 'Par défaut';
+
+  @override
+  String get playbackSubtitleModeDefaultDescription =>
+      'Suit le réglage du fichier';
+
+  @override
+  String get playbackSubtitleModeAlways => 'Toujours';
+
+  @override
+  String get playbackSubtitleModeAlwaysDescription =>
+      'Afficher dès qu\'une piste correspond à la langue préférée';
+
+  @override
+  String get playbackSubtitleModeOnlyForced => 'Uniquement forcés';
+
+  @override
+  String get playbackSubtitleModeOnlyForcedDescription =>
+      'Seulement les sous-titres forcés';
+
+  @override
+  String get playbackSubtitleModeSmart => 'Intelligent';
+
+  @override
+  String get playbackSubtitleModeSmartDescription =>
+      'Quand l\'audio n\'est pas dans votre langue préférée';
+
+  @override
+  String get playbackSubtitleModeNone => 'Aucun';
+
+  @override
+  String get playbackSubtitleModeNoneDescription => 'Ne jamais afficher';
+
+  @override
+  String get downloadsSettingsTitle => 'Téléchargements';
+
+  @override
+  String get downloadsOptions => 'OPTIONS';
+
+  @override
+  String get downloadsBackgroundEnabled => 'Téléchargements en arrière-plan';
+
+  @override
+  String get downloadsBackgroundEnabledDescription =>
+      'Continue les téléchargements quand l\'app est fermée.';
+
+  @override
+  String get downloadsWifiOnly => 'Wi-Fi uniquement';
+
+  @override
+  String get downloadsWifiOnlyDescription =>
+      'Bloque les nouveaux téléchargements sur le réseau mobile.';
+
+  @override
+  String get downloadsAutoDeleteWatched => 'Supprimer après visionnage';
+
+  @override
+  String get downloadsAutoDeleteWatchedDescription =>
+      'Retire les épisodes téléchargés une fois la lecture terminée.';
+
+  @override
+  String get downloadsStorage => 'STOCKAGE';
+
+  @override
+  String get downloadsStorageUsed => 'Espace utilisé';
+
+  @override
+  String get downloadsDeleteAll => 'Tout supprimer';
+
+  @override
+  String get downloadsDeleteAllConfirm =>
+      'Supprimer tous les téléchargements ?';
+
+  @override
+  String get downloadsDeleteAllConfirmMessage =>
+      'Tous les fichiers téléchargés et leurs images locales seront supprimés. Cette action est irréversible.';
+
+  @override
+  String get aboutAppName => 'Jellyfish';
+
+  @override
+  String get aboutAppSubtitle => 'Client Jellyfin + Seerr';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutLicenses => 'Licences open-source';
+
+  @override
+  String get profileDisplayName => 'Nom d\'affichage';
+
+  @override
+  String get profileChangePassword => 'Changer le mot de passe';
+
+  @override
+  String get profileChangePhoto => 'Changer la photo';
+
+  @override
+  String get profileDeletePhoto => 'Supprimer';
+
+  @override
+  String get profileDisplayNameUpdated => 'Nom d\'affichage mis à jour.';
+
+  @override
+  String get profilePasswordChanged => 'Mot de passe modifié.';
+
+  @override
+  String get profilePasswordIncorrect => 'Mot de passe actuel incorrect.';
+
+  @override
+  String get profilePhotoUpdated => 'Photo de profil mise à jour.';
+
+  @override
+  String get profilePhotoDeleted => 'Photo de profil supprimée.';
+
+  @override
+  String get homeNoMoreContent => 'Tu as tout vu';
+
+  @override
+  String get homeSearch => 'Rechercher';
+
+  @override
+  String get homeOffline => 'Hors ligne';
+
+  @override
+  String get homeOfflineNoDownloads => 'Aucun téléchargement';
+
+  @override
+  String get homeOfflineNoDownloadsMessage =>
+      'Vous êtes hors ligne et aucun élément n\'est disponible sur cet appareil.';
+
+  @override
+  String get homeOfflineBanner => 'Mode hors ligne — votre bibliothèque locale';
+
+  @override
+  String get homeOfflineSeriesDownloaded => 'Séries téléchargées';
+
+  @override
+  String get homeOfflineMoviesDownloaded => 'Films téléchargés';
+
+  @override
+  String homeOfflineEpisodeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count épisodes',
+      one: '1 épisode',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homePluginMissing =>
+      'Le plugin Jellyfish.Bridge n\'est pas installé sur ton serveur Jellyfin. Discover, Demandes et Calendrier resteront vides. Demande à ton admin de l\'installer.';
+
+  @override
+  String get homeNoJellyseerrAccount =>
+      'Ton compte Seerr n\'a pas été activé. Demande à ton admin d\'ouvrir Seerr → Settings → Users → Import Jellyfin Users.';
+
+  @override
+  String get homeJellyseerrNotConfigured =>
+      'Jellyseerr n\'est pas configuré dans le plugin Jellyfish.Bridge.';
+
+  @override
+  String get homeRadarrNotConfigured =>
+      'Radarr n\'est pas configuré dans le plugin Jellyfish.Bridge.';
+
+  @override
+  String get homeSonarrNotConfigured =>
+      'Sonarr n\'est pas configuré dans le plugin Jellyfish.Bridge.';
+
+  @override
+  String get homeUpstreamUnreachable =>
+      'Le service externe est injoignable. Réessaie dans quelques instants.';
+
+  @override
+  String get homeUpstreamTimeout =>
+      'Le service externe n\'a pas répondu à temps.';
+
+  @override
+  String get homePluginMissingError =>
+      'Le plugin Jellyfish.Bridge n\'est pas installé sur ton serveur.';
+
+  @override
+  String homeOtherError(int statusCode) {
+    return 'Une erreur est survenue (HTTP $statusCode).';
+  }
+
+  @override
+  String get libraryTitle => 'Library';
+
+  @override
+  String get librarySearch => 'Search library…';
+
+  @override
+  String get libraryAll => 'All';
+
+  @override
+  String get searchTitle => 'Rechercher un film, une série…';
+
+  @override
+  String get searchClear => 'Effacer';
+
+  @override
+  String get searchIntroTitle => 'Cherche un titre';
+
+  @override
+  String get searchIntroWithSeerr =>
+      'La recherche couvre ta bibliothèque Jellyfin et te permet de demander de nouveaux titres via Seerr.';
+
+  @override
+  String get searchIntroWithoutSeerr =>
+      'La recherche couvre ta bibliothèque Jellyfin.';
+
+  @override
+  String get searchIntroJellyfin => 'Bibliothèque Jellyfin';
+
+  @override
+  String get searchIntroJellyfinDescription =>
+      'Films et séries déjà disponibles chez toi.';
+
+  @override
+  String get searchIntroSeerr => 'Demander via Seerr';
+
+  @override
+  String get searchIntroSeerrDescription =>
+      'Trouve un nouveau titre et envoie une demande à Seerr.';
+
+  @override
+  String get searchNoResults => 'Aucun résultat';
+
+  @override
+  String searchNoResultsMessage(String query) {
+    return 'Aucun titre ne correspond à « $query ».';
+  }
+
+  @override
+  String get searchJellyfinSection => '01 ── BIBLIOTHÈQUE';
+
+  @override
+  String get searchJellyfinTitle => 'Dans ta bibliothèque';
+
+  @override
+  String get searchJellyfinLoadError => 'Impossible de charger Jellyfin';
+
+  @override
+  String get searchJellyfinEmpty => 'Rien ne correspond ici.';
+
+  @override
+  String get searchSeerrSection => '02 ── SEERR';
+
+  @override
+  String get searchSeerrTitle => 'Demander via Seerr';
+
+  @override
+  String get searchSeerrLoadError => 'Impossible de joindre Seerr';
+
+  @override
+  String get searchSeerrEmpty => 'Rien à demander pour cette requête.';
+
+  @override
+  String get searchSeerrCollection => 'COLLECTION';
+
+  @override
+  String get offlineSearchTitle => 'Rechercher (hors ligne)';
+
+  @override
+  String get offlineSearchHint => 'Filtrer les téléchargements…';
+
+  @override
+  String get offlineSearchNoResults => 'Aucun résultat';
+
+  @override
+  String get offlineSearchNoDownloads => 'Aucun téléchargement';
+
+  @override
+  String get offlineSearchNoDownloadsMessage =>
+      'Téléchargez des films ou séries pour les retrouver hors ligne.';
+
+  @override
+  String offlineSearchNoResultsMessage(String query) {
+    return 'Aucun téléchargement ne correspond à « $query ».';
+  }
+
+  @override
+  String get downloadsTitle => 'Downloads';
+
+  @override
+  String get downloadsSettings => 'Paramètres de téléchargement';
+
+  @override
+  String get downloadsNoDownloads => 'No downloads';
+
+  @override
+  String get downloadsNoDownloadsMessage =>
+      'Items you download for offline playback will appear here.';
+
+  @override
+  String get downloadsInProgress => 'In progress';
+
+  @override
+  String get downloadsDownloaded => 'Downloaded';
+
+  @override
+  String get downloadsFailedOrCancelled => 'Failed / cancelled';
+
+  @override
+  String get downloadsSeriesName => 'Series';
+
+  @override
+  String get onboardingConnect => 'Connect to your Jellyfin server';
+
+  @override
+  String get onboardingServerLabel => 'Server URL';
+
+  @override
+  String get onboardingServerHint => 'https://jellyfin.example.com';
+
+  @override
+  String get onboardingServerRequired => 'Required';
+
+  @override
+  String get onboardingServerTip =>
+      'Tip: https://server.example.com or LAN https://192.168.x.x:8096';
+
+  @override
+  String get onboardingContinue => 'Continue';
+
+  @override
+  String get onboardingCancel => 'Cancel';
+
+  @override
+  String get onboardingWelcomeBack => 'Welcome back';
+
+  @override
+  String get onboardingSignInSubtitle => 'Sign in to your Jellyfin account';
+
+  @override
+  String get onboardingSessionExpired => 'Session expired';
+
+  @override
+  String get onboardingSessionExpiredSubtitle =>
+      'Sign in again to keep using this account';
+
+  @override
+  String get onboardingChange => 'Change';
+
+  @override
+  String get onboardingUsername => 'Username';
+
+  @override
+  String get onboardingUsernameHint => 'Your Jellyfin username';
+
+  @override
+  String get onboardingPassword => 'Password';
+
+  @override
+  String get onboardingSignIn => 'Sign in';
+
+  @override
+  String get onboardingQuickConnect => 'Use a Quick Connect code';
+
+  @override
+  String get onboardingChangeServer => 'Change server';
+
+  @override
+  String get onboardingErrorWrongCredentials => 'Wrong username or password';
+
+  @override
+  String get onboardingErrorWrongCredentialsHint =>
+      'Double-check your credentials and try again.';
+
+  @override
+  String get onboardingErrorReverseProxy =>
+      'Reverse proxy rejected your credentials';
+
+  @override
+  String get onboardingErrorReverseProxyHint =>
+      'Include proxy credentials in the URL:\nhttps://user:pass@host';
+
+  @override
+  String get onboardingErrorAuthRequired => 'Authentication required';
+
+  @override
+  String get onboardingErrorServerNotResponding => 'Server did not respond';
+
+  @override
+  String get onboardingErrorServerNotRespondingHint =>
+      'Check that the server is running and reachable.';
+
+  @override
+  String get onboardingErrorServerUnreachable => 'Could not reach the server';
+
+  @override
+  String get onboardingErrorServerUnreachableHint =>
+      'Check the URL and your network connection.';
+
+  @override
+  String get onboardingErrorServerUnavailable => 'Server unavailable';
+
+  @override
+  String get onboardingErrorServerUnavailableHint =>
+      'The server returned a gateway error. Try again shortly.';
+
+  @override
+  String get onboardingErrorServerError => 'Server returned an error';
+
+  @override
+  String get onboardingErrorGeneric => 'Something went wrong';
+
+  @override
+  String get quickConnectTitle => 'Quick Connect';
+
+  @override
+  String get quickConnectEnterCode => 'Enter this code';
+
+  @override
+  String get quickConnectApproved => 'Approved';
+
+  @override
+  String get quickConnectDone => 'Signed in';
+
+  @override
+  String get quickConnectFailed => 'Quick Connect failed';
+
+  @override
+  String get quickConnectExpired => 'Quick Connect expired';
+
+  @override
+  String get quickConnectGenerating => 'Generating…';
+
+  @override
+  String get quickConnectSigningIn => 'Signing in…';
+
+  @override
+  String quickConnectInstruction(String server) {
+    return 'On any device already signed in to $server, open the user menu → Quick Connect, then enter the code above.';
+  }
+
+  @override
+  String get quickConnectWaiting => 'Waiting for approval…';
+
+  @override
+  String get quickConnectCodeCopied => 'Code copied';
+
+  @override
+  String get quickConnectCopy => 'Copy';
+
+  @override
+  String get quickConnectExpiredMessage =>
+      'The code expired before it was approved. Generate a new one to try again.';
+
+  @override
+  String get quickConnectClose => 'Close';
+
+  @override
+  String get accountsTitle => 'Comptes';
+
+  @override
+  String get accountsMyServer => 'MON SERVEUR';
+
+  @override
+  String accountsMyServers(int count) {
+    return 'MES SERVEURS · $count';
+  }
+
+  @override
+  String get accountsAddUser => 'Ajouter un utilisateur sur ce serveur';
+
+  @override
+  String get accountsOtherServer => 'AUTRE SERVEUR';
+
+  @override
+  String get accountsAddServer => 'Ajouter un serveur Jellyfin';
+
+  @override
+  String get accountsHint =>
+      'Appuyez sur un compte pour basculer. Appui long pour supprimer.';
+
+  @override
+  String get accountsEmpty => 'Aucun compte enregistré';
+
+  @override
+  String get accountsEmptyMessage =>
+      'Ajoutez un serveur Jellyfin pour commencer.';
+
+  @override
+  String get accountsForgetServer => 'Oublier ce serveur';
+
+  @override
+  String get accountsRemove => 'Supprimer';
+
+  @override
+  String get accountsActive => 'Actif';
+
+  @override
+  String accountsForgetServerTitle(String serverName) {
+    return 'Oublier $serverName ?';
+  }
+
+  @override
+  String accountsForgetServerMessage(int count) {
+    return 'Les $count compte(s) associé(s) seront retirés de cet appareil.';
+  }
+
+  @override
+  String get accountsForget => 'Oublier';
+
+  @override
+  String get accountsDeleteTitle => 'Supprimer ce compte ?';
+
+  @override
+  String accountsDeleteMessage(String userName, String serverName) {
+    return '$userName sur $serverName sera retiré de cet appareil.';
+  }
+
+  @override
+  String get accountsDelete => 'Supprimer';
+
+  @override
+  String get calendarTitle => 'Calendrier';
+
+  @override
+  String get calendarAllTypes => 'Tout';
+
+  @override
+  String get calendarMovies => 'Films';
+
+  @override
+  String get calendarEpisodes => 'Épisodes';
+
+  @override
+  String get calendar30Days => '30 jours';
+
+  @override
+  String get calendar90Days => '3 mois';
+
+  @override
+  String get calendar365Days => '1 an';
+
+  @override
+  String get calendarMissing => 'Manquants';
+
+  @override
+  String get calendarNoData => 'Impossible de joindre le serveur.';
+
+  @override
+  String get calendarNoPlugin =>
+      'Le plugin Jellyfish.Bridge n\'est pas installé sur ton serveur Jellyfin. Demande à ton admin de l\'installer.';
+
+  @override
+  String get calendarNoServices =>
+      'Ni Radarr ni Sonarr ne sont configurés sur le plugin. Demande à ton admin de connecter au moins l\'un des deux.';
+
+  @override
+  String get calendarLoadError => 'Impossible de charger le calendrier.';
+
+  @override
+  String get calendarNoItems =>
+      'Rien à l\'horizon sur la période sélectionnée.';
+
+  @override
+  String get requestsTitle => 'Requests';
+
+  @override
+  String get requestsSort => 'Sort requests';
+
+  @override
+  String get requestsSortRecent => 'Most recent';
+
+  @override
+  String get requestsSortOldest => 'Oldest';
+
+  @override
+  String get requestsSortStatus => 'Status';
+
+  @override
+  String get requestsSortTitle => 'Title (A–Z)';
+
+  @override
+  String get requestsAll => 'All';
+
+  @override
+  String get requestsPending => 'Pending';
+
+  @override
+  String get requestsProcessing => 'Processing';
+
+  @override
+  String get requestsAvailable => 'Available';
+
+  @override
+  String get requestsOfflineUnavailable => 'Indisponible hors ligne';
+
+  @override
+  String get requestsOfflineUnavailableMessage =>
+      'Les requêtes Seerr nécessitent une connexion réseau active.';
+
+  @override
+  String get requestsNoRequests => 'No requests yet';
+
+  @override
+  String get requestsNoRequestsMessage =>
+      'Browse and tap Request on something you\'d like to add.';
+
+  @override
+  String get requestsNoMatching => 'No matching requests';
+
+  @override
+  String requestsNoMatchingMessage(String filterLabel) {
+    return 'No results for \"$filterLabel\".';
+  }
+
+  @override
+  String get requestsStatusAvailable => 'Available';
+
+  @override
+  String get requestsStatusDownloading => 'Downloading';
+
+  @override
+  String get requestsStatusPartial => 'Partial';
+
+  @override
+  String get requestsStatusPending => 'Pending';
+
+  @override
+  String get requestsStatusUnknown => 'Unknown';
+
+  @override
+  String get requestsTypeMovie => 'Movie';
+
+  @override
+  String get requestsTypeShow => 'Show';
+
+  @override
+  String get requestsJustNow => 'Just now';
+
+  @override
+  String requestsMinutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes ago',
+      one: '1 minute ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String requestsHoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours ago',
+      one: '1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get requestsYesterday => 'Yesterday';
+
+  @override
+  String requestsDaysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get requestsLastWeek => 'Last week';
+
+  @override
+  String requestsWeeksAgo(int count) {
+    return '$count weeks ago';
+  }
+
+  @override
+  String requestsMonthsAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months ago',
+      one: '1 month ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String requestsYearsAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years ago',
+      one: '1 year ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get adminTitle => 'Administration';
+
+  @override
+  String get adminServer => 'SERVEUR';
+
+  @override
+  String get adminDashboard => 'Tableau de bord';
+
+  @override
+  String get adminDashboardSubtitle => 'Version, OS, redémarrer / arrêter';
+
+  @override
+  String get adminContent => 'CONTENU';
+
+  @override
+  String get adminLibraries => 'Bibliothèques';
+
+  @override
+  String get adminLibrariesSubtitle => 'Lister et lancer un scan';
+
+  @override
+  String get adminTasks => 'Tâches planifiées';
+
+  @override
+  String get adminTasksSubtitle => 'Voir et déclencher les tâches du serveur';
+
+  @override
+  String get adminAccounts => 'COMPTES';
+
+  @override
+  String get adminUsers => 'Utilisateurs';
+
+  @override
+  String get adminUsersSubtitle => 'Créer, éditer, supprimer';
+
+  @override
+  String get playerChapters => 'Chapitres';
+
+  @override
+  String get playerSubtitlesAudio => 'Sous-titres et audio';
+
+  @override
+  String get playerSpeed => 'Vitesse';
+
+  @override
+  String get playerNextUp => 'Épisode suivant';
+
+  @override
+  String get playerLocked => 'Verrouillé';
+
+  @override
+  String get playerUnlocked => 'Déverrouillé';
+
+  @override
+  String get playerAudioTrack => 'Piste audio';
+
+  @override
+  String get playerSubtitles => 'Sous-titres';
+
+  @override
+  String get playerSubtitlesOff => 'Désactiver';
+
+  @override
+  String get playerSpeedNormal => 'Normal';
+
+  @override
+  String playerError(String error) {
+    return 'Playback error: $error';
+  }
+
+  @override
+  String errorGeneric(String message) {
+    return 'Erreur : $message';
+  }
+
+  @override
+  String errorFailed(String message) {
+    return 'Échec : $message';
+  }
+
+  @override
+  String selectionCancelled(String message) {
+    return 'Sélection annulée : $message';
+  }
+
+  @override
+  String get successSaved => 'Enregistrer';
+
+  @override
+  String get cancelButton => 'Annuler';
+
+  @override
+  String get deleteButton => 'Supprimer';
+
+  @override
+  String get deleteAllButton => 'Tout supprimer';
+
+  @override
+  String get retryButton => 'Retry';
+
+  @override
+  String get profileDisplayNameTitle => 'Nom d\'affichage';
+
+  @override
+  String get profileChangePasswordTitle => 'Changer le mot de passe';
+
+  @override
+  String get profileCurrentPassword => 'Mot de passe actuel';
+
+  @override
+  String get profileNewPassword => 'Nouveau mot de passe';
+
+  @override
+  String get profileConfirmPassword => 'Confirmer le nouveau mot de passe';
+
+  @override
+  String get profilePasswordsDoNotMatch =>
+      'Les mots de passe ne correspondent pas';
+
+  @override
+  String get profileRequired => 'Requis';
+
+  @override
+  String get settingsLanguageSection => 'LANGUE';
+
+  @override
+  String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get settingsLanguageEnglish => 'Anglais';
+
+  @override
+  String get seerrAvailabilityAvailable => 'Disponible';
+
+  @override
+  String get seerrAvailabilityPartial => 'Partiel';
+
+  @override
+  String get seerrAvailabilityProcessing => 'En cours';
+
+  @override
+  String get seerrAvailabilityPending => 'En attente';
+
+  @override
+  String get seerrAvailabilityUnavailable => 'Non disponible';
+
+  @override
+  String get upcomingViewAll => 'Voir tout';
+
+  @override
+  String get libraryFailedToLoad => 'Échec du chargement';
+
+  @override
+  String get libraryNoResults => 'Aucun résultat';
+
+  @override
+  String get libraryNoResultsMessage => 'Essayez un autre terme ou filtre.';
+
+  @override
+  String get detailsFailedToLoad => 'Impossible de charger';
+
+  @override
+  String get detailsItemInvalid => 'Cet élément est invalide.';
+
+  @override
+  String get detailsRetry => 'Réessayer';
+
+  @override
+  String get detailsUnsupportedItem => 'Type non supporté';
+
+  @override
+  String get detailsUnsupportedItemMessage =>
+      'Ce type d\'élément n\'est pas encore pris en charge.';
+
+  @override
+  String get detailsPlay => 'Lire';
+
+  @override
+  String get detailsResume => 'Reprendre';
+
+  @override
+  String get detailsNoEpisodes => 'Aucun épisode disponible';
+
+  @override
+  String detailsResumeFrom(String time) {
+    return 'depuis $time';
+  }
+
+  @override
+  String get detailsEpisodes => 'Épisodes';
+
+  @override
+  String get detailsDownloadSeason => 'Télécharger la saison';
+
+  @override
+  String detailsSeason(int number) {
+    return 'Saison $number';
+  }
+
+  @override
+  String get detailsNoEpisodesInSeason => 'Aucun épisode dans cette saison.';
+
+  @override
+  String get detailsWatched => 'Vu';
+
+  @override
+  String get detailsPreviousEpisode => 'Précédent';
+
+  @override
+  String get detailsNextEpisode => 'Suivant';
+
+  @override
+  String get detailsMissingSeasons => 'Saisons manquantes';
+
+  @override
+  String detailsMissingSeason(int number) {
+    return 'Saison $number';
+  }
+
+  @override
+  String get detailsBoxSetFailedToLoad => 'Impossible de charger les éléments';
+
+  @override
+  String get detailsBoxSetEmpty => 'Collection vide';
+
+  @override
+  String get detailsBoxSetEmptyMessage =>
+      'Cette collection ne contient pas encore d\'éléments.';
+
+  @override
+  String get castSectionTitle => 'Distribution';
+
+  @override
+  String get seerrDiscoverTitle => 'Découvrir sur Seerr';
+
+  @override
+  String get seerrDiscoverSubtitle =>
+      'Appuyez pour demander — ajouté à votre bibliothèque Jellyfin une fois approuvé';
+
+  @override
+  String seerrRequestSent(String title) {
+    return 'Demande envoyée : $title';
+  }
+
+  @override
+  String seerrRequestError(String error) {
+    return 'Impossible d\'envoyer la demande. $error';
+  }
+
+  @override
+  String get seerrRequestSentLabel => 'Demande envoyée';
+
+  @override
+  String get seerrAlreadyAvailable => 'Déjà disponible';
+
+  @override
+  String get seerrAlreadyRequested => 'Déjà demandé';
+
+  @override
+  String seerrRequestSeasons(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Demander $count saisons',
+      one: 'Demander 1 saison',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get seerrRequest => 'Demander';
+
+  @override
+  String get seerrTypeMovie => 'Film';
+
+  @override
+  String get seerrTypeSeries => 'Série';
+
+  @override
+  String get seerrSeasonsTitle => 'Saisons';
+
+  @override
+  String get seerrSelectAll => 'Tout sélectionner';
+
+  @override
+  String get seerrDeselectAll => 'Tout désélectionner';
+
+  @override
+  String get seerrBonus => 'Bonus';
+
+  @override
+  String seerrSeasonNumber(int number) {
+    return 'Saison $number';
+  }
+
+  @override
+  String get seerrCollectionMovies => 'Films de la collection';
+
+  @override
+  String get seerrCollectionSelectAll => 'Tout sélect.';
+
+  @override
+  String get seerrCollectionDeselectAll => 'Tout déselect.';
+
+  @override
+  String get seerrCollectionSelectAtLeastOne => 'Sélectionne au moins un film';
+
+  @override
+  String get seerrCollectionRequested => 'Demandé';
+
+  @override
+  String seerrCollectionRequestMovies(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Demander $count films',
+      one: 'Demander 1 film',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get seerrCollectionChip => 'Collection';
+
+  @override
+  String get seerrPendingLabel => 'En attente';
+
+  @override
+  String get seerrProcessingLabel => 'En cours';
+
+  @override
+  String get seerrPartialLabel => 'Partiel';
+
+  @override
+  String get offlineUnavailableTitle => 'Indisponible hors ligne';
+
+  @override
+  String get offlineUnavailableMessage =>
+      'Cet élément n\'a pas été téléchargé. Reconnectez-vous pour y accéder.';
+
+  @override
+  String get offlinePlay => 'Lire';
+
+  @override
+  String get offlineMarkPlayed => 'Marquer comme vu';
+
+  @override
+  String get offlineAddFavorite => 'Ajouter aux favoris';
+
+  @override
+  String get offlineDeleteDownload => 'Supprimer le téléchargement';
+
+  @override
+  String get offlineSynopsis => 'Synopsis';
+
+  @override
+  String get offlineMarkPlayedSnack =>
+      'Marqué comme vu — synchronisation à la reconnexion';
+
+  @override
+  String get offlineAddFavoriteSnack =>
+      'Ajouté aux favoris — synchronisation à la reconnexion';
+
+  @override
+  String get offlineDeleteTitle => 'Supprimer le téléchargement ?';
+
+  @override
+  String get offlineDeleteMessage =>
+      'Le fichier et ses images locales seront supprimés.';
+
+  @override
+  String get offlineDeleteConfirm => 'Supprimer';
+
+  @override
+  String get offlineSeriesNoEpisodesTitle => 'Aucun épisode';
+
+  @override
+  String get offlineSeriesNoEpisodesMessage =>
+      'Aucun épisode de cette série n\'est téléchargé.';
+
+  @override
+  String offlineSeasonLabel(int number) {
+    return 'Saison $number';
+  }
+
+  @override
+  String get offlineSeasonUnknown => 'Saison ?';
+
+  @override
+  String get downloadButtonDownload => 'Télécharger';
+
+  @override
+  String get downloadButtonQueued => 'En attente — appuyer pour annuler';
+
+  @override
+  String downloadButtonDownloading(String percent) {
+    return 'Téléchargement $percent% — appuyer pour pause';
+  }
+
+  @override
+  String downloadButtonPaused(String percent) {
+    return 'Pause $percent% — appuyer pour reprendre';
+  }
+
+  @override
+  String get downloadButtonDownloaded =>
+      'Téléchargé — appui long pour supprimer';
+
+  @override
+  String downloadButtonFailedSnack(String error) {
+    return 'Échec du téléchargement : $error';
+  }
+
+  @override
+  String get downloadButtonDeleteTitle => 'Supprimer le téléchargement ?';
+
+  @override
+  String get downloadButtonDeleteMessage =>
+      'Le fichier local sera supprimé. Vous pouvez le retélécharger ultérieurement.';
+
+  @override
+  String get downloadButtonDeleteConfirm => 'Supprimer';
+
+  @override
+  String get downloadButtonDeleteCancel => 'Annuler';
+
+  @override
+  String downloadButtonDeleteFailedSnack(String error) {
+    return 'Échec de la suppression : $error';
+  }
+
+  @override
+  String get downloadTileQueued => 'En attente';
+
+  @override
+  String get downloadTileDownloaded => 'Téléchargé';
+
+  @override
+  String get downloadTileFailed => 'Échec';
+
+  @override
+  String get downloadTileCancelled => 'Annulé';
+
+  @override
+  String get downloadTilePaused => 'Pause';
+
+  @override
+  String get downloadTileTooltipDelete => 'Supprimer';
+
+  @override
+  String get downloadTileTooltipResume => 'Reprendre';
+
+  @override
+  String get downloadTileTooltipCancel => 'Annuler';
+
+  @override
+  String get downloadTileTooltipPause => 'Pause';
+
+  @override
+  String get downloadTileTooltipRemove => 'Retirer';
+
+  @override
+  String playerResumeFrom(String time) {
+    return 'Reprise depuis $time';
+  }
+
+  @override
+  String get playerNoChapters => 'Aucun chapitre disponible';
+
+  @override
+  String playerChapterNumber(int number) {
+    return 'Chapitre $number';
+  }
+
+  @override
+  String get playerLockControls => 'Verrouiller les commandes';
+
+  @override
+  String get playerPictureInPicture => 'Picture-in-Picture';
+
+  @override
+  String get playerDismiss => 'Ignorer';
+
+  @override
+  String get playerPlayNow => 'Lire maintenant';
+
+  @override
+  String get adminServerName => 'Nom du serveur';
+
+  @override
+  String get adminVersion => 'Version';
+
+  @override
+  String get adminProduct => 'Produit';
+
+  @override
+  String get adminServerId => 'ID serveur';
+
+  @override
+  String get adminLocalAddress => 'Adresse locale';
+
+  @override
+  String get adminRestartPending => 'Redémarrage en attente';
+
+  @override
+  String get adminRestartPendingMessage =>
+      'Le serveur a une mise à jour ou un changement de configuration nécessitant un redémarrage.';
+
+  @override
+  String get adminShuttingDown => 'Arrêt en cours';
+
+  @override
+  String get adminInfoSection => 'INFORMATIONS';
+
+  @override
+  String get adminRestartButton => 'Redémarrer le serveur';
+
+  @override
+  String get adminShutdownButton => 'Arrêter le serveur';
+
+  @override
+  String get adminRestartConfirmTitle => 'Redémarrer le serveur ?';
+
+  @override
+  String get adminRestartConfirmMessage =>
+      'Toutes les lectures en cours seront interrompues. Le serveur sera indisponible pendant quelques secondes.';
+
+  @override
+  String get adminRestartConfirmLabel => 'Redémarrer';
+
+  @override
+  String get adminRestartSnack => 'Redémarrage demandé.';
+
+  @override
+  String get adminShutdownConfirmTitle => 'Arrêter le serveur ?';
+
+  @override
+  String get adminShutdownConfirmMessage =>
+      'Le serveur Jellyfin sera arrêté. Il faudra le redémarrer manuellement (machine, conteneur, service systemd).';
+
+  @override
+  String get adminShutdownConfirmLabel => 'Arrêter';
+
+  @override
+  String get adminShutdownSnack => 'Arrêt demandé.';
+
+  @override
+  String adminErrorPrefix(String error) {
+    return 'Erreur : $error';
+  }
+
+  @override
+  String adminFailurePrefix(String error) {
+    return 'Échec : $error';
+  }
+
+  @override
+  String get adminLibrariesEmpty => 'Aucune bibliothèque configurée.';
+
+  @override
+  String get adminLibrariesScanAll => 'Lancer un scan complet';
+
+  @override
+  String get adminLibrariesScanAllTitle => 'Lancer un scan complet ?';
+
+  @override
+  String get adminLibrariesScanAllMessage =>
+      'Le serveur va analyser toutes les bibliothèques en arrière-plan. Cela peut prendre plusieurs minutes selon la taille de la médiathèque.';
+
+  @override
+  String get adminLibrariesScanAllConfirm => 'Lancer';
+
+  @override
+  String get adminLibrariesScanSnack => 'Scan lancé.';
+
+  @override
+  String adminLibrariesScanOneSnack(String name) {
+    return 'Scan lancé pour « $name ».';
+  }
+
+  @override
+  String get adminLibrariesTooltipScan => 'Scanner cette bibliothèque';
+
+  @override
+  String get adminTasksNoTasks => 'Aucune tâche.';
+
+  @override
+  String get adminTasksRunning => 'En cours…';
+
+  @override
+  String adminTasksRunningPercent(String percent) {
+    return 'En cours… $percent%';
+  }
+
+  @override
+  String get adminTasksCancelling => 'Annulation…';
+
+  @override
+  String get adminTasksNeverRun => 'Jamais exécutée';
+
+  @override
+  String adminTasksCompleted(String ago) {
+    return 'Terminée $ago';
+  }
+
+  @override
+  String adminTasksFailed(String ago) {
+    return 'Échec $ago';
+  }
+
+  @override
+  String get adminTasksTooltipStop => 'Interrompre';
+
+  @override
+  String get adminTasksTooltipStart => 'Lancer';
+
+  @override
+  String get adminTasksLastRunStatus => 'Statut';
+
+  @override
+  String get adminTasksLastRunStart => 'Début';
+
+  @override
+  String get adminTasksLastRunEnd => 'Fin';
+
+  @override
+  String get adminTasksLastRunDuration => 'Durée';
+
+  @override
+  String get adminTasksLastRunError => 'Erreur';
+
+  @override
+  String get adminUsersAdd => 'Ajouter';
+
+  @override
+  String get adminUsersEmpty => 'Aucun utilisateur.';
+
+  @override
+  String get adminUsersNeverConnected => 'Jamais connecté';
+
+  @override
+  String adminUsersSeenAt(String when) {
+    return 'Vu $when';
+  }
+
+  @override
+  String get adminUsersBadgeAdmin => 'Admin';
+
+  @override
+  String get adminUsersBadgeDisabled => 'Désactivé';
+
+  @override
+  String get adminUserCreateTitle => 'Nouvel utilisateur';
+
+  @override
+  String get adminUserCreateName => 'Nom d\'utilisateur';
+
+  @override
+  String get adminUserCreatePassword => 'Mot de passe';
+
+  @override
+  String get adminUserCreatePasswordHelper =>
+      'Laissez vide pour aucun mot de passe initial.';
+
+  @override
+  String get adminUserCreateIsAdmin => 'Administrateur';
+
+  @override
+  String get adminUserCreateIsAdminSubtitle =>
+      'Donne tous les droits sur le serveur Jellyfin.';
+
+  @override
+  String get adminUserCreateRequired => 'Requis';
+
+  @override
+  String get adminUserCreateButton => 'Créer le compte';
+
+  @override
+  String get adminUserEditTitle => 'Utilisateur';
+
+  @override
+  String get adminUserEditIdentitySection => 'IDENTITÉ';
+
+  @override
+  String get adminUserEditLastLogin => 'Dernière connexion';
+
+  @override
+  String get adminUserEditRightsSection => 'DROITS';
+
+  @override
+  String get adminUserEditIsAdmin => 'Administrateur';
+
+  @override
+  String get adminUserEditIsAdminSelfHint =>
+      'Vous ne pouvez pas retirer vos propres droits.';
+
+  @override
+  String get adminUserEditIsDisabled => 'Compte désactivé';
+
+  @override
+  String get adminUserEditIsDisabledSelfHint =>
+      'Vous ne pouvez pas vous désactiver vous-même.';
+
+  @override
+  String get adminUserEditLibrariesSection => 'BIBLIOTHÈQUES';
+
+  @override
+  String get adminUserEditAllFolders => 'Accès à toutes les bibliothèques';
+
+  @override
+  String get adminUserEditSaveButton => 'Enregistrer';
+
+  @override
+  String get adminUserEditSaveSnack => 'Modifications enregistrées.';
+
+  @override
+  String get adminUserEditResetPassword => 'Réinitialiser le mot de passe';
+
+  @override
+  String get adminUserEditNewPasswordTitle => 'Nouveau mot de passe';
+
+  @override
+  String get adminUserEditNewPasswordHint => 'Mot de passe';
+
+  @override
+  String get adminUserEditResetPasswordCancel => 'Annuler';
+
+  @override
+  String get adminUserEditResetPasswordConfirm => 'Réinitialiser';
+
+  @override
+  String get adminUserEditResetPasswordSnack => 'Mot de passe réinitialisé.';
+
+  @override
+  String get adminUserEditDeleteButton => 'Supprimer ce compte';
+
+  @override
+  String adminUserEditDeleteTitle(String name) {
+    return 'Supprimer « $name » ?';
+  }
+
+  @override
+  String get adminUserEditDeleteMessage =>
+      'Cette action est irréversible. Le compte, ses préférences et son historique de lecture seront supprimés du serveur.';
+
+  @override
+  String get adminUserEditDeleteConfirm => 'Supprimer';
+}

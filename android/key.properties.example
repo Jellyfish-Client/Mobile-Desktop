@@ -1,0 +1,11 @@
+# Copy this file to `key.properties` and fill in the real values.
+# `key.properties` is gitignored — do not commit secrets.
+#
+# Generate the keystore with:
+#   keytool -genkey -v -keystore ~/jellyfish-release.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias jellyfish
+
+storeFile=/absolute/path/to/jellyfish-release.jks
+storePassword=CHANGE_ME
+keyAlias=jellyfish
+keyPassword=CHANGE_ME

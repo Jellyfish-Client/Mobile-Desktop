@@ -1,0 +1,1196 @@
+{
+  "@@locale": "en",
+  "appTitle": "Jellyfish",
+  "@appTitle": {},
+  "settingsTitle": "Settings",
+  "@settingsTitle": {},
+  "settingsAccount": "ACCOUNT",
+  "@settingsAccount": {},
+  "settingsMyProfile": "My profile",
+  "@settingsMyProfile": {},
+  "settingsMyProfileSubtitle": "Display name, password, photo",
+  "@settingsMyProfileSubtitle": {},
+  "settingsServer": "Server",
+  "@settingsServer": {},
+  "settingsUser": "User",
+  "@settingsUser": {},
+  "settingsSwitchAccount": "Switch account",
+  "@settingsSwitchAccount": {},
+  "settingsSwitchAccountSubtitleSingle": "Add an account or server",
+  "@settingsSwitchAccountSubtitleSingle": {},
+  "settingsSwitchAccountSubtitleMultiple": "{count} accounts saved",
+  "@settingsSwitchAccountSubtitleMultiple": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsLogout": "Sign out of this account",
+  "@settingsLogout": {},
+  "settingsDownloads": "DOWNLOADS",
+  "@settingsDownloads": {},
+  "settingsDownloadsTitle": "Downloads",
+  "@settingsDownloadsTitle": {},
+  "settingsDownloadsSubtitle": "Wi-Fi only, background, storage",
+  "@settingsDownloadsSubtitle": {},
+  "settingsDiscovery": "DISCOVERY",
+  "@settingsDiscovery": {},
+  "settingsRequests": "My requests",
+  "@settingsRequests": {},
+  "settingsRequestsSubtitle": "Track movies and shows requested via Jellyseerr.",
+  "@settingsRequestsSubtitle": {},
+  "settingsPlayback": "PLAYBACK",
+  "@settingsPlayback": {},
+  "settingsPlaybackTitle": "Playback",
+  "@settingsPlaybackTitle": {},
+  "settingsAdmin": "ADMINISTRATION",
+  "@settingsAdmin": {},
+  "settingsAdminTitle": "Administration",
+  "@settingsAdminTitle": {},
+  "settingsAdminSubtitle": "Server, users, libraries, tasks",
+  "@settingsAdminSubtitle": {},
+  "settingsAbout": "ABOUT",
+  "@settingsAbout": {},
+  "settingsAboutTitle": "About",
+  "@settingsAboutTitle": {},
+  "playbackLanguages": "LANGUAGES",
+  "@playbackLanguages": {},
+  "playbackAudioLanguage": "Preferred audio language",
+  "@playbackAudioLanguage": {},
+  "playbackSubtitleLanguage": "Preferred subtitle language",
+  "@playbackSubtitleLanguage": {},
+  "playbackSubtitleMode": "Subtitle mode",
+  "@playbackSubtitleMode": {},
+  "playbackBehavior": "BEHAVIOR",
+  "@playbackBehavior": {},
+  "playbackAutoNextEpisode": "Auto-play next episode",
+  "@playbackAutoNextEpisode": {},
+  "playbackDefaultAudioTrack": "Play default audio track",
+  "@playbackDefaultAudioTrack": {},
+  "playbackDefaultAudioTrackDescription": "Automatically select the file's default audio track instead of your preferred language.",
+  "@playbackDefaultAudioTrackDescription": {},
+  "playbackRememberAudioSelections": "Remember audio choices",
+  "@playbackRememberAudioSelections": {},
+  "playbackRememberSubtitleSelections": "Remember subtitle choices",
+  "@playbackRememberSubtitleSelections": {},
+  "playbackShowMissingEpisodes": "Show missing episodes",
+  "@playbackShowMissingEpisodes": {},
+  "playbackAudioLanguageUpdated": "Audio language updated.",
+  "@playbackAudioLanguageUpdated": {},
+  "playbackSubtitleLanguageUpdated": "Subtitle language updated.",
+  "@playbackSubtitleLanguageUpdated": {},
+  "playbackSubtitleModeUpdated": "Subtitle mode updated.",
+  "@playbackSubtitleModeUpdated": {},
+  "playbackAutoPlayEnabled": "Auto-play enabled.",
+  "@playbackAutoPlayEnabled": {},
+  "playbackAutoPlayDisabled": "Auto-play disabled.",
+  "@playbackAutoPlayDisabled": {},
+  "playbackPreferenceSaved": "Preference saved.",
+  "@playbackPreferenceSaved": {},
+  "playbackLanguageNone": "None",
+  "@playbackLanguageNone": {},
+  "playbackLanguageSearch": "Search for a language",
+  "@playbackLanguageSearch": {},
+  "playbackSubtitleModeDefault": "Default",
+  "@playbackSubtitleModeDefault": {},
+  "playbackSubtitleModeDefaultDescription": "Follow the file's setting",
+  "@playbackSubtitleModeDefaultDescription": {},
+  "playbackSubtitleModeAlways": "Always",
+  "@playbackSubtitleModeAlways": {},
+  "playbackSubtitleModeAlwaysDescription": "Show when a track matches your preferred language",
+  "@playbackSubtitleModeAlwaysDescription": {},
+  "playbackSubtitleModeOnlyForced": "Forced only",
+  "@playbackSubtitleModeOnlyForced": {},
+  "playbackSubtitleModeOnlyForcedDescription": "Only forced subtitles",
+  "@playbackSubtitleModeOnlyForcedDescription": {},
+  "playbackSubtitleModeSmart": "Smart",
+  "@playbackSubtitleModeSmart": {},
+  "playbackSubtitleModeSmartDescription": "When audio is not in your preferred language",
+  "@playbackSubtitleModeSmartDescription": {},
+  "playbackSubtitleModeNone": "None",
+  "@playbackSubtitleModeNone": {},
+  "playbackSubtitleModeNoneDescription": "Never show",
+  "@playbackSubtitleModeNoneDescription": {},
+  "downloadsSettingsTitle": "Downloads",
+  "@downloadsSettingsTitle": {},
+  "downloadsOptions": "OPTIONS",
+  "@downloadsOptions": {},
+  "downloadsBackgroundEnabled": "Background downloads",
+  "@downloadsBackgroundEnabled": {},
+  "downloadsBackgroundEnabledDescription": "Continue downloads when the app is closed.",
+  "@downloadsBackgroundEnabledDescription": {},
+  "downloadsWifiOnly": "Wi-Fi only",
+  "@downloadsWifiOnly": {},
+  "downloadsWifiOnlyDescription": "Block new downloads on mobile networks.",
+  "@downloadsWifiOnlyDescription": {},
+  "downloadsAutoDeleteWatched": "Delete after watching",
+  "@downloadsAutoDeleteWatched": {},
+  "downloadsAutoDeleteWatchedDescription": "Remove downloaded episodes after playback is finished.",
+  "@downloadsAutoDeleteWatchedDescription": {},
+  "downloadsStorage": "STORAGE",
+  "@downloadsStorage": {},
+  "downloadsStorageUsed": "Space used",
+  "@downloadsStorageUsed": {},
+  "downloadsDeleteAll": "Delete all",
+  "@downloadsDeleteAll": {},
+  "downloadsDeleteAllConfirm": "Delete all downloads?",
+  "@downloadsDeleteAllConfirm": {},
+  "downloadsDeleteAllConfirmMessage": "All downloaded files and their local images will be deleted. This action cannot be undone.",
+  "@downloadsDeleteAllConfirmMessage": {},
+  "aboutAppName": "Jellyfish",
+  "@aboutAppName": {},
+  "aboutAppSubtitle": "Jellyfin + Seerr client",
+  "@aboutAppSubtitle": {},
+  "aboutVersion": "Version",
+  "@aboutVersion": {},
+  "aboutLicenses": "Open-source licenses",
+  "@aboutLicenses": {},
+  "profileDisplayName": "Display name",
+  "@profileDisplayName": {},
+  "profileChangePassword": "Change password",
+  "@profileChangePassword": {},
+  "profileChangePhoto": "Change photo",
+  "@profileChangePhoto": {},
+  "profileDeletePhoto": "Delete",
+  "@profileDeletePhoto": {},
+  "profileDisplayNameUpdated": "Display name updated.",
+  "@profileDisplayNameUpdated": {},
+  "profilePasswordChanged": "Password changed.",
+  "@profilePasswordChanged": {},
+  "profilePasswordIncorrect": "Current password is incorrect.",
+  "@profilePasswordIncorrect": {},
+  "profilePhotoUpdated": "Profile photo updated.",
+  "@profilePhotoUpdated": {},
+  "profilePhotoDeleted": "Profile photo deleted.",
+  "@profilePhotoDeleted": {},
+  "homeNoMoreContent": "You've seen it all",
+  "@homeNoMoreContent": {},
+  "homeSearch": "Search",
+  "@homeSearch": {},
+  "homeOffline": "Offline",
+  "@homeOffline": {},
+  "homeOfflineNoDownloads": "No downloads",
+  "@homeOfflineNoDownloads": {},
+  "homeOfflineNoDownloadsMessage": "You're offline and no items are available on this device.",
+  "@homeOfflineNoDownloadsMessage": {},
+  "homeOfflineBanner": "Offline mode — your local library",
+  "@homeOfflineBanner": {},
+  "homeOfflineSeriesDownloaded": "Downloaded series",
+  "@homeOfflineSeriesDownloaded": {},
+  "homeOfflineMoviesDownloaded": "Downloaded movies",
+  "@homeOfflineMoviesDownloaded": {},
+  "homeOfflineEpisodeCount": "{count, plural, =1{1 episode} other{{count} episodes}}",
+  "@homeOfflineEpisodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homePluginMissing": "The Jellyfish.Bridge plugin is not installed on your Jellyfin server. Discover, Requests, and Calendar will remain empty. Ask your admin to install it.",
+  "@homePluginMissing": {},
+  "homeNoJellyseerrAccount": "Your Seerr account has not been activated. Ask your admin to open Seerr → Settings → Users → Import Jellyfin Users.",
+  "@homeNoJellyseerrAccount": {},
+  "homeJellyseerrNotConfigured": "Jellyseerr is not configured in the Jellyfish.Bridge plugin.",
+  "@homeJellyseerrNotConfigured": {},
+  "homeRadarrNotConfigured": "Radarr is not configured in the Jellyfish.Bridge plugin.",
+  "@homeRadarrNotConfigured": {},
+  "homeSonarrNotConfigured": "Sonarr is not configured in the Jellyfish.Bridge plugin.",
+  "@homeSonarrNotConfigured": {},
+  "homeUpstreamUnreachable": "The external service is unreachable. Try again in a few moments.",
+  "@homeUpstreamUnreachable": {},
+  "homeUpstreamTimeout": "The external service did not respond in time.",
+  "@homeUpstreamTimeout": {},
+  "homePluginMissingError": "The Jellyfish.Bridge plugin is not installed on your server.",
+  "@homePluginMissingError": {},
+  "homeOtherError": "An error occurred (HTTP {statusCode}).",
+  "@homeOtherError": {
+    "placeholders": {
+      "statusCode": {
+        "type": "int"
+      }
+    }
+  },
+  "libraryTitle": "Library",
+  "@libraryTitle": {},
+  "librarySearch": "Search library…",
+  "@librarySearch": {},
+  "libraryAll": "All",
+  "@libraryAll": {},
+  "searchTitle": "Search for a movie or show…",
+  "@searchTitle": {},
+  "searchClear": "Clear",
+  "@searchClear": {},
+  "searchIntroTitle": "Search for a title",
+  "@searchIntroTitle": {},
+  "searchIntroWithSeerr": "Search covers your Jellyfin library and lets you request new titles via Seerr.",
+  "@searchIntroWithSeerr": {},
+  "searchIntroWithoutSeerr": "Search covers your Jellyfin library.",
+  "@searchIntroWithoutSeerr": {},
+  "searchIntroJellyfin": "Jellyfin library",
+  "@searchIntroJellyfin": {},
+  "searchIntroJellyfinDescription": "Movies and shows already available to you.",
+  "@searchIntroJellyfinDescription": {},
+  "searchIntroSeerr": "Request via Seerr",
+  "@searchIntroSeerr": {},
+  "searchIntroSeerrDescription": "Find a new title and submit a request to Seerr.",
+  "@searchIntroSeerrDescription": {},
+  "searchNoResults": "No results",
+  "@searchNoResults": {},
+  "searchNoResultsMessage": "No titles match \"{query}\".",
+  "@searchNoResultsMessage": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchJellyfinSection": "01 ── LIBRARY",
+  "@searchJellyfinSection": {},
+  "searchJellyfinTitle": "In your library",
+  "@searchJellyfinTitle": {},
+  "searchJellyfinLoadError": "Failed to load Jellyfin",
+  "@searchJellyfinLoadError": {},
+  "searchJellyfinEmpty": "Nothing matches here.",
+  "@searchJellyfinEmpty": {},
+  "searchSeerrSection": "02 ── SEERR",
+  "@searchSeerrSection": {},
+  "searchSeerrTitle": "Request via Seerr",
+  "@searchSeerrTitle": {},
+  "searchSeerrLoadError": "Failed to reach Seerr",
+  "@searchSeerrLoadError": {},
+  "searchSeerrEmpty": "Nothing to request for this query.",
+  "@searchSeerrEmpty": {},
+  "searchSeerrCollection": "COLLECTION",
+  "@searchSeerrCollection": {},
+  "offlineSearchTitle": "Search (offline)",
+  "@offlineSearchTitle": {},
+  "offlineSearchHint": "Filter downloads…",
+  "@offlineSearchHint": {},
+  "offlineSearchNoResults": "No results",
+  "@offlineSearchNoResults": {},
+  "offlineSearchNoDownloads": "No downloads",
+  "@offlineSearchNoDownloads": {},
+  "offlineSearchNoDownloadsMessage": "Download movies or shows to access them offline.",
+  "@offlineSearchNoDownloadsMessage": {},
+  "offlineSearchNoResultsMessage": "No downloads match \"{query}\".",
+  "@offlineSearchNoResultsMessage": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsTitle": "Downloads",
+  "@downloadsTitle": {},
+  "downloadsSettings": "Download settings",
+  "@downloadsSettings": {},
+  "downloadsNoDownloads": "No downloads",
+  "@downloadsNoDownloads": {},
+  "downloadsNoDownloadsMessage": "Items you download for offline playback will appear here.",
+  "@downloadsNoDownloadsMessage": {},
+  "downloadsInProgress": "In progress",
+  "@downloadsInProgress": {},
+  "downloadsDownloaded": "Downloaded",
+  "@downloadsDownloaded": {},
+  "downloadsFailedOrCancelled": "Failed / cancelled",
+  "@downloadsFailedOrCancelled": {},
+  "downloadsSeriesName": "Series",
+  "@downloadsSeriesName": {},
+  "onboardingConnect": "Connect to your Jellyfin server",
+  "@onboardingConnect": {},
+  "onboardingServerLabel": "Server URL",
+  "@onboardingServerLabel": {},
+  "onboardingServerHint": "https://jellyfin.example.com",
+  "@onboardingServerHint": {},
+  "onboardingServerRequired": "Required",
+  "@onboardingServerRequired": {},
+  "onboardingServerTip": "Tip: https://server.example.com or LAN https://192.168.x.x:8096",
+  "@onboardingServerTip": {},
+  "onboardingContinue": "Continue",
+  "@onboardingContinue": {},
+  "onboardingCancel": "Cancel",
+  "@onboardingCancel": {},
+  "onboardingWelcomeBack": "Welcome back",
+  "@onboardingWelcomeBack": {},
+  "onboardingSignInSubtitle": "Sign in to your Jellyfin account",
+  "@onboardingSignInSubtitle": {},
+  "onboardingSessionExpired": "Session expired",
+  "@onboardingSessionExpired": {},
+  "onboardingSessionExpiredSubtitle": "Sign in again to keep using this account",
+  "@onboardingSessionExpiredSubtitle": {},
+  "onboardingChange": "Change",
+  "@onboardingChange": {},
+  "onboardingUsername": "Username",
+  "@onboardingUsername": {},
+  "onboardingUsernameHint": "Your Jellyfin username",
+  "@onboardingUsernameHint": {},
+  "onboardingPassword": "Password",
+  "@onboardingPassword": {},
+  "onboardingSignIn": "Sign in",
+  "@onboardingSignIn": {},
+  "onboardingQuickConnect": "Use a Quick Connect code",
+  "@onboardingQuickConnect": {},
+  "onboardingChangeServer": "Change server",
+  "@onboardingChangeServer": {},
+  "onboardingErrorWrongCredentials": "Wrong username or password",
+  "@onboardingErrorWrongCredentials": {},
+  "onboardingErrorWrongCredentialsHint": "Double-check your credentials and try again.",
+  "@onboardingErrorWrongCredentialsHint": {},
+  "onboardingErrorReverseProxy": "Reverse proxy rejected your credentials",
+  "@onboardingErrorReverseProxy": {},
+  "onboardingErrorReverseProxyHint": "Include proxy credentials in the URL:\nhttps://user:pass@host",
+  "@onboardingErrorReverseProxyHint": {},
+  "onboardingErrorAuthRequired": "Authentication required",
+  "@onboardingErrorAuthRequired": {},
+  "onboardingErrorServerNotResponding": "Server did not respond",
+  "@onboardingErrorServerNotResponding": {},
+  "onboardingErrorServerNotRespondingHint": "Check that the server is running and reachable.",
+  "@onboardingErrorServerNotRespondingHint": {},
+  "onboardingErrorServerUnreachable": "Could not reach the server",
+  "@onboardingErrorServerUnreachable": {},
+  "onboardingErrorServerUnreachableHint": "Check the URL and your network connection.",
+  "@onboardingErrorServerUnreachableHint": {},
+  "onboardingErrorServerUnavailable": "Server unavailable",
+  "@onboardingErrorServerUnavailable": {},
+  "onboardingErrorServerUnavailableHint": "The server returned a gateway error. Try again shortly.",
+  "@onboardingErrorServerUnavailableHint": {},
+  "onboardingErrorServerError": "Server returned an error",
+  "@onboardingErrorServerError": {},
+  "onboardingErrorGeneric": "Something went wrong",
+  "@onboardingErrorGeneric": {},
+  "quickConnectTitle": "Quick Connect",
+  "@quickConnectTitle": {},
+  "quickConnectEnterCode": "Enter this code",
+  "@quickConnectEnterCode": {},
+  "quickConnectApproved": "Approved",
+  "@quickConnectApproved": {},
+  "quickConnectDone": "Signed in",
+  "@quickConnectDone": {},
+  "quickConnectFailed": "Quick Connect failed",
+  "@quickConnectFailed": {},
+  "quickConnectExpired": "Quick Connect expired",
+  "@quickConnectExpired": {},
+  "quickConnectGenerating": "Generating…",
+  "@quickConnectGenerating": {},
+  "quickConnectSigningIn": "Signing in…",
+  "@quickConnectSigningIn": {},
+  "quickConnectInstruction": "On any device already signed in to {server}, open the user menu → Quick Connect, then enter the code above.",
+  "@quickConnectInstruction": {
+    "placeholders": {
+      "server": {
+        "type": "String"
+      }
+    }
+  },
+  "quickConnectWaiting": "Waiting for approval…",
+  "@quickConnectWaiting": {},
+  "quickConnectCodeCopied": "Code copied",
+  "@quickConnectCodeCopied": {},
+  "quickConnectCopy": "Copy",
+  "@quickConnectCopy": {},
+  "quickConnectExpiredMessage": "The code expired before it was approved. Generate a new one to try again.",
+  "@quickConnectExpiredMessage": {},
+  "quickConnectClose": "Close",
+  "@quickConnectClose": {},
+  "accountsTitle": "Accounts",
+  "@accountsTitle": {},
+  "accountsMyServer": "MY SERVER",
+  "@accountsMyServer": {},
+  "accountsMyServers": "MY SERVERS · {count}",
+  "@accountsMyServers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountsAddUser": "Add a user on this server",
+  "@accountsAddUser": {},
+  "accountsOtherServer": "OTHER SERVER",
+  "@accountsOtherServer": {},
+  "accountsAddServer": "Add a Jellyfin server",
+  "@accountsAddServer": {},
+  "accountsHint": "Tap an account to switch. Long-press to delete.",
+  "@accountsHint": {},
+  "accountsEmpty": "No accounts saved",
+  "@accountsEmpty": {},
+  "accountsEmptyMessage": "Add a Jellyfin server to get started.",
+  "@accountsEmptyMessage": {},
+  "accountsForgetServer": "Forget this server",
+  "@accountsForgetServer": {},
+  "accountsRemove": "Delete",
+  "@accountsRemove": {},
+  "accountsActive": "Active",
+  "@accountsActive": {},
+  "accountsForgetServerTitle": "Forget {serverName}?",
+  "@accountsForgetServerTitle": {
+    "placeholders": {
+      "serverName": {
+        "type": "String"
+      }
+    }
+  },
+  "accountsForgetServerMessage": "The {count} associated account(s) will be removed from this device.",
+  "@accountsForgetServerMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountsForget": "Forget",
+  "@accountsForget": {},
+  "accountsDeleteTitle": "Delete this account?",
+  "@accountsDeleteTitle": {},
+  "accountsDeleteMessage": "{userName} on {serverName} will be removed from this device.",
+  "@accountsDeleteMessage": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      },
+      "serverName": {
+        "type": "String"
+      }
+    }
+  },
+  "accountsDelete": "Delete",
+  "@accountsDelete": {},
+  "calendarTitle": "Calendar",
+  "@calendarTitle": {},
+  "calendarAllTypes": "All",
+  "@calendarAllTypes": {},
+  "calendarMovies": "Movies",
+  "@calendarMovies": {},
+  "calendarEpisodes": "Episodes",
+  "@calendarEpisodes": {},
+  "calendar30Days": "30 days",
+  "@calendar30Days": {},
+  "calendar90Days": "3 months",
+  "@calendar90Days": {},
+  "calendar365Days": "1 year",
+  "@calendar365Days": {},
+  "calendarMissing": "Missing",
+  "@calendarMissing": {},
+  "calendarNoData": "Failed to reach server.",
+  "@calendarNoData": {},
+  "calendarNoPlugin": "The Jellyfish.Bridge plugin is not installed on your Jellyfin server. Ask your admin to install it.",
+  "@calendarNoPlugin": {},
+  "calendarNoServices": "Neither Radarr nor Sonarr are configured in the plugin. Ask your admin to connect at least one of them.",
+  "@calendarNoServices": {},
+  "calendarLoadError": "Failed to load calendar.",
+  "@calendarLoadError": {},
+  "calendarNoItems": "Nothing on the horizon for the selected period.",
+  "@calendarNoItems": {},
+  "requestsTitle": "Requests",
+  "@requestsTitle": {},
+  "requestsSort": "Sort requests",
+  "@requestsSort": {},
+  "requestsSortRecent": "Most recent",
+  "@requestsSortRecent": {},
+  "requestsSortOldest": "Oldest",
+  "@requestsSortOldest": {},
+  "requestsSortStatus": "Status",
+  "@requestsSortStatus": {},
+  "requestsSortTitle": "Title (A–Z)",
+  "@requestsSortTitle": {},
+  "requestsAll": "All",
+  "@requestsAll": {},
+  "requestsPending": "Pending",
+  "@requestsPending": {},
+  "requestsProcessing": "Processing",
+  "@requestsProcessing": {},
+  "requestsAvailable": "Available",
+  "@requestsAvailable": {},
+  "requestsOfflineUnavailable": "Unavailable offline",
+  "@requestsOfflineUnavailable": {},
+  "requestsOfflineUnavailableMessage": "Seerr requests require an active network connection.",
+  "@requestsOfflineUnavailableMessage": {},
+  "requestsNoRequests": "No requests yet",
+  "@requestsNoRequests": {},
+  "requestsNoRequestsMessage": "Browse and tap Request on something you'd like to add.",
+  "@requestsNoRequestsMessage": {},
+  "requestsNoMatching": "No matching requests",
+  "@requestsNoMatching": {},
+  "requestsNoMatchingMessage": "No results for \"{filterLabel}\".",
+  "@requestsNoMatchingMessage": {
+    "placeholders": {
+      "filterLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "requestsStatusAvailable": "Available",
+  "@requestsStatusAvailable": {},
+  "requestsStatusDownloading": "Downloading",
+  "@requestsStatusDownloading": {},
+  "requestsStatusPartial": "Partial",
+  "@requestsStatusPartial": {},
+  "requestsStatusPending": "Pending",
+  "@requestsStatusPending": {},
+  "requestsStatusUnknown": "Unknown",
+  "@requestsStatusUnknown": {},
+  "requestsTypeMovie": "Movie",
+  "@requestsTypeMovie": {},
+  "requestsTypeShow": "Show",
+  "@requestsTypeShow": {},
+  "requestsJustNow": "Just now",
+  "@requestsJustNow": {},
+  "requestsMinutesAgo": "{count, plural, =1{1 minute ago} other{{count} minutes ago}}",
+  "@requestsMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsHoursAgo": "{count, plural, =1{1 hour ago} other{{count} hours ago}}",
+  "@requestsHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsYesterday": "Yesterday",
+  "@requestsYesterday": {},
+  "requestsDaysAgo": "{count} days ago",
+  "@requestsDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsLastWeek": "Last week",
+  "@requestsLastWeek": {},
+  "requestsWeeksAgo": "{count} weeks ago",
+  "@requestsWeeksAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsMonthsAgo": "{count, plural, =1{1 month ago} other{{count} months ago}}",
+  "@requestsMonthsAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsYearsAgo": "{count, plural, =1{1 year ago} other{{count} years ago}}",
+  "@requestsYearsAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminTitle": "Administration",
+  "@adminTitle": {},
+  "adminServer": "SERVER",
+  "@adminServer": {},
+  "adminDashboard": "Dashboard",
+  "@adminDashboard": {},
+  "adminDashboardSubtitle": "Version, OS, restart / stop",
+  "@adminDashboardSubtitle": {},
+  "adminContent": "CONTENT",
+  "@adminContent": {},
+  "adminLibraries": "Libraries",
+  "@adminLibraries": {},
+  "adminLibrariesSubtitle": "List and run scans",
+  "@adminLibrariesSubtitle": {},
+  "adminTasks": "Scheduled tasks",
+  "@adminTasks": {},
+  "adminTasksSubtitle": "View and trigger server tasks",
+  "@adminTasksSubtitle": {},
+  "adminAccounts": "ACCOUNTS",
+  "@adminAccounts": {},
+  "adminUsers": "Users",
+  "@adminUsers": {},
+  "adminUsersSubtitle": "Create, edit, delete",
+  "@adminUsersSubtitle": {},
+  "playerChapters": "Chapters",
+  "@playerChapters": {},
+  "playerSubtitlesAudio": "Subtitles and audio",
+  "@playerSubtitlesAudio": {},
+  "playerSpeed": "Speed",
+  "@playerSpeed": {},
+  "playerNextUp": "Next episode",
+  "@playerNextUp": {},
+  "playerLocked": "Locked",
+  "@playerLocked": {},
+  "playerUnlocked": "Unlocked",
+  "@playerUnlocked": {},
+  "playerAudioTrack": "Audio track",
+  "@playerAudioTrack": {},
+  "playerSubtitles": "Subtitles",
+  "@playerSubtitles": {},
+  "playerSubtitlesOff": "Off",
+  "@playerSubtitlesOff": {},
+  "playerSpeedNormal": "Normal",
+  "@playerSpeedNormal": {},
+  "playerError": "Playback error: {error}",
+  "@playerError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneric": "Error: {message}",
+  "@errorGeneric": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "errorFailed": "Failed: {message}",
+  "@errorFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "selectionCancelled": "Selection cancelled: {message}",
+  "@selectionCancelled": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "successSaved": "Save",
+  "@successSaved": {},
+  "cancelButton": "Cancel",
+  "@cancelButton": {},
+  "deleteButton": "Delete",
+  "@deleteButton": {},
+  "deleteAllButton": "Delete all",
+  "@deleteAllButton": {},
+  "retryButton": "Retry",
+  "@retryButton": {},
+  "profileDisplayNameTitle": "Display name",
+  "@profileDisplayNameTitle": {},
+  "profileChangePasswordTitle": "Change password",
+  "@profileChangePasswordTitle": {},
+  "profileCurrentPassword": "Current password",
+  "@profileCurrentPassword": {},
+  "profileNewPassword": "New password",
+  "@profileNewPassword": {},
+  "profileConfirmPassword": "Confirm new password",
+  "@profileConfirmPassword": {},
+  "profilePasswordsDoNotMatch": "Passwords do not match",
+  "@profilePasswordsDoNotMatch": {},
+  "profileRequired": "Required",
+  "@profileRequired": {},
+  "settingsLanguageSection": "LANGUAGE",
+  "@settingsLanguageSection": {},
+  "settingsLanguageFrench": "French",
+  "@settingsLanguageFrench": {},
+  "settingsLanguageEnglish": "English",
+  "@settingsLanguageEnglish": {},
+  "seerrAvailabilityAvailable": "Available",
+  "@seerrAvailabilityAvailable": {},
+  "seerrAvailabilityPartial": "Partial",
+  "@seerrAvailabilityPartial": {},
+  "seerrAvailabilityProcessing": "Processing",
+  "@seerrAvailabilityProcessing": {},
+  "seerrAvailabilityPending": "Pending",
+  "@seerrAvailabilityPending": {},
+  "seerrAvailabilityUnavailable": "Unavailable",
+  "@seerrAvailabilityUnavailable": {},
+  "upcomingViewAll": "View all",
+  "@upcomingViewAll": {},
+  "libraryFailedToLoad": "Failed to load library",
+  "@libraryFailedToLoad": {},
+  "libraryNoResults": "No results",
+  "@libraryNoResults": {},
+  "libraryNoResultsMessage": "Try a different search term or filter.",
+  "@libraryNoResultsMessage": {},
+  "detailsFailedToLoad": "Failed to load",
+  "@detailsFailedToLoad": {},
+  "detailsItemInvalid": "This item is invalid.",
+  "@detailsItemInvalid": {},
+  "detailsRetry": "Retry",
+  "@detailsRetry": {},
+  "detailsUnsupportedItem": "Unsupported item",
+  "@detailsUnsupportedItem": {},
+  "detailsUnsupportedItemMessage": "This item type is not supported yet.",
+  "@detailsUnsupportedItemMessage": {},
+  "detailsPlay": "Play",
+  "@detailsPlay": {},
+  "detailsResume": "Resume",
+  "@detailsResume": {},
+  "detailsNoEpisodes": "No episodes available",
+  "@detailsNoEpisodes": {},
+  "detailsResumeFrom": "from {time}",
+  "@detailsResumeFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsEpisodes": "Episodes",
+  "@detailsEpisodes": {},
+  "detailsDownloadSeason": "Download season",
+  "@detailsDownloadSeason": {},
+  "detailsSeason": "Season {number}",
+  "@detailsSeason": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "detailsNoEpisodesInSeason": "No episodes in this season.",
+  "@detailsNoEpisodesInSeason": {},
+  "detailsWatched": "Watched",
+  "@detailsWatched": {},
+  "detailsPreviousEpisode": "Previous",
+  "@detailsPreviousEpisode": {},
+  "detailsNextEpisode": "Next",
+  "@detailsNextEpisode": {},
+  "detailsMissingSeasons": "Missing seasons",
+  "@detailsMissingSeasons": {},
+  "detailsMissingSeason": "Season {number}",
+  "@detailsMissingSeason": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "detailsBoxSetFailedToLoad": "Failed to load items",
+  "@detailsBoxSetFailedToLoad": {},
+  "detailsBoxSetEmpty": "Empty collection",
+  "@detailsBoxSetEmpty": {},
+  "detailsBoxSetEmptyMessage": "This collection has no items yet.",
+  "@detailsBoxSetEmptyMessage": {},
+  "castSectionTitle": "Cast",
+  "@castSectionTitle": {},
+  "seerrDiscoverTitle": "Discover on Seerr",
+  "@seerrDiscoverTitle": {},
+  "seerrDiscoverSubtitle": "Tap to request — added to your Jellyfin library once approved",
+  "@seerrDiscoverSubtitle": {},
+  "seerrRequestSent": "Request sent: {title}",
+  "@seerrRequestSent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "seerrRequestError": "Could not send request. {error}",
+  "@seerrRequestError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "seerrRequestSentLabel": "Request sent",
+  "@seerrRequestSentLabel": {},
+  "seerrAlreadyAvailable": "Already available",
+  "@seerrAlreadyAvailable": {},
+  "seerrAlreadyRequested": "Already requested",
+  "@seerrAlreadyRequested": {},
+  "seerrRequestSeasons": "{count, plural, =1{Request 1 season} other{Request {count} seasons}}",
+  "@seerrRequestSeasons": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "seerrRequest": "Request",
+  "@seerrRequest": {},
+  "seerrTypeMovie": "Movie",
+  "@seerrTypeMovie": {},
+  "seerrTypeSeries": "Series",
+  "@seerrTypeSeries": {},
+  "seerrSeasonsTitle": "Seasons",
+  "@seerrSeasonsTitle": {},
+  "seerrSelectAll": "Select all",
+  "@seerrSelectAll": {},
+  "seerrDeselectAll": "Deselect all",
+  "@seerrDeselectAll": {},
+  "seerrBonus": "Specials",
+  "@seerrBonus": {},
+  "seerrSeasonNumber": "Season {number}",
+  "@seerrSeasonNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "seerrCollectionMovies": "Collection movies",
+  "@seerrCollectionMovies": {},
+  "seerrCollectionSelectAll": "Select all",
+  "@seerrCollectionSelectAll": {},
+  "seerrCollectionDeselectAll": "Deselect all",
+  "@seerrCollectionDeselectAll": {},
+  "seerrCollectionSelectAtLeastOne": "Select at least one movie",
+  "@seerrCollectionSelectAtLeastOne": {},
+  "seerrCollectionRequested": "Requested",
+  "@seerrCollectionRequested": {},
+  "seerrCollectionRequestMovies": "{count, plural, =1{Request 1 movie} other{Request {count} movies}}",
+  "@seerrCollectionRequestMovies": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "seerrCollectionChip": "Collection",
+  "@seerrCollectionChip": {},
+  "seerrPendingLabel": "Pending",
+  "@seerrPendingLabel": {},
+  "seerrProcessingLabel": "Processing",
+  "@seerrProcessingLabel": {},
+  "seerrPartialLabel": "Partial",
+  "@seerrPartialLabel": {},
+  "offlineUnavailableTitle": "Unavailable offline",
+  "@offlineUnavailableTitle": {},
+  "offlineUnavailableMessage": "This item has not been downloaded. Reconnect to access it.",
+  "@offlineUnavailableMessage": {},
+  "offlinePlay": "Play",
+  "@offlinePlay": {},
+  "offlineMarkPlayed": "Mark as watched",
+  "@offlineMarkPlayed": {},
+  "offlineAddFavorite": "Add to favourites",
+  "@offlineAddFavorite": {},
+  "offlineDeleteDownload": "Delete download",
+  "@offlineDeleteDownload": {},
+  "offlineSynopsis": "Synopsis",
+  "@offlineSynopsis": {},
+  "offlineMarkPlayedSnack": "Marked as watched — will sync on reconnect",
+  "@offlineMarkPlayedSnack": {},
+  "offlineAddFavoriteSnack": "Added to favourites — will sync on reconnect",
+  "@offlineAddFavoriteSnack": {},
+  "offlineDeleteTitle": "Delete download?",
+  "@offlineDeleteTitle": {},
+  "offlineDeleteMessage": "The file and its local images will be removed.",
+  "@offlineDeleteMessage": {},
+  "offlineDeleteConfirm": "Delete",
+  "@offlineDeleteConfirm": {},
+  "offlineSeriesNoEpisodesTitle": "No episodes",
+  "@offlineSeriesNoEpisodesTitle": {},
+  "offlineSeriesNoEpisodesMessage": "No episodes from this series have been downloaded.",
+  "@offlineSeriesNoEpisodesMessage": {},
+  "offlineSeasonLabel": "Season {number}",
+  "@offlineSeasonLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "offlineSeasonUnknown": "Season ?",
+  "@offlineSeasonUnknown": {},
+  "downloadButtonDownload": "Download",
+  "@downloadButtonDownload": {},
+  "downloadButtonQueued": "Queued — tap to cancel",
+  "@downloadButtonQueued": {},
+  "downloadButtonDownloading": "Downloading {percent}% — tap to pause",
+  "@downloadButtonDownloading": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadButtonPaused": "Paused {percent}% — tap to resume",
+  "@downloadButtonPaused": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadButtonDownloaded": "Downloaded — long-press to delete",
+  "@downloadButtonDownloaded": {},
+  "downloadButtonFailedSnack": "Download failed: {error}",
+  "@downloadButtonFailedSnack": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadButtonDeleteTitle": "Delete download?",
+  "@downloadButtonDeleteTitle": {},
+  "downloadButtonDeleteMessage": "The local file will be removed. You can download it again later.",
+  "@downloadButtonDeleteMessage": {},
+  "downloadButtonDeleteConfirm": "Delete",
+  "@downloadButtonDeleteConfirm": {},
+  "downloadButtonDeleteCancel": "Cancel",
+  "@downloadButtonDeleteCancel": {},
+  "downloadButtonDeleteFailedSnack": "Delete failed: {error}",
+  "@downloadButtonDeleteFailedSnack": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadTileQueued": "Queued",
+  "@downloadTileQueued": {},
+  "downloadTileDownloaded": "Downloaded",
+  "@downloadTileDownloaded": {},
+  "downloadTileFailed": "Failed",
+  "@downloadTileFailed": {},
+  "downloadTileCancelled": "Cancelled",
+  "@downloadTileCancelled": {},
+  "downloadTilePaused": "Paused",
+  "@downloadTilePaused": {},
+  "downloadTileTooltipDelete": "Delete",
+  "@downloadTileTooltipDelete": {},
+  "downloadTileTooltipResume": "Resume",
+  "@downloadTileTooltipResume": {},
+  "downloadTileTooltipCancel": "Cancel",
+  "@downloadTileTooltipCancel": {},
+  "downloadTileTooltipPause": "Pause",
+  "@downloadTileTooltipPause": {},
+  "downloadTileTooltipRemove": "Remove",
+  "@downloadTileTooltipRemove": {},
+  "playerResumeFrom": "Resuming from {time}",
+  "@playerResumeFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerNoChapters": "No chapters available",
+  "@playerNoChapters": {},
+  "playerChapterNumber": "Chapter {number}",
+  "@playerChapterNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "playerLockControls": "Lock controls",
+  "@playerLockControls": {},
+  "playerPictureInPicture": "Picture-in-Picture",
+  "@playerPictureInPicture": {},
+  "playerDismiss": "Dismiss",
+  "@playerDismiss": {},
+  "playerPlayNow": "Play now",
+  "@playerPlayNow": {},
+  "adminServerName": "Server name",
+  "@adminServerName": {},
+  "adminVersion": "Version",
+  "@adminVersion": {},
+  "adminProduct": "Product",
+  "@adminProduct": {},
+  "adminServerId": "Server ID",
+  "@adminServerId": {},
+  "adminLocalAddress": "Local address",
+  "@adminLocalAddress": {},
+  "adminRestartPending": "Restart pending",
+  "@adminRestartPending": {},
+  "adminRestartPendingMessage": "The server has an update or configuration change that requires a restart.",
+  "@adminRestartPendingMessage": {},
+  "adminShuttingDown": "Shutting down",
+  "@adminShuttingDown": {},
+  "adminInfoSection": "INFORMATION",
+  "@adminInfoSection": {},
+  "adminRestartButton": "Restart server",
+  "@adminRestartButton": {},
+  "adminShutdownButton": "Shut down server",
+  "@adminShutdownButton": {},
+  "adminRestartConfirmTitle": "Restart server?",
+  "@adminRestartConfirmTitle": {},
+  "adminRestartConfirmMessage": "All active playback sessions will be interrupted. The server will be unavailable for a few seconds.",
+  "@adminRestartConfirmMessage": {},
+  "adminRestartConfirmLabel": "Restart",
+  "@adminRestartConfirmLabel": {},
+  "adminRestartSnack": "Restart requested.",
+  "@adminRestartSnack": {},
+  "adminShutdownConfirmTitle": "Shut down server?",
+  "@adminShutdownConfirmTitle": {},
+  "adminShutdownConfirmMessage": "The Jellyfin server will stop. You will need to restart it manually (machine, container, systemd service).",
+  "@adminShutdownConfirmMessage": {},
+  "adminShutdownConfirmLabel": "Shut down",
+  "@adminShutdownConfirmLabel": {},
+  "adminShutdownSnack": "Shutdown requested.",
+  "@adminShutdownSnack": {},
+  "adminErrorPrefix": "Error: {error}",
+  "@adminErrorPrefix": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "adminFailurePrefix": "Failed: {error}",
+  "@adminFailurePrefix": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "adminLibrariesEmpty": "No libraries configured.",
+  "@adminLibrariesEmpty": {},
+  "adminLibrariesScanAll": "Run full scan",
+  "@adminLibrariesScanAll": {},
+  "adminLibrariesScanAllTitle": "Run full scan?",
+  "@adminLibrariesScanAllTitle": {},
+  "adminLibrariesScanAllMessage": "The server will scan all libraries in the background. This may take several minutes depending on the size of your media library.",
+  "@adminLibrariesScanAllMessage": {},
+  "adminLibrariesScanAllConfirm": "Run",
+  "@adminLibrariesScanAllConfirm": {},
+  "adminLibrariesScanSnack": "Scan started.",
+  "@adminLibrariesScanSnack": {},
+  "adminLibrariesScanOneSnack": "Scan started for \"{name}\".",
+  "@adminLibrariesScanOneSnack": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminLibrariesTooltipScan": "Scan this library",
+  "@adminLibrariesTooltipScan": {},
+  "adminTasksNoTasks": "No tasks.",
+  "@adminTasksNoTasks": {},
+  "adminTasksRunning": "Running…",
+  "@adminTasksRunning": {},
+  "adminTasksRunningPercent": "Running… {percent}%",
+  "@adminTasksRunningPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "adminTasksCancelling": "Cancelling…",
+  "@adminTasksCancelling": {},
+  "adminTasksNeverRun": "Never run",
+  "@adminTasksNeverRun": {},
+  "adminTasksCompleted": "Completed {ago}",
+  "@adminTasksCompleted": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "adminTasksFailed": "Failed {ago}",
+  "@adminTasksFailed": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "adminTasksTooltipStop": "Stop",
+  "@adminTasksTooltipStop": {},
+  "adminTasksTooltipStart": "Run",
+  "@adminTasksTooltipStart": {},
+  "adminTasksLastRunStatus": "Status",
+  "@adminTasksLastRunStatus": {},
+  "adminTasksLastRunStart": "Start",
+  "@adminTasksLastRunStart": {},
+  "adminTasksLastRunEnd": "End",
+  "@adminTasksLastRunEnd": {},
+  "adminTasksLastRunDuration": "Duration",
+  "@adminTasksLastRunDuration": {},
+  "adminTasksLastRunError": "Error",
+  "@adminTasksLastRunError": {},
+  "adminUsersAdd": "Add",
+  "@adminUsersAdd": {},
+  "adminUsersEmpty": "No users.",
+  "@adminUsersEmpty": {},
+  "adminUsersNeverConnected": "Never connected",
+  "@adminUsersNeverConnected": {},
+  "adminUsersSeenAt": "Seen {when}",
+  "@adminUsersSeenAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "adminUsersBadgeAdmin": "Admin",
+  "@adminUsersBadgeAdmin": {},
+  "adminUsersBadgeDisabled": "Disabled",
+  "@adminUsersBadgeDisabled": {},
+  "adminUserCreateTitle": "New user",
+  "@adminUserCreateTitle": {},
+  "adminUserCreateName": "Username",
+  "@adminUserCreateName": {},
+  "adminUserCreatePassword": "Password",
+  "@adminUserCreatePassword": {},
+  "adminUserCreatePasswordHelper": "Leave blank for no initial password.",
+  "@adminUserCreatePasswordHelper": {},
+  "adminUserCreateIsAdmin": "Administrator",
+  "@adminUserCreateIsAdmin": {},
+  "adminUserCreateIsAdminSubtitle": "Grants full control over the Jellyfin server.",
+  "@adminUserCreateIsAdminSubtitle": {},
+  "adminUserCreateRequired": "Required",
+  "@adminUserCreateRequired": {},
+  "adminUserCreateButton": "Create account",
+  "@adminUserCreateButton": {},
+  "adminUserEditTitle": "User",
+  "@adminUserEditTitle": {},
+  "adminUserEditIdentitySection": "IDENTITY",
+  "@adminUserEditIdentitySection": {},
+  "adminUserEditLastLogin": "Last login",
+  "@adminUserEditLastLogin": {},
+  "adminUserEditRightsSection": "PERMISSIONS",
+  "@adminUserEditRightsSection": {},
+  "adminUserEditIsAdmin": "Administrator",
+  "@adminUserEditIsAdmin": {},
+  "adminUserEditIsAdminSelfHint": "You cannot remove your own admin rights.",
+  "@adminUserEditIsAdminSelfHint": {},
+  "adminUserEditIsDisabled": "Account disabled",
+  "@adminUserEditIsDisabled": {},
+  "adminUserEditIsDisabledSelfHint": "You cannot disable your own account.",
+  "@adminUserEditIsDisabledSelfHint": {},
+  "adminUserEditLibrariesSection": "LIBRARIES",
+  "@adminUserEditLibrariesSection": {},
+  "adminUserEditAllFolders": "Access to all libraries",
+  "@adminUserEditAllFolders": {},
+  "adminUserEditSaveButton": "Save",
+  "@adminUserEditSaveButton": {},
+  "adminUserEditSaveSnack": "Changes saved.",
+  "@adminUserEditSaveSnack": {},
+  "adminUserEditResetPassword": "Reset password",
+  "@adminUserEditResetPassword": {},
+  "adminUserEditNewPasswordTitle": "New password",
+  "@adminUserEditNewPasswordTitle": {},
+  "adminUserEditNewPasswordHint": "Password",
+  "@adminUserEditNewPasswordHint": {},
+  "adminUserEditResetPasswordCancel": "Cancel",
+  "@adminUserEditResetPasswordCancel": {},
+  "adminUserEditResetPasswordConfirm": "Reset",
+  "@adminUserEditResetPasswordConfirm": {},
+  "adminUserEditResetPasswordSnack": "Password reset.",
+  "@adminUserEditResetPasswordSnack": {},
+  "adminUserEditDeleteButton": "Delete account",
+  "@adminUserEditDeleteButton": {},
+  "adminUserEditDeleteTitle": "Delete \"{name}\"?",
+  "@adminUserEditDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminUserEditDeleteMessage": "This action is irreversible. The account, its preferences and playback history will be deleted from the server.",
+  "@adminUserEditDeleteMessage": {},
+  "adminUserEditDeleteConfirm": "Delete",
+  "@adminUserEditDeleteConfirm": {}
+}

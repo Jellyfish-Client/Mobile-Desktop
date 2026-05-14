@@ -1,0 +1,28 @@
+import 'package:test/test.dart';
+import 'package:jellyfin_api/jellyfin_api.dart';
+
+// tests for LyricLine
+void main() {
+  final instance = LyricLineBuilder();
+  // TODO add properties to the builder and call build()
+
+  group(LyricLine, () {
+    // Gets the text of this lyric line.
+    // String text
+    test('to test the property `text`', () async {
+      // TODO
+    });
+
+    // Gets the start time in ticks.
+    // int start
+    test('to test the property `start`', () async {
+      // TODO
+    });
+
+    // Gets the time-aligned cues for the song's lyrics.
+    // BuiltList<LyricLineCue> cues
+    test('to test the property `cues`', () async {
+      // TODO
+    });
+  });
+}
