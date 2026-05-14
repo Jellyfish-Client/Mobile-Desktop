@@ -163,6 +163,16 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
+      - name: Disable code signing for unsigned CI build
+        run: |
+          cat >> macos/Flutter/Flutter-Release.xcconfig <<'EOF'
+          CODE_SIGN_STYLE = Manual
+          CODE_SIGN_IDENTITY =
+          CODE_SIGNING_REQUIRED = NO
+          CODE_SIGNING_ALLOWED = NO
+          DEVELOPMENT_TEAM =
+          EOF
+
       - name: Build macOS release
         run: flutter build macos --release
 
