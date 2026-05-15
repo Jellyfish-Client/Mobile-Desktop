@@ -80,6 +80,7 @@ dependencies:
   timezone: ^0.11.0
   floating: ^6.0.0
   audio_service: ^0.18.16
+  audio_session: ^0.2.3
 
   # Chromecast
   flutter_chrome_cast: ^1.4.6
@@ -89,6 +90,10 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+
+  # Raw sqlite3 binding — used by migration tests to seed legacy schema
+  # versions before opening AppDatabase on top of the file.
+  sqlite3: ^2.4.0
 
   # Codegen
   build_runner: ^2.4.13
