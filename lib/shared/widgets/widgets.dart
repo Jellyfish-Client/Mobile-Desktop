@@ -29,4 +29,5 @@ export 'jf_reading_panel.dart';
 export 'jf_section_title.dart';
 export 'jf_spotlight_card.dart';
 export 'jf_text_field.dart';
-export 'main_scaffold.dart';
+
+// main_scaffold.dart supprimé lors du refacto Phase 2 (remplacé par AppNavigationShell).

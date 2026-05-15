@@ -4477,6 +4477,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Rien à afficher'**
   String get commonEmptyTitle;
+
+  /// No description provided for @drawerExpandTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étendre le menu'**
+  String get drawerExpandTooltip;
+
+  /// No description provided for @drawerCollapseTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réduire le menu'**
+  String get drawerCollapseTooltip;
+
+  /// No description provided for @drawerHideAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer la navigation'**
+  String get drawerHideAction;
+
+  /// No description provided for @drawerShowTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher la navigation'**
+  String get drawerShowTooltip;
 }
 
 class _AppLocalizationsDelegate

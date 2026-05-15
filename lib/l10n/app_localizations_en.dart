@@ -2449,4 +2449,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonEmptyTitle => 'Nothing to show';
+
+  @override
+  String get drawerExpandTooltip => 'Expand menu';
+
+  @override
+  String get drawerCollapseTooltip => 'Collapse menu';
+
+  @override
+  String get drawerHideAction => 'Hide navigation';
+
+  @override
+  String get drawerShowTooltip => 'Show navigation';
 }

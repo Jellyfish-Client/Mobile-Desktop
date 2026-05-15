@@ -45,7 +45,7 @@ import '../features/settings/playback_settings_screen.dart';
 import '../features/settings/profile/profile_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/watch_provider/watch_provider_screen.dart';
-import '../shared/widgets/main_scaffold.dart';
+import '../shared/layout/app_navigation_shell.dart';
 
 /// Listenable wrapper around the reauth stream. Holds the last (unhandled)
 /// signal so the router's redirect can read it synchronously, and notifies
@@ -167,7 +167,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // re-running the network calls on the way back.
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
-            MainScaffold(navigationShell: navigationShell),
+            AppNavigationShell(navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(
             routes: [

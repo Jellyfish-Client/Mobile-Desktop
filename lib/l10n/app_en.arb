@@ -1828,5 +1828,13 @@
   "commonErrorRetry": "Retry",
   "@commonErrorRetry": {},
   "commonEmptyTitle": "Nothing to show",
-  "@commonEmptyTitle": {}
+  "@commonEmptyTitle": {},
+  "drawerExpandTooltip": "Expand menu",
+  "@drawerExpandTooltip": {},
+  "drawerCollapseTooltip": "Collapse menu",
+  "@drawerCollapseTooltip": {},
+  "drawerHideAction": "Hide navigation",
+  "@drawerHideAction": {},
+  "drawerShowTooltip": "Show navigation",
+  "@drawerShowTooltip": {}
 }
