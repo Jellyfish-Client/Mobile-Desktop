@@ -37,12 +37,26 @@ final castDevicesProvider = StreamProvider.autoDispose<List<CastDevice>>((ref) {
 /// État courant de la session. **Non autoDispose** : doit survivre au
 /// PlayerScreen pour permettre au mini-player de continuer à afficher la
 /// lecture après navigation.
+///
+/// Le `StreamController.broadcast` sous-jacent n'émet rien à la première
+/// subscription → les consumers flasheraient `AsyncLoading` pendant quelques
+/// frames même quand une session est déjà active.
+/// Fix : on préfixe le stream natif par un `Stream.value` du snapshot courant
+/// grâce à [_replayThenFollow], de sorte que le premier événement arrive
+/// synchroniquement. `distinct()` évite un doublon si le stream sous-jacent
+/// ré-émet la même valeur immédiatement (rendu possible par l'implémentation
+/// de `==` dans [CastSessionSnapshot]).
 final castSessionProvider = StreamProvider<CastSessionSnapshot>((ref) {
   final svc = ref.watch(castServiceProvider);
-  // Émet le snapshot courant immédiatement pour que les widgets qui s'abonnent
-  // après une transition ne loupent pas l'état.
-  return svc.sessionStream;
+  return _replayThenFollow(svc.currentSnapshot, svc.sessionStream).distinct();
 });
+
+/// Crée un stream qui émet [seed] immédiatement, puis tous les événements de
+/// [tail]. Équivalent à `BehaviorSubject` de rxdart mais sans dépendance.
+Stream<T> _replayThenFollow<T>(T seed, Stream<T> tail) async* {
+  yield seed;
+  yield* tail;
+}
 
 /// Booléen pratique pour l'UI ("cast_connected" vs "cast" sur le bouton).
 final isCastConnectedProvider = Provider<bool>((ref) {

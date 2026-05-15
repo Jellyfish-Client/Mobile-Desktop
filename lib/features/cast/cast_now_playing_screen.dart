@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jellyfin_api/jellyfin_api.dart' show BaseItemKind;
 
+import '../../app/theme/app_radius.dart';
+import '../../app/theme/app_spacing.dart';
 import '../../core/cast/cast_player_backend.dart';
 import '../../core/cast/cast_providers.dart';
 import '../../core/jellyfin/jellyfin_url_service.dart';
@@ -67,6 +69,7 @@ class _CastNowPlayingScreenState extends ConsumerState<CastNowPlayingScreen> {
     final urls = ref.watch(jellyfinUrlServiceProvider);
     final backdropUrl = urls.landscapeUrl(item, maxWidth: 1080);
     final posterUrl = urls.imageUrl(item, type: 'Primary', maxWidth: 600);
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -75,7 +78,8 @@ class _CastNowPlayingScreenState extends ConsumerState<CastNowPlayingScreen> {
         elevation: 0,
         title: Text(
           l10n.castNowPlayingTitle,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          // 14sp / w500 → titleSmall (sémantique : titre de navigation)
+          style: textTheme.titleSmall,
         ),
       ),
       body: Stack(
@@ -98,7 +102,10 @@ class _CastNowPlayingScreenState extends ConsumerState<CastNowPlayingScreen> {
                 final posterMax =
                     (constraints.maxHeight * 0.45).clamp(120.0, 280.0);
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  // horizontal: 16 → AppSpacing.lg
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                  ),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
@@ -108,7 +115,9 @@ class _CastNowPlayingScreenState extends ConsumerState<CastNowPlayingScreen> {
                       children: [
                         if (posterUrl != null)
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            // BorderRadius.circular(12) → AppRadius.md
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.md),
                             child: CachedNetworkImage(
                               imageUrl: posterUrl,
                               height: posterMax,
@@ -120,19 +129,23 @@ class _CastNowPlayingScreenState extends ConsumerState<CastNowPlayingScreen> {
                             Text(
                               _titleFor(item),
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              // fontSize: 18, w600 → titleMedium (applyTo booste à w600)
+                              style: textTheme.titleMedium?.copyWith(
                                 color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                            if (_subtitleFor(item) case final sub when sub.isNotEmpty)
+                            if (_subtitleFor(item)
+                                case final sub when sub.isNotEmpty)
                               Padding(
-                                padding: const EdgeInsets.only(top: 4),
+                                // top: 4 → AppSpacing.xs
+                                padding: const EdgeInsets.only(
+                                  top: AppSpacing.xs,
+                                ),
                                 child: Text(
                                   sub,
-                                  style:
-                                      const TextStyle(color: Colors.white70),
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white70,
+                                  ),
                                 ),
                               ),
                           ],
@@ -140,7 +153,8 @@ class _CastNowPlayingScreenState extends ConsumerState<CastNowPlayingScreen> {
                         Column(
                           children: [
                             _CastSeekBar(backend: backend),
-                            const SizedBox(height: 8),
+                            // SizedBox(height: 8) → AppSpacing.sm
+                            const SizedBox(height: AppSpacing.sm),
                             _CastTransportRow(backend: backend),
                           ],
                         ),
@@ -152,11 +166,15 @@ class _CastNowPlayingScreenState extends ConsumerState<CastNowPlayingScreen> {
                                 .set(null);
                             if (context.mounted) context.pop();
                           },
-                          icon: const Icon(Icons.cancel_outlined,
-                              color: Colors.white),
+                          icon: const Icon(
+                            Icons.cancel_outlined,
+                            color: Colors.white,
+                          ),
                           label: Text(
                             l10n.castMiniPlayerStop,
-                            style: const TextStyle(color: Colors.white),
+                            style: textTheme.labelLarge?.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],
@@ -229,6 +247,7 @@ class _CastSeekBarState extends State<_CastSeekBar> {
     final maxMs = _duration.inMilliseconds.toDouble();
     final value = (_scrubValue ?? _position.inMilliseconds.toDouble())
         .clamp(0.0, maxMs <= 0 ? 1.0 : maxMs);
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
         SliderTheme(
@@ -260,14 +279,24 @@ class _CastSeekBarState extends State<_CastSeekBar> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          // horizontal: 8 → AppSpacing.sm
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_format(_position),
-                  style: const TextStyle(color: Colors.white70, fontSize: 12)),
-              Text(_format(_duration),
-                  style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              Text(
+                _format(_position),
+                // fontSize: 12 → bodySmall, color: white70 via copyWith
+                style: textTheme.bodySmall?.copyWith(
+                  color: Colors.white70,
+                ),
+              ),
+              Text(
+                _format(_duration),
+                style: textTheme.bodySmall?.copyWith(
+                  color: Colors.white70,
+                ),
+              ),
             ],
           ),
         ),

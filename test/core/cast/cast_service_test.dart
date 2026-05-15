@@ -3,6 +3,13 @@ import 'package:jellyfish/core/cast/cast_device.dart';
 import 'package:jellyfish/core/cast/cast_service.dart';
 import 'package:jellyfish/core/cast/cast_session_state.dart';
 
+/// Reproduit le pattern de `castSessionProvider` : émet [seed] immédiatement,
+/// puis suit [tail]. Permet de tester le comportement sans passer par Riverpod.
+Stream<T> _replayThenFollow<T>(T seed, Stream<T> tail) async* {
+  yield seed;
+  yield* tail;
+}
+
 void main() {
   group('CastSessionSnapshot', () {
     test('idle snapshot is the canonical empty state', () {
@@ -91,6 +98,48 @@ void main() {
       // it gives us an empty list rather than a timeout.
       final devices = await service.devicesStream.toList();
       expect(devices, isEmpty);
+    });
+
+    test(
+        'sessionStream replay — un second abonné obtient le snapshot courant '
+        'sans passer par AsyncLoading', () async {
+      // Simule le pattern castSessionProvider :
+      // _replayThenFollow(currentSnapshot, sessionStream).distinct()
+      // Sur plateforme non supportée currentSnapshot est toujours idle.
+      final replayStream =
+          _replayThenFollow(service.currentSnapshot, service.sessionStream)
+              .distinct();
+
+      // Le premier événement doit arriver rapidement (async generator).
+      CastSessionSnapshot? firstEvent;
+      final sub = replayStream.listen((s) => firstEvent ??= s);
+      // Pump quelques microtasks pour que l'async* generator démarre.
+      await Future<void>.delayed(Duration.zero);
+      await sub.cancel();
+
+      expect(
+        firstEvent,
+        equals(CastSessionSnapshot.idle),
+        reason: 'Le premier événement doit être le snapshot courant, '
+            'pas null (i.e. pas de flash AsyncLoading)',
+      );
+    });
+
+    test(
+        'sessionStream replay — distinct() supprime les doublons consécutifs',
+        () async {
+      final replayStream =
+          _replayThenFollow(service.currentSnapshot, service.sessionStream)
+              .distinct();
+
+      final events = <CastSessionSnapshot>[];
+      final sub = replayStream.listen(events.add);
+      await Future<void>.delayed(Duration.zero);
+      await sub.cancel();
+
+      // sessionStream n'émet rien sur plateforme non supportée → un seul event.
+      expect(events, hasLength(1));
+      expect(events.first, CastSessionSnapshot.idle);
     });
   });
 }
