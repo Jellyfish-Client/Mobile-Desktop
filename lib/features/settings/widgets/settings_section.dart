@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_spacing.dart';
+import '../../../app/theme/app_typography.dart';
 
 /// Section grouping for Settings-style screens: a small caps label followed by
 /// a card-like list of tiles separated by thin top/bottom borders. Used in
@@ -29,10 +30,7 @@ class SettingsSection extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                letterSpacing: 1.2,
-              ),
+              style: AppTypography.eyebrow(color: scheme.onSurfaceVariant),
             ),
           ),
           DecoratedBox(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/theme/app_motion.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../shared/widgets/widgets.dart';
@@ -78,10 +79,7 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel>
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 220),
-    );
+    _ctrl = AnimationController(vsync: this, duration: AppMotion.medium);
     _opacity = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
     _slide = Tween<Offset>(
       begin: const Offset(0, -0.15),
@@ -138,7 +136,11 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(_categoryIcon(cat), color: scheme.onErrorContainer, size: 20),
+              Icon(
+                _categoryIcon(cat),
+                color: scheme.onErrorContainer,
+                size: 20,
+              ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Column(
@@ -163,7 +165,9 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel>
                       Text(
                         hint,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onErrorContainer.withValues(alpha: 0.65),
+                          color: scheme.onErrorContainer.withValues(
+                            alpha: 0.65,
+                          ),
                           fontStyle: FontStyle.italic,
                         ),
                       ),

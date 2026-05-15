@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_spacing.dart';
+import '../../app/theme/app_typography.dart';
 import '../../core/auth/account_key.dart';
 import '../../core/auth/auth_controller.dart';
 import '../../core/downloads/download_manager.dart';
@@ -120,10 +121,7 @@ class _SectionHeader extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-          letterSpacing: 1.2,
-        ),
+        style: AppTypography.eyebrow(color: theme.colorScheme.onSurfaceVariant),
       ),
     );
   }

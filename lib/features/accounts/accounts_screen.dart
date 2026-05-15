@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme/app_spacing.dart';
+import '../../app/theme/app_typography.dart';
 import '../../core/auth/accounts_repository.dart';
 import '../../core/auth/auth_controller.dart';
 import '../../core/auth/saved_account.dart';
@@ -255,10 +256,7 @@ class _SectionLabel extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-          letterSpacing: 1.2,
-        ),
+        style: AppTypography.eyebrow(color: theme.colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -377,11 +375,9 @@ class _AccountTile extends StatelessWidget {
       subtitle: isActive
           ? Text(
               context.l10n.accountsActive,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: AppTypography.eyebrow(
                 color: scheme.primary,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-              ),
+              ).copyWith(fontWeight: FontWeight.w700),
             )
           : null,
       trailing: IconButton(

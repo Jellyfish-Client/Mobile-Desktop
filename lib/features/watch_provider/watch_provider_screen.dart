@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/theme/app_radius.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/seerr/models.dart';
 import '../../core/seerr/seerr_client.dart';
@@ -92,13 +93,13 @@ class _PosterCell extends StatelessWidget {
     final url = client.posterUrl(media);
     return InkWell(
       onTap: () => showSeerrRequestSheet(context, media: media),
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(AppRadius.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppRadius.sm),
               child: url == null
                   ? Container(color: scheme.surfaceContainerHigh)
                   : CachedNetworkImage(

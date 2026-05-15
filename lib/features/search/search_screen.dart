@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/theme/app_motion.dart';
+import '../../app/theme/app_radius.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../app/theme/breakpoints.dart';
 import '../../core/jellyfin/jellyfin_url_service.dart';
@@ -85,7 +87,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 textInputAction: TextInputAction.search,
                 onChanged: _onChanged,
                 suffix: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 120),
+                  duration: AppMotion.fast,
                   opacity: state.query.isEmpty ? 0 : 1,
                   child: IconButton(
                     icon: const Icon(Icons.close, size: 18),
@@ -484,7 +486,7 @@ class _SearchIntroRow extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(

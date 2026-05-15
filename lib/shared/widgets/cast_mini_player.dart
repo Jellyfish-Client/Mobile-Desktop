@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jellyfin_api/jellyfin_api.dart' show BaseItemKind;
 
+import '../../app/theme/app_radius.dart';
 import '../../core/cast/cast_player_backend.dart';
 import '../../core/cast/cast_providers.dart';
 import '../../core/jellyfin/jellyfin_url_service.dart';
@@ -86,9 +87,9 @@ class _CastMiniPlayerBodyState extends ConsumerState<_CastMiniPlayerBody> {
     return Material(
       color: scheme.surfaceContainerHighest,
       elevation: 6,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.md),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         onTap: () => context.push('/cast/now-playing'),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -99,7 +100,7 @@ class _CastMiniPlayerBodyState extends ConsumerState<_CastMiniPlayerBody> {
                 children: [
                   const SizedBox(width: 4),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
                     child: SizedBox(
                       width: 44,
                       height: 44,
@@ -122,13 +123,18 @@ class _CastMiniPlayerBodyState extends ConsumerState<_CastMiniPlayerBody> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 13),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Row(
                           children: [
-                            Icon(Icons.cast_connected,
-                                size: 12, color: scheme.primary),
+                            Icon(
+                              Icons.cast_connected,
+                              size: 12,
+                              color: scheme.primary,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
@@ -157,9 +163,7 @@ class _CastMiniPlayerBodyState extends ConsumerState<_CastMiniPlayerBody> {
                     tooltip: l10n.castMiniPlayerStop,
                     onPressed: () async {
                       await ref.read(castServiceProvider).disconnect();
-                      await ref
-                          .read(castNowPlayingProvider.notifier)
-                          .set(null);
+                      await ref.read(castNowPlayingProvider.notifier).set(null);
                     },
                     icon: const Icon(Icons.close),
                   ),

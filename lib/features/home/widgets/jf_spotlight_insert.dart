@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../app/theme/app_radius.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/seerr/models.dart';
 import '../../../core/seerr/seerr_client.dart';
@@ -72,7 +73,7 @@ class _SkeletonSpotlight extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
           ),
         ),
       ),

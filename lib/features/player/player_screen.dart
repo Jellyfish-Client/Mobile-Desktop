@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../../app/theme/app_radius.dart';
 import '../../core/auth/account_key.dart';
 import '../../core/auth/auth_controller.dart';
 import '../../core/cast/cast_device_profile.dart';
@@ -233,9 +234,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     } on Object catch (e, st) {
       _log.warning('Player initialization failed', e, st);
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.playerError(e.toString()))),
       );
       if (mounted) context.pop();
@@ -316,7 +315,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       }
     });
 
-    await ref.read(castNowPlayingProvider.notifier).set(
+    await ref
+        .read(castNowPlayingProvider.notifier)
+        .set(
           CastNowPlaying(
             item: item,
             backend: castBackend,
@@ -392,11 +393,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       duration: backend.duration > Duration.zero ? backend.duration : null,
       artUri: posterUrl != null ? Uri.parse(posterUrl) : null,
     );
-    ref.read(audioHandlerProvider).attachBackend(
-      backend: backend,
-      item: mediaItem,
-      onSkipNext: _hasNextUp() ? _playNextUp : null,
-    );
+    ref
+        .read(audioHandlerProvider)
+        .attachBackend(
+          backend: backend,
+          item: mediaItem,
+          onSkipNext: _hasNextUp() ? _playNextUp : null,
+        );
     _attachedToAudioHandler = true;
   }
 
@@ -450,9 +453,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(
-        SnackBar(content: Text(context.l10n.playerError(msg))),
-      );
+      ).showSnackBar(SnackBar(content: Text(context.l10n.playerError(msg))));
     });
     _completedSub = backend.completedStream.listen((_) async {
       if (!mounted) return;
@@ -871,12 +872,10 @@ class _ResumeToast extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
       ),
       child: Text(
-        context.l10n.playerResumeFrom(
-          formatRuntime(from.inMicroseconds * 10),
-        ),
+        context.l10n.playerResumeFrom(formatRuntime(from.inMicroseconds * 10)),
         style: const TextStyle(color: Colors.white),
       ),
     );
