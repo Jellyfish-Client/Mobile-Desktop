@@ -146,6 +146,50 @@
   "@aboutVersion": {},
   "aboutLicenses": "Open-source licenses",
   "@aboutLicenses": {},
+  "aboutUpdateSectionTitle": "Updates",
+  "@aboutUpdateSectionTitle": {},
+  "aboutUpdateAutoToggle": "Check automatically",
+  "@aboutUpdateAutoToggle": {},
+  "aboutUpdateAutoToggleSubtitle": "Downloads in the background as soon as a new version is available",
+  "@aboutUpdateAutoToggleSubtitle": {},
+  "aboutUpdateCheckNow": "Check now",
+  "@aboutUpdateCheckNow": {},
+  "aboutUpdateChecking": "Checking…",
+  "@aboutUpdateChecking": {},
+  "aboutUpdateUpToDate": "You're on the latest version.",
+  "@aboutUpdateUpToDate": {},
+  "aboutUpdateDownloading": "Downloading v{version}…",
+  "@aboutUpdateDownloading": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutUpdateReadyTitle": "Update ready: v{version}",
+  "@aboutUpdateReadyTitle": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutUpdateReadyBody": "The app will restart to apply the installation.",
+  "@aboutUpdateReadyBody": {},
+  "aboutUpdateInstall": "Install & restart",
+  "@aboutUpdateInstall": {},
+  "aboutUpdateInstalling": "Installing…",
+  "@aboutUpdateInstalling": {},
+  "aboutUpdateReleaseNotes": "View release notes",
+  "@aboutUpdateReleaseNotes": {},
+  "aboutUpdateCheckFailed": "Couldn't check for updates.",
+  "@aboutUpdateCheckFailed": {},
+  "aboutUpdateDownloadFailed": "Failed to download the update.",
+  "@aboutUpdateDownloadFailed": {},
+  "aboutUpdateInstallFailed": "Failed to launch the installer.",
+  "@aboutUpdateInstallFailed": {},
+  "aboutUpdateUnsupportedPlatform": "In-app updates aren't available on this platform.",
+  "@aboutUpdateUnsupportedPlatform": {},
   "profileDisplayName": "Display name",
   "@profileDisplayName": {},
   "profileChangePassword": "Change password",

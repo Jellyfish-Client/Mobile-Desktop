@@ -518,6 +518,102 @@ abstract class AppLocalizations {
   /// **'Licences open-source'**
   String get aboutLicenses;
 
+  /// No description provided for @aboutUpdateSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mises à jour'**
+  String get aboutUpdateSectionTitle;
+
+  /// No description provided for @aboutUpdateAutoToggle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifier automatiquement'**
+  String get aboutUpdateAutoToggle;
+
+  /// No description provided for @aboutUpdateAutoToggleSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Télécharge en arrière-plan dès qu\'une nouvelle version est disponible'**
+  String get aboutUpdateAutoToggleSubtitle;
+
+  /// No description provided for @aboutUpdateCheckNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifier maintenant'**
+  String get aboutUpdateCheckNow;
+
+  /// No description provided for @aboutUpdateChecking.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérification en cours…'**
+  String get aboutUpdateChecking;
+
+  /// No description provided for @aboutUpdateUpToDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous utilisez la dernière version.'**
+  String get aboutUpdateUpToDate;
+
+  /// No description provided for @aboutUpdateDownloading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléchargement de v{version}…'**
+  String aboutUpdateDownloading(String version);
+
+  /// No description provided for @aboutUpdateReadyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise à jour prête : v{version}'**
+  String aboutUpdateReadyTitle(String version);
+
+  /// No description provided for @aboutUpdateReadyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'app va redémarrer pour appliquer l\'installation.'**
+  String get aboutUpdateReadyBody;
+
+  /// No description provided for @aboutUpdateInstall.
+  ///
+  /// In fr, this message translates to:
+  /// **'Installer et redémarrer'**
+  String get aboutUpdateInstall;
+
+  /// No description provided for @aboutUpdateInstalling.
+  ///
+  /// In fr, this message translates to:
+  /// **'Installation en cours…'**
+  String get aboutUpdateInstalling;
+
+  /// No description provided for @aboutUpdateReleaseNotes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les notes de version'**
+  String get aboutUpdateReleaseNotes;
+
+  /// No description provided for @aboutUpdateCheckFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de vérifier les mises à jour.'**
+  String get aboutUpdateCheckFailed;
+
+  /// No description provided for @aboutUpdateDownloadFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échec du téléchargement de la mise à jour.'**
+  String get aboutUpdateDownloadFailed;
+
+  /// No description provided for @aboutUpdateInstallFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échec du lancement de l\'installation.'**
+  String get aboutUpdateInstallFailed;
+
+  /// No description provided for @aboutUpdateUnsupportedPlatform.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les mises à jour in-app sont indisponibles sur cette plateforme.'**
+  String get aboutUpdateUnsupportedPlatform;
+
   /// No description provided for @profileDisplayName.
   ///
   /// In fr, this message translates to:

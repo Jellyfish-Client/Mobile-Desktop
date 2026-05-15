@@ -231,6 +231,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutLicenses => 'Open-source licenses';
 
   @override
+  String get aboutUpdateSectionTitle => 'Updates';
+
+  @override
+  String get aboutUpdateAutoToggle => 'Check automatically';
+
+  @override
+  String get aboutUpdateAutoToggleSubtitle =>
+      'Downloads in the background as soon as a new version is available';
+
+  @override
+  String get aboutUpdateCheckNow => 'Check now';
+
+  @override
+  String get aboutUpdateChecking => 'Checking…';
+
+  @override
+  String get aboutUpdateUpToDate => 'You\'re on the latest version.';
+
+  @override
+  String aboutUpdateDownloading(String version) {
+    return 'Downloading v$version…';
+  }
+
+  @override
+  String aboutUpdateReadyTitle(String version) {
+    return 'Update ready: v$version';
+  }
+
+  @override
+  String get aboutUpdateReadyBody =>
+      'The app will restart to apply the installation.';
+
+  @override
+  String get aboutUpdateInstall => 'Install & restart';
+
+  @override
+  String get aboutUpdateInstalling => 'Installing…';
+
+  @override
+  String get aboutUpdateReleaseNotes => 'View release notes';
+
+  @override
+  String get aboutUpdateCheckFailed => 'Couldn\'t check for updates.';
+
+  @override
+  String get aboutUpdateDownloadFailed => 'Failed to download the update.';
+
+  @override
+  String get aboutUpdateInstallFailed => 'Failed to launch the installer.';
+
+  @override
+  String get aboutUpdateUnsupportedPlatform =>
+      'In-app updates aren\'t available on this platform.';
+
+  @override
   String get profileDisplayName => 'Display name';
 
   @override

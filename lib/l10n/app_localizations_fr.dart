@@ -237,6 +237,64 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aboutLicenses => 'Licences open-source';
 
   @override
+  String get aboutUpdateSectionTitle => 'Mises à jour';
+
+  @override
+  String get aboutUpdateAutoToggle => 'Vérifier automatiquement';
+
+  @override
+  String get aboutUpdateAutoToggleSubtitle =>
+      'Télécharge en arrière-plan dès qu\'une nouvelle version est disponible';
+
+  @override
+  String get aboutUpdateCheckNow => 'Vérifier maintenant';
+
+  @override
+  String get aboutUpdateChecking => 'Vérification en cours…';
+
+  @override
+  String get aboutUpdateUpToDate => 'Vous utilisez la dernière version.';
+
+  @override
+  String aboutUpdateDownloading(String version) {
+    return 'Téléchargement de v$version…';
+  }
+
+  @override
+  String aboutUpdateReadyTitle(String version) {
+    return 'Mise à jour prête : v$version';
+  }
+
+  @override
+  String get aboutUpdateReadyBody =>
+      'L\'app va redémarrer pour appliquer l\'installation.';
+
+  @override
+  String get aboutUpdateInstall => 'Installer et redémarrer';
+
+  @override
+  String get aboutUpdateInstalling => 'Installation en cours…';
+
+  @override
+  String get aboutUpdateReleaseNotes => 'Voir les notes de version';
+
+  @override
+  String get aboutUpdateCheckFailed =>
+      'Impossible de vérifier les mises à jour.';
+
+  @override
+  String get aboutUpdateDownloadFailed =>
+      'Échec du téléchargement de la mise à jour.';
+
+  @override
+  String get aboutUpdateInstallFailed =>
+      'Échec du lancement de l\'installation.';
+
+  @override
+  String get aboutUpdateUnsupportedPlatform =>
+      'Les mises à jour in-app sont indisponibles sur cette plateforme.';
+
+  @override
   String get profileDisplayName => 'Nom d\'affichage';
 
   @override

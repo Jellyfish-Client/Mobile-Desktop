@@ -146,6 +146,50 @@
   "@aboutVersion": {},
   "aboutLicenses": "Licences open-source",
   "@aboutLicenses": {},
+  "aboutUpdateSectionTitle": "Mises à jour",
+  "@aboutUpdateSectionTitle": {},
+  "aboutUpdateAutoToggle": "Vérifier automatiquement",
+  "@aboutUpdateAutoToggle": {},
+  "aboutUpdateAutoToggleSubtitle": "Télécharge en arrière-plan dès qu'une nouvelle version est disponible",
+  "@aboutUpdateAutoToggleSubtitle": {},
+  "aboutUpdateCheckNow": "Vérifier maintenant",
+  "@aboutUpdateCheckNow": {},
+  "aboutUpdateChecking": "Vérification en cours…",
+  "@aboutUpdateChecking": {},
+  "aboutUpdateUpToDate": "Vous utilisez la dernière version.",
+  "@aboutUpdateUpToDate": {},
+  "aboutUpdateDownloading": "Téléchargement de v{version}…",
+  "@aboutUpdateDownloading": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutUpdateReadyTitle": "Mise à jour prête : v{version}",
+  "@aboutUpdateReadyTitle": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutUpdateReadyBody": "L'app va redémarrer pour appliquer l'installation.",
+  "@aboutUpdateReadyBody": {},
+  "aboutUpdateInstall": "Installer et redémarrer",
+  "@aboutUpdateInstall": {},
+  "aboutUpdateInstalling": "Installation en cours…",
+  "@aboutUpdateInstalling": {},
+  "aboutUpdateReleaseNotes": "Voir les notes de version",
+  "@aboutUpdateReleaseNotes": {},
+  "aboutUpdateCheckFailed": "Impossible de vérifier les mises à jour.",
+  "@aboutUpdateCheckFailed": {},
+  "aboutUpdateDownloadFailed": "Échec du téléchargement de la mise à jour.",
+  "@aboutUpdateDownloadFailed": {},
+  "aboutUpdateInstallFailed": "Échec du lancement de l'installation.",
+  "@aboutUpdateInstallFailed": {},
+  "aboutUpdateUnsupportedPlatform": "Les mises à jour in-app sont indisponibles sur cette plateforme.",
+  "@aboutUpdateUnsupportedPlatform": {},
   "profileDisplayName": "Nom d'affichage",
   "@profileDisplayName": {},
   "profileChangePassword": "Changer le mot de passe",

@@ -6,6 +6,8 @@ import '../../app/theme/app_spacing.dart';
 import '../../core/app_settings/app_locale_settings.dart';
 import '../../core/auth/accounts_repository.dart';
 import '../../core/auth/auth_controller.dart';
+import '../../core/updates/update_controller.dart';
+import '../../core/updates/update_models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n_extension.dart';
 import '../admin/admin_providers.dart';
@@ -147,7 +149,7 @@ class SettingsScreen extends ConsumerWidget {
             label: l10n.settingsAbout,
             tiles: [
               ListTile(
-                leading: const Icon(Icons.info_outline),
+                leading: _AboutLeadingIcon(),
                 title: Text(l10n.settingsAboutTitle),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push('/settings/about'),
@@ -156,6 +158,27 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Renders the About entry's leading icon with a small dot badge whenever a
+/// Windows update has been downloaded and is awaiting install. Keeps the
+/// notification discoverable for users who never open the About screen.
+class _AboutLeadingIcon extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final phase = ref
+        .watch(updateControllerProvider)
+        .valueOrNull
+        ?.phase;
+    final ready = phase is UpdateReady;
+    const icon = Icon(Icons.info_outline);
+    if (!ready) return icon;
+    return Badge(
+      smallSize: 8,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      child: icon,
     );
   }
 }

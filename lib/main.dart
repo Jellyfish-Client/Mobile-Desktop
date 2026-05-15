@@ -12,6 +12,7 @@ import 'core/cast/cast_providers.dart';
 import 'core/downloads/download_manager.dart';
 import 'core/playback/media_session_service.dart';
 import 'core/storage/device_id.dart';
+import 'core/updates/update_controller.dart';
 import 'features/home/home_providers.dart';
 import 'features/home/home_sections_controller.dart';
 
@@ -84,6 +85,16 @@ Future<void> main() async {
   // Eagerly create the DownloadManager so it subscribes to update events
   // and resumes tracked tasks from previous app runs.
   container.read(downloadManagerProvider);
+
+  // In-app updater (Windows only). Fire-and-forget the auto-check so the
+  // first frame isn't gated on a network round-trip — the controller
+  // surfaces progress through `updateControllerProvider` and the About
+  // screen renders the install banner when the download is ready.
+  if (updatesSupportedHere) {
+    unawaited(
+      container.read(updateControllerProvider.notifier).maybeAutoCheck(),
+    );
+  }
 
   // Cast SDK init — best-effort. If natives aren't available (emulator
   // without Play Services, non-mobile platform, denied permissions),
