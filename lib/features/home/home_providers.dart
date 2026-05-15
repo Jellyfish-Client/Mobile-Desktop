@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
@@ -7,7 +9,6 @@ import '../../core/auth/auth_controller.dart';
 import '../../core/bridge/bridge_error_bus.dart';
 import '../../core/bridge/bridge_errors.dart';
 import '../../core/bridge/bridge_services.dart';
-import '../../core/cache/cache_repository.dart';
 import '../../core/cache/cache_repository_provider.dart';
 import '../../core/cache/item_serialization.dart';
 import '../../core/cache/seerr_serialization.dart';
@@ -61,33 +62,33 @@ class _CachedListNotifier<TState, TStorage>
 
   @override
   Future<List<TState>> build() async {
-    // Invalidate this notifier whenever the active account changes — without
-    // this watch the keepAlive() below would hold the previous user's rails in
-    // memory forever and the UI would flash old data after switchTo.
     ref.watch(_activeAccountKeyProvider);
-    // Keep alive *before* awaiting anything. Otherwise if the consuming widget
-    // unmounts (tab switch) before the network call returns, the provider is
-    // disposed and the in-flight fetch is thrown away.
     ref.keepAlive();
     final cache = ref.read(cacheRepositoryProvider);
-    final cached = await _readCache(cache);
+    final rawCached = await cache.read(cacheKey);
+    final cached = rawCached == null ? null : decode(rawCached);
+    List<TState>? cachedMapped;
     if (cached != null) {
-      // Paint the cached list synchronously so the UI doesn't flash a skeleton
-      // on cold start. The network call below will re-emit when it lands.
-      state = AsyncData(mapState(cached));
+      // Paint the cached list synchronously so the UI doesn't flash a
+      // skeleton on cold start. The fresh fetch below decides whether to
+      // re-emit.
+      cachedMapped = mapState(cached);
+      state = AsyncData(cachedMapped);
     }
     final fresh = await fetch(ref);
-    // Await the write so a pull-to-refresh that re-creates the notifier can't
-    // race against an in-flight write from the previous cycle and read a
-    // stale payload from disk.
-    await cache.write(cacheKey, encode(fresh));
+    final encodedFresh = encode(fresh);
+    await cache.write(cacheKey, encodedFresh);
+    // SWR dedup: when the freshly-fetched payload is byte-identical to the
+    // cached payload we already emitted, return the SAME mapped reference
+    // so Riverpod's equality check skips the redundant second emission.
+    // Without this, derived providers like [tasteProfileProvider] →
+    // [recommendationRailsProvider] would re-execute their full
+    // computation (including 4-5 network calls) for a result that is
+    // structurally identical to the one they just produced.
+    if (cachedMapped != null && rawCached == encodedFresh) {
+      return cachedMapped;
+    }
     return mapState(fresh);
-  }
-
-  Future<List<TStorage>?> _readCache(CacheRepository cache) async {
-    final raw = await cache.read(cacheKey);
-    if (raw == null) return null;
-    return decode(raw);
   }
 }
 
@@ -125,9 +126,17 @@ class _CachedListFamilyNotifier<TState, TStorage, K>
     final key = cacheKeyFor(arg);
     final raw = await cache.read(key);
     final cached = raw == null ? null : decode(raw);
-    if (cached != null) state = AsyncData(mapState(cached));
+    List<TState>? cachedMapped;
+    if (cached != null) {
+      cachedMapped = mapState(cached);
+      state = AsyncData(cachedMapped);
+    }
     final fresh = await fetch(ref, arg);
-    await cache.write(key, encode(fresh));
+    final encodedFresh = encode(fresh);
+    await cache.write(key, encodedFresh);
+    if (cachedMapped != null && raw == encodedFresh) {
+      return cachedMapped;
+    }
     return mapState(fresh);
   }
 }
@@ -277,8 +286,14 @@ final featuredCarouselItemsProvider =
     FutureProvider.autoDispose<List<HeroFeaturedItem>>((ref) async {
       ref.keepAlive();
       final pool = await ref.watch(featuredPoolProvider.future);
-      final jfPool = pool.where((i) => i.imageTags.containsKey('Logo')).toList()
-        ..shuffle();
+      final jfPool = pool
+          .where((i) => i.imageTags.containsKey('Logo'))
+          .toList();
+      // Seed the shuffle off the pool's content so cache→network re-emit
+      // doesn't reorder the slides under the user.
+      final ids = jfPool.map((i) => i.id).toList()..sort();
+      final seed = Object.hashAll(ids);
+      jfPool.shuffle(Random(seed));
       return jfPool.take(6).map(HeroJellyfinItem.new).toList();
     });
 
@@ -770,6 +785,13 @@ final homeCatalogProvider = FutureProvider.autoDispose<List<HomeSection>>((
   // keepAlive BEFORE awaiting — userViews fetch must survive transient
   // unmounts (tab switch during cold start).
   ref.keepAlive();
+  // Register the l10n watch BEFORE any await so the dependency is
+  // resolved synchronously on the first run. At cold start
+  // `appLocaleSettingsProvider` (AsyncNotifier) transitions loading → data
+  // once SharedPreferences resolves; registering the watch after the
+  // awaits below would invalidate this provider mid-build and re-run
+  // every sub-fetch.
+  final l10n = ref.watch(appLocalizationsProvider);
   final views = await ref.watch(userViewsProvider.future);
   // Wait for the services discovery to resolve before building the catalog.
   // A synchronous read here would observe the pre-resolution `unavailable`
@@ -781,11 +803,6 @@ final homeCatalogProvider = FutureProvider.autoDispose<List<HomeSection>>((
   final recoSeeds = services.jellyseerrAvailable
       ? await ref.watch(recoSeedsProvider.future)
       : const <RecoSeed>[];
-  // Watching the localizations provider here makes the catalog reactive to
-  // language switches: changing the app locale invalidates this provider so
-  // the rail titles ("Continue watching", "Pour vous", …) rebuild in the
-  // new language without restarting the app.
-  final l10n = ref.watch(appLocalizationsProvider);
   return buildHomeCatalog(
     views: views,
     isSeerLinked: services.jellyseerrAvailable,
