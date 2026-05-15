@@ -10,19 +10,121 @@ import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/jf_section_title.dart';
 import 'widgets/download_tile.dart';
 
+// ---------------------------------------------------------------------------
+// Sealed class — représente un élément aplati de la liste virtualisée.
+// Un header de section (En cours, Téléchargés, Échecs) ou un header de série
+// ou une tuile téléchargeable.
+// ---------------------------------------------------------------------------
+
+sealed class _ListItem {
+  const _ListItem();
+}
+
+final class _SectionItem extends _ListItem {
+  const _SectionItem(this.title);
+  final String title;
+}
+
+final class _SeriesHeaderItem extends _ListItem {
+  const _SeriesHeaderItem(this.name);
+  final String name;
+}
+
+final class _TileItem extends _ListItem {
+  const _TileItem(this.row, this.kind);
+  final DownloadRow row;
+  final _TileKind kind;
+}
+
+enum _TileKind { inProgress, completed, failed }
+
+// ---------------------------------------------------------------------------
+// Fonction pure — construit la liste aplatie depuis les données brutes.
+// Appelée une seule fois par build ; aucun widget n'est alloué ici.
+// ---------------------------------------------------------------------------
+
+List<_ListItem> _buildFlatList({
+  required List<DownloadRow> inProgress,
+  required List<DownloadRow> completed,
+  required List<DownloadRow> failed,
+  required String inProgressLabel,
+  required String downloadedLabel,
+  required String failedLabel,
+}) {
+  final items = <_ListItem>[];
+
+  if (inProgress.isNotEmpty) {
+    items.add(_SectionItem(inProgressLabel));
+    for (final row in inProgress) {
+      items.add(_TileItem(row, _TileKind.inProgress));
+    }
+  }
+
+  if (completed.isNotEmpty) {
+    items.add(_SectionItem(downloadedLabel));
+    _addGroupedCompleted(items, completed);
+  }
+
+  if (failed.isNotEmpty) {
+    items.add(_SectionItem(failedLabel));
+    for (final row in failed) {
+      items.add(_TileItem(row, _TileKind.failed));
+    }
+  }
+
+  return items;
+}
+
+/// Ajoute les éléments "complétés" dans [items], groupés par série.
+/// Les films (non-épisodes) sont ajoutés à la fin, sans header.
+void _addGroupedCompleted(List<_ListItem> items, List<DownloadRow> rows) {
+  final bySeries = <String, List<DownloadRow>>{};
+  final movies = <DownloadRow>[];
+
+  for (final r in rows) {
+    if (r.itemType == 'Episode' && r.seriesId != null) {
+      bySeries.putIfAbsent(r.seriesId!, () => []).add(r);
+    } else {
+      movies.add(r);
+    }
+  }
+
+  bySeries.forEach((_, eps) {
+    eps.sort((a, b) {
+      final s = (a.seasonNumber ?? 0).compareTo(b.seasonNumber ?? 0);
+      if (s != 0) return s;
+      return (a.episodeNumber ?? 0).compareTo(b.episodeNumber ?? 0);
+    });
+    items.add(_SeriesHeaderItem(eps.first.seriesName ?? ''));
+    for (final row in eps) {
+      items.add(_TileItem(row, _TileKind.completed));
+    }
+  });
+
+  for (final row in movies) {
+    items.add(_TileItem(row, _TileKind.completed));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Écran principal
+// ---------------------------------------------------------------------------
+
 class DownloadsScreen extends ConsumerWidget {
   const DownloadsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(allDownloadsProvider);
+    final l10n = context.l10n;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.downloadsTitle),
+        title: Text(l10n.downloadsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            tooltip: context.l10n.downloadsSettings,
+            tooltip: l10n.downloadsSettings,
             onPressed: () => context.push('/settings/downloads'),
           ),
         ],
@@ -34,8 +136,8 @@ class DownloadsScreen extends ConsumerWidget {
           if (rows.isEmpty) {
             return EmptyState(
               icon: Icons.download_outlined,
-              title: context.l10n.downloadsNoDownloads,
-              message: context.l10n.downloadsNoDownloadsMessage,
+              title: l10n.downloadsNoDownloads,
+              message: l10n.downloadsNoDownloadsMessage,
             );
           }
 
@@ -58,36 +160,29 @@ class DownloadsScreen extends ConsumerWidget {
               )
               .toList();
 
-          return ListView(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-            children: [
-              if (inProgress.isNotEmpty) ...[
-                _SectionHeader(title: context.l10n.downloadsInProgress),
-                ...inProgress.map(
-                  (row) => _DismissibleTile(
-                    row: row,
-                    ref: ref,
-                    onSwiped: () =>
-                        ref.read(downloadManagerProvider).cancel(row.itemId),
+          // Liste aplatie — pure data, aucun widget alloué.
+          final flatItems = _buildFlatList(
+            inProgress: inProgress,
+            completed: completed,
+            failed: failed,
+            inProgressLabel: l10n.downloadsInProgress,
+            downloadedLabel: l10n.downloadsDownloaded,
+            failedLabel: l10n.downloadsFailedOrCancelled,
+          );
+
+          return CustomScrollView(
+            slivers: [
+              // Padding haut via SliverPadding pour ne pas sortir du sliver world.
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        _buildItem(context, ref, flatItems[index]),
+                    childCount: flatItems.length,
                   ),
                 ),
-              ],
-              if (completed.isNotEmpty) ...[
-                _SectionHeader(title: context.l10n.downloadsDownloaded),
-                ..._groupedCompleted(context, completed, ref),
-              ],
-              if (failed.isNotEmpty) ...[
-                _SectionHeader(title: context.l10n.downloadsFailedOrCancelled),
-                ...failed.map(
-                  (row) => _DismissibleTile(
-                    row: row,
-                    ref: ref,
-                    onSwiped: () => ref
-                        .read(downloadManagerProvider)
-                        .deleteDownload(row.itemId),
-                  ),
-                ),
-              ],
+              ),
             ],
           );
         },
@@ -95,72 +190,30 @@ class DownloadsScreen extends ConsumerWidget {
     );
   }
 
-  /// Episodes are grouped under their series. Movies are listed flat at the end.
-  List<Widget> _groupedCompleted(
-    BuildContext context,
-    List<DownloadRow> rows,
-    WidgetRef ref,
-  ) {
-    final bySeries = <String, List<DownloadRow>>{};
-    final movies = <DownloadRow>[];
-    for (final r in rows) {
-      if (r.itemType == 'Episode' && r.seriesId != null) {
-        bySeries.putIfAbsent(r.seriesId!, () => []).add(r);
-      } else {
-        movies.add(r);
-      }
-    }
-
-    final widgets = <Widget>[];
-    bySeries.forEach((seriesId, eps) {
-      eps.sort((a, b) {
-        final s = (a.seasonNumber ?? 0).compareTo(b.seasonNumber ?? 0);
-        if (s != 0) return s;
-        return (a.episodeNumber ?? 0).compareTo(b.episodeNumber ?? 0);
-      });
-      widgets
-        ..add(
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg,
-              AppSpacing.md,
-              AppSpacing.lg,
-              AppSpacing.xs,
-            ),
-            child: Text(
-              eps.first.seriesName ?? context.l10n.downloadsSeriesName,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
-        )
-        ..addAll(
-          eps.map(
-            (row) => _DismissibleTile(
-              row: row,
-              ref: ref,
-              onSwiped: () =>
-                  ref.read(downloadManagerProvider).deleteDownload(row.itemId),
-            ),
-          ),
-        );
-    });
-
-    widgets.addAll(
-      movies.map(
-        (row) => _DismissibleTile(
-          row: row,
-          ref: ref,
-          onSwiped: () =>
-              ref.read(downloadManagerProvider).deleteDownload(row.itemId),
-        ),
+  Widget _buildItem(BuildContext context, WidgetRef ref, _ListItem item) {
+    return switch (item) {
+      _SectionItem(:final title) => _SectionHeader(title: title),
+      _SeriesHeaderItem(:final name) => _SeriesHeader(
+        name: name.isNotEmpty ? name : context.l10n.downloadsSeriesName,
       ),
-    );
-
-    return widgets;
+      _TileItem(:final row, :final kind) => _DismissibleTile(
+        row: row,
+        ref: ref,
+        onSwiped: () => switch (kind) {
+          _TileKind.inProgress =>
+            ref.read(downloadManagerProvider).cancel(row.itemId),
+          _TileKind.completed ||
+          _TileKind.failed =>
+            ref.read(downloadManagerProvider).deleteDownload(row.itemId),
+        },
+      ),
+    };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Widgets statiques de présentation
+// ---------------------------------------------------------------------------
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title});
@@ -180,6 +233,34 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
+class _SeriesHeader extends StatelessWidget {
+  const _SeriesHeader({required this.name});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.xs,
+      ),
+      child: Text(
+        name,
+        style: Theme.of(context)
+            .textTheme
+            .titleSmall
+            ?.copyWith(fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tuile avec geste swipe-to-dismiss
+// ---------------------------------------------------------------------------
+
 class _DismissibleTile extends StatefulWidget {
   const _DismissibleTile({
     required this.row,
@@ -196,9 +277,8 @@ class _DismissibleTile extends StatefulWidget {
 }
 
 class _DismissibleTileState extends State<_DismissibleTile> {
-  // The Drift stream takes a beat to emit the deletion and re-render without
-  // the row. During that window a fast user could trigger onDismissed twice.
-  // Scoped per-instance so disposal of the widget naturally clears it.
+  // Le stream Drift prend un court instant pour propager la suppression.
+  // Ce booléen par instance empêche un double-dismiss pendant cette fenêtre.
   bool _dismissing = false;
 
   @override

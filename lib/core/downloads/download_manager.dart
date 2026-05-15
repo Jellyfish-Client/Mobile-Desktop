@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:background_downloader/background_downloader.dart';
 import 'package:drift/drift.dart' show Value;
@@ -15,10 +16,12 @@ import 'package:uuid/uuid.dart';
 import '../auth/account_key.dart';
 import '../auth/auth_controller.dart';
 import '../jellyfin/jellyfin_client.dart';
+import '../network/connectivity_provider.dart';
 import '../network/dio_provider.dart';
 import '../storage/app_database.dart';
 import '../storage/app_database_provider.dart';
 import '../storage/device_id.dart';
+import '../sync/backoff_policy.dart';
 import 'download_settings.dart';
 import 'download_url_builder.dart';
 
@@ -26,16 +29,37 @@ const _kDownloadsDir = 'downloads';
 const _kImagesDir = 'downloads/images';
 const _kGroup = 'jellyfish';
 
+/// Hard cap for the persisted `last_error` text on a failed download. Mirrors
+/// the SyncService cap so a runaway exception string (Dio dumps the full
+/// request body on some errors) can't bloat the DB row.
+const int _maxDownloadLastErrorChars = 500;
+
 class DownloadManager {
-  DownloadManager(this._ref) {
+  DownloadManager(
+    this._ref, {
+    BackoffPolicy? policy,
+    DateTime Function()? clock,
+    Random? random,
+  }) : _policy =
+           policy ??
+           BackoffPolicy.exponential(
+             base: const Duration(seconds: 30),
+             cap: const Duration(hours: 1),
+           ),
+       _clock = clock ?? DateTime.now,
+       _random = random ?? Random() {
     _bootstrap();
   }
 
   final Ref _ref;
+  final BackoffPolicy _policy;
+  final DateTime Function() _clock;
+  final Random _random;
   final FileDownloader _fd = FileDownloader();
   final Logger _log = Logger('DownloadManager');
   final Uuid _uuid = const Uuid();
   StreamSubscription<TaskUpdate>? _updatesSub;
+  ProviderSubscription<AsyncValue<bool>>? _connectivitySub;
   AppLifecycleListener? _lifecycle;
   // Serializes DB writes per task so concurrent progress / status events for
   // the same task can't race (e.g. a delayed progress event overwriting a
@@ -47,6 +71,13 @@ class DownloadManager {
   // Caches the notification-permission request so we only prompt once per
   // session. Android 13+ and iOS need this for progress notifications to show.
   Future<PermissionStatus>? _notifPermissionFuture;
+  // Guards `_retryEligible` so a connectivity flap can't trigger overlapping
+  // retry sweeps that would double-enqueue the same row.
+  bool _retrying = false;
+  bool _wasOnline = false;
+
+  /// Exposes the active retry policy for diagnostics / tests.
+  BackoffPolicy get policy => _policy;
 
   AppDatabase get _db => _ref.read(appDatabaseProvider);
 
@@ -89,6 +120,21 @@ class DownloadManager {
       onPause: _onAppBackground,
       onResume: _onAppForeground,
     );
+    // Drives the retry sweep: whenever connectivity flips from offline to
+    // online, scan the Downloads table for failed rows whose `nextRetryAt`
+    // window has elapsed and re-enqueue them. We mirror SyncService's
+    // edge-trigger semantics — only the offline → online transition triggers
+    // a sweep, not every connectivity event (Wi-Fi → cellular handoffs etc.).
+    _connectivitySub = _ref.listen<AsyncValue<bool>>(connectivityStreamProvider, (
+      prev,
+      next,
+    ) {
+      final online = next.valueOrNull ?? false;
+      if (online && !_wasOnline) {
+        unawaited(retryEligible());
+      }
+      _wasOnline = online;
+    }, fireImmediately: true);
   }
 
   /// Called synchronously by `ref.onDispose`. We can't await here, but
@@ -96,6 +142,8 @@ class DownloadManager {
   void dispose() {
     _updatesSub?.cancel();
     _updatesSub = null;
+    _connectivitySub?.close();
+    _connectivitySub = null;
     _lifecycle?.dispose();
     _lifecycle = null;
   }
@@ -104,20 +152,57 @@ class DownloadManager {
   /// downloads in Settings and the app moves out of the foreground. Note:
   /// `AppLifecycleListener.onPause` returns `void`, so the async work below
   /// races against the OS suspending the isolate. iOS only grants ~5s of
-  /// background time; the simple `pause` calls usually fit, but if the user
-  /// has many running downloads some pauses may not land before suspension.
+  /// background time; tasks are paused in parallel with a 4s hard budget to
+  /// stay safely below the iOS limit even with many concurrent downloads.
   Future<void> _onAppBackground() async {
     final settings = _ref.read(downloadSettingsProvider).valueOrNull;
     if (settings?.backgroundEnabled ?? true) return;
     final rows = await _db.findActive(_accountKey);
-    for (final r in rows) {
-      if (r.taskId == null) continue;
-      final t = await _fd.taskForId(r.taskId!);
-      if (t is DownloadTask) {
-        final paused = await _fd.pause(t);
-        if (paused) _autoPaused.add(r.itemId);
-      }
-    }
+    if (rows.isEmpty) return;
+
+    await pauseTasksInParallel(
+      rows,
+      pauseTask: (taskId) async {
+        final t = await _fd.taskForId(taskId);
+        if (t is DownloadTask) return _fd.pause(t);
+        return false;
+      },
+    );
+  }
+
+  /// Pauses [rows] in parallel, collecting the itemIds that were successfully
+  /// paused into [_autoPaused]. Failures per task are caught individually so
+  /// one broken task can't block the others. A 4-second hard timeout prevents
+  /// exceeding the iOS background-execution budget (~5s).
+  ///
+  /// The [pauseTask] callback is injectable for unit-testing without a real
+  /// [FileDownloader]. It receives the non-null taskId and must return whether
+  /// the pause succeeded.
+  @visibleForTesting
+  Future<void> pauseTasksInParallel(
+    List<DownloadRow> rows, {
+    required Future<bool> Function(String taskId) pauseTask,
+  }) async {
+    await Future.wait(
+      rows.map((r) async {
+        if (r.taskId == null) return;
+        try {
+          final paused = await pauseTask(r.taskId!);
+          if (paused) _autoPaused.add(r.itemId);
+        } on Object catch (e, st) {
+          _log.warning('Failed to pause download ${r.taskId}', e, st);
+        }
+      }),
+    ).timeout(
+      const Duration(seconds: 4),
+      onTimeout: () {
+        _log.warning(
+          'Background pause exceeded 4s budget — iOS may suspend before all '
+          'tasks are paused',
+        );
+        return [];
+      },
+    );
   }
 
   /// Resumes whatever we auto-paused on background when the user comes back.
@@ -184,6 +269,11 @@ class DownloadManager {
     // Use a fresh UUID per enqueue so re-downloading the same item after a
     // cancel/fail can't collide with the old task in background_downloader's
     // task DB. The mapping back to itemId lives on DownloadRow.taskId.
+    //
+    // `retries: 0` disables the package's built-in auto-retry: our own
+    // BackoffPolicy owns the retry schedule (persisted in Drift), so letting
+    // background_downloader retry on its own would cause double-retries with
+    // a different cadence and clobber our `attempts` counter.
     final task = DownloadTask(
       taskId: _uuid.v4(),
       url: endpoint.url,
@@ -195,11 +285,16 @@ class DownloadManager {
       updates: Updates.statusAndProgress,
       requiresWiFi: settings.wifiOnly,
       allowPause: true,
-      retries: 3,
+      retries: 0,
       displayName: item.name ?? itemId,
     );
 
     final genres = item.genres?.toList();
+    // Reset the retry-bookkeeping columns explicitly: `insertOnConflictUpdate`
+    // only overrides the columns we set, so a previously-failed row would
+    // carry its stale `attempts` / `nextRetryAt` forward and immediately look
+    // "still in backoff" to the retry sweep. Passing explicit zero/null Values
+    // here clears that history on every manual re-enqueue.
     await _db.upsertRow(
       DownloadsCompanion.insert(
         accountKey: Value(_accountKey),
@@ -223,6 +318,11 @@ class DownloadManager {
         genres: Value(
           (genres == null || genres.isEmpty) ? null : jsonEncode(genres),
         ),
+        attempts: const Value(0),
+        lastAttemptAt: const Value(null),
+        nextRetryAt: const Value(null),
+        lastError: const Value(null),
+        errorMessage: const Value(null),
       ),
     );
 
@@ -468,13 +568,117 @@ class DownloadManager {
             await _db.setStatus(ownerKey, row.itemId, DownloadStatus.cancelled);
           case TaskStatus.failed:
           case TaskStatus.notFound:
-            await _db.setStatus(
-              ownerKey,
-              row.itemId,
-              DownloadStatus.failed,
-              error: exception?.description ?? status.name,
-            );
+            await _recordFailure(row, exception?.description ?? status.name);
         }
+    }
+  }
+
+  /// Stamps the failed row with bumped `attempts`, a fresh `lastAttemptAt`,
+  /// the next backoff-driven `nextRetryAt` (null when dead-lettering kicks in)
+  /// and a truncated `lastError`. Status is also set to
+  /// [DownloadStatus.failed]. Mirrors `SyncService._recordFailure` so both
+  /// queues share the same persistence contract.
+  Future<void> _recordFailure(DownloadRow row, String rawError) async {
+    final attempts = row.attempts + 1;
+    final now = _clock();
+    final next = _policy.nextRetryAt(attempts, now: now, random: _random);
+    final truncated = _truncateError(rawError);
+    if (next == null) {
+      _log.info(
+        'Download row ${row.itemId} dead-lettered after $attempts attempts',
+      );
+    } else {
+      _log.info(
+        'Download row ${row.itemId} rescheduled for $next '
+        '(attempt $attempts/${_policy.maxAttempts})',
+      );
+    }
+    await _db.recordDownloadFailure(
+      accountKey: row.accountKey,
+      itemId: row.itemId,
+      attempts: attempts,
+      lastAttemptAt: now,
+      nextRetryAt: next,
+      lastError: truncated,
+    );
+  }
+
+  String _truncateError(String raw) {
+    if (raw.length <= _maxDownloadLastErrorChars) return raw;
+    return raw.substring(0, _maxDownloadLastErrorChars);
+  }
+
+  /// Public retry sweep — also exposed on the manager so callers (UI buttons,
+  /// background work runners) can force a sweep without waiting for the next
+  /// connectivity transition.
+  ///
+  /// Scans the Downloads table for rows whose backoff window has elapsed and
+  /// re-enqueues a fresh `DownloadTask` for each. Rows past `maxAttempts` are
+  /// filtered out at the SQL level so they never bounce back.
+  Future<void> retryEligible() async {
+    if (_retrying) return;
+    _retrying = true;
+    try {
+      final accountKey = _accountKey;
+      if (accountKey == legacyAccountKey) return;
+      final session = _ref.read(authControllerProvider).valueOrNull?.session;
+      final deviceId = _ref.read(deviceIdProvider).valueOrNull;
+      if (session == null || deviceId == null) return;
+      final settings =
+          _ref.read(downloadSettingsProvider).valueOrNull ??
+          DownloadSettings.defaults;
+
+      final eligible = await _db.pendingDownloadsEligibleForRetry(
+        accountKey,
+        maxAttempts: _policy.maxAttempts,
+        now: _clock(),
+      );
+      for (final row in eligible) {
+        try {
+          final endpoint = buildDownloadEndpoint(
+            session: session,
+            deviceId: deviceId,
+            itemId: row.itemId,
+          );
+          final filename =
+              '${row.itemId}'
+              '${row.container == null ? '' : '.${row.container}'}';
+          final task = DownloadTask(
+            taskId: _uuid.v4(),
+            url: endpoint.url,
+            filename: filename,
+            headers: endpoint.headers,
+            baseDirectory: BaseDirectory.applicationDocuments,
+            directory: _kDownloadsDir,
+            group: _kGroup,
+            updates: Updates.statusAndProgress,
+            requiresWiFi: settings.wifiOnly,
+            allowPause: true,
+            retries: 0,
+            displayName: row.name,
+          );
+          // Bind the new task id to the row BEFORE enqueueing so a fast
+          // failure callback can find it via findByTaskId. We intentionally
+          // keep `attempts` as-is so the next failure keeps climbing the
+          // backoff curve.
+          await _db.rebindDownloadTaskId(
+            accountKey: row.accountKey,
+            itemId: row.itemId,
+            taskId: task.taskId,
+          );
+          final ok = await _fd.enqueue(task);
+          if (!ok) {
+            // Treat an immediate enqueue rejection as one more failed attempt
+            // so we don't loop indefinitely on a permanently-broken task.
+            await _recordFailure(row, 'enqueue rejected');
+          }
+        } on Object catch (e, s) {
+          _log.warning('Retry enqueue failed for ${row.itemId}', e, s);
+          await _recordFailure(row, e.toString());
+        }
+      }
+    } finally {
+      _retrying = false;
     }
   }
 
