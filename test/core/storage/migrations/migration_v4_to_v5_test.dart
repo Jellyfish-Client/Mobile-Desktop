@@ -51,7 +51,11 @@ void main() {
           .select('PRAGMA user_version')
           .first
           .columnAt(0) as int;
-      expect(userVersion, 5);
+      // Drift runs every onUpgrade step between `from` and `to`, so a
+      // database seeded at v4 ends up at the current schemaVersion (6 since
+      // the cached_responses PK rebuild landed). The v5 retry-column
+      // assertions below still validate the v4→v5 step independently.
+      expect(userVersion, 6);
 
       // Both tables must now expose the four retry columns.
       final syncCols = raw

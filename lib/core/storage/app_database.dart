@@ -114,7 +114,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -183,6 +183,28 @@ class AppDatabase extends _$AppDatabase {
           'SET next_retry_at = created_at '
           'WHERE next_retry_at IS NULL',
         );
+      }
+      if (from < 6) {
+        // Fix the cached_responses primary key for legacy upgraders. The
+        // table was created at v2 with `PRIMARY KEY (key)` only; v4 added
+        // the `account_key` column but SQLite can't ALTER a primary key,
+        // so the composite PK declared in the Dart `CachedResponses` table
+        // (`{accountKey, key}`) never reached the on-disk schema for users
+        // who upgraded through that path. As a result Drift's
+        // `insertOnConflictUpdate` emits `ON CONFLICT(account_key, key)`
+        // which fails with "ON CONFLICT clause does not match any PRIMARY
+        // KEY or UNIQUE constraint" on every SWR cache write — knocking
+        // out the home screen because every rail provider throws on its
+        // cache.write call.
+        //
+        // SQLite can't ALTER the primary key in place; the canonical fix
+        // is rebuild the table. Cache content is regenerable (SWR), so we
+        // drop and recreate from the current Dart definition instead of
+        // copying rows. Index is recreated too because DROP TABLE removes
+        // its indexes.
+        await m.deleteTable('cached_responses');
+        await m.createTable(cachedResponses);
+        await m.createIndex(cachedResponsesAccountIdx);
       }
     },
   );
