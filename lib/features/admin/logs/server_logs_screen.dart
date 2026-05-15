@@ -6,6 +6,7 @@ import 'package:jellyfin_api/jellyfin_api.dart';
 
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import 'logs_providers.dart';
 
 class AdminServerLogsScreen extends ConsumerWidget {
@@ -19,11 +20,12 @@ class AdminServerLogsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.l10n.adminServerLogs)),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(adminServerLogsProvider.future),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -34,12 +36,7 @@ class AdminServerLogsScreen extends ConsumerWidget {
           ),
           data: (files) {
             if (files.isEmpty) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 96),
-                  Center(child: Text(context.l10n.adminServerLogsEmpty)),
-                ],
-              );
+              return Center(child: Text(context.l10n.adminServerLogsEmpty));
             }
             return ListView.builder(
               padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),

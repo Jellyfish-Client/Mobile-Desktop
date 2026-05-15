@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
+import '../../../app/theme/app_radius.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../../shared/widgets/jf_confirm_dialog.dart';
 import '../../settings/widgets/settings_section.dart';
 
@@ -28,11 +30,12 @@ class _AdminBackupScreenState extends ConsumerState<AdminBackupScreen> {
       appBar: AppBar(title: Text(l.adminBackup)),
       body: RefreshIndicator(
         onRefresh: () => ref.read(adminBackupProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -44,20 +47,16 @@ class _AdminBackupScreenState extends ConsumerState<AdminBackupScreen> {
           data: (backups) => ListView(
             padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
             children: [
-              _CreateBackupCard(
-                isCreating: _isCreating,
-                onCreate: _create,
-              ),
+              _CreateBackupCard(isCreating: _isCreating, onCreate: _create),
               if (backups.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
                   child: Center(
                     child: Text(
                       l.adminBackupEmpty,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontStyle: FontStyle.italic),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
                 )
@@ -83,9 +82,7 @@ class _AdminBackupScreenState extends ConsumerState<AdminBackupScreen> {
     if (_isCreating) return;
     setState(() => _isCreating = true);
     final messenger = ScaffoldMessenger.of(context)
-      ..showSnackBar(
-        SnackBar(content: Text(context.l10n.adminBackupCreating)),
-      );
+      ..showSnackBar(SnackBar(content: Text(context.l10n.adminBackupCreating)));
     try {
       await ref.read(adminBackupProvider.notifier).create();
       if (!mounted) return;
@@ -95,9 +92,7 @@ class _AdminBackupScreenState extends ConsumerState<AdminBackupScreen> {
     } on Object catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     } finally {
       if (mounted) setState(() => _isCreating = false);
@@ -138,9 +133,7 @@ class _AdminBackupScreenState extends ConsumerState<AdminBackupScreen> {
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }
@@ -167,7 +160,7 @@ class _CreateBackupCard extends StatelessWidget {
         elevation: 0,
         color: theme.colorScheme.surfaceContainerLow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadius.md),
           side: BorderSide(
             color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
           ),
@@ -179,10 +172,7 @@ class _CreateBackupCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.backup_outlined,
-                    color: theme.colorScheme.primary,
-                  ),
+                  Icon(Icons.backup_outlined, color: theme.colorScheme.primary),
                   const SizedBox(width: AppSpacing.sm),
                   Text(
                     l.adminBackupCreateSectionTitle,
@@ -191,10 +181,7 @@ class _CreateBackupCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(
-                l.adminBackupCreateHint,
-                style: theme.textTheme.bodyMedium,
-              ),
+              Text(l.adminBackupCreateHint, style: theme.textTheme.bodyMedium),
               const SizedBox(height: AppSpacing.lg),
               Align(
                 alignment: Alignment.centerLeft,
@@ -264,8 +251,7 @@ class _BackupTile extends StatelessWidget {
                     Chip(
                       label: Text(label),
                       visualDensity: VisualDensity.compact,
-                      materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                 ],
               ),
@@ -280,5 +266,4 @@ class _BackupTile extends StatelessWidget {
       ),
     );
   }
-
 }

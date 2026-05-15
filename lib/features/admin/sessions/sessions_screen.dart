@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
+import '../../../app/theme/app_radius.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../../shared/widgets/jf_confirm_dialog.dart';
 import 'sessions_providers.dart';
 
@@ -18,11 +20,12 @@ class AdminSessionsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.l10n.adminSessions)),
       body: RefreshIndicator(
         onRefresh: () => ref.read(adminSessionsProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -33,12 +36,7 @@ class AdminSessionsScreen extends ConsumerWidget {
           ),
           data: (sessions) {
             if (sessions.isEmpty) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 96),
-                  Center(child: Text(context.l10n.adminSessionsEmpty)),
-                ],
-              );
+              return Center(child: Text(context.l10n.adminSessionsEmpty));
             }
             return ListView.builder(
               padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
@@ -78,15 +76,14 @@ class _SessionTile extends ConsumerWidget {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: isPlaying ? scheme.primary : scheme.primaryContainer,
-        foregroundColor:
-            isPlaying ? scheme.onPrimary : scheme.onPrimaryContainer,
+        foregroundColor: isPlaying
+            ? scheme.onPrimary
+            : scheme.onPrimaryContainer,
         child: Text(initial),
       ),
       title: Row(
         children: [
-          Flexible(
-            child: Text(user, overflow: TextOverflow.ellipsis),
-          ),
+          Flexible(child: Text(user, overflow: TextOverflow.ellipsis)),
           if (isActive) ...[
             const SizedBox(width: AppSpacing.sm),
             _Badge(
@@ -178,10 +175,9 @@ class _SessionTile extends ConsumerWidget {
     final sessionId = session.id;
     if (sessionId == null) return;
     try {
-      await ref.read(adminSessionsProvider.notifier).sendMessage(
-            sessionId: sessionId,
-            text: text,
-          );
+      await ref
+          .read(adminSessionsProvider.notifier)
+          .sendMessage(sessionId: sessionId, text: text);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.adminSessionsMessageSent)),
@@ -189,9 +185,7 @@ class _SessionTile extends ConsumerWidget {
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }
@@ -221,9 +215,7 @@ class _SessionTile extends ConsumerWidget {
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }
@@ -246,14 +238,14 @@ class _Badge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: foreground,
-              fontWeight: FontWeight.w600,
-            ),
+          color: foreground,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

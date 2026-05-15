@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
+import '../../../app/theme/app_radius.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import 'users_providers.dart';
 
 class AdminUsersListScreen extends ConsumerWidget {
@@ -23,11 +25,12 @@ class AdminUsersListScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(adminUsersProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -73,10 +76,7 @@ class _UserTile extends StatelessWidget {
       title: Row(
         children: [
           Flexible(
-            child: Text(
-              user.name ?? '—',
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Text(user.name ?? '—', overflow: TextOverflow.ellipsis),
           ),
           if (isAdmin) ...[
             const SizedBox(width: AppSpacing.sm),
@@ -133,14 +133,14 @@ class _Badge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: foreground,
-              fontWeight: FontWeight.w600,
-            ),
+          color: foreground,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

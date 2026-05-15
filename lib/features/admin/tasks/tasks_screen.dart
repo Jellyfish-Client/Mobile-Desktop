@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
 import '../../../app/theme/app_spacing.dart';
+import '../../../app/theme/app_typography.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import 'tasks_providers.dart';
 
 class AdminTasksScreen extends ConsumerWidget {
@@ -18,11 +20,12 @@ class AdminTasksScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.l10n.adminTasks)),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(adminTasksProvider.future),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -55,11 +58,9 @@ class AdminTasksScreen extends ConsumerWidget {
                     ),
                     child: Text(
                       cat.toUpperCase(),
-                      style:
-                          Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                                letterSpacing: 1.2,
-                              ),
+                      style: AppTypography.eyebrow(
+                        color: scheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                   ...byCat[cat]!.map((t) => _TaskTile(task: t)),
@@ -133,11 +134,18 @@ class _TaskTile extends ConsumerWidget {
       return Icon(Icons.hourglass_top, color: scheme.error);
     }
     return switch (lastStatus) {
-      TaskCompletionStatus.failed => Icon(Icons.error_outline, color: scheme.error),
-      TaskCompletionStatus.cancelled || TaskCompletionStatus.aborted =>
-        Icon(Icons.cancel_outlined, color: scheme.onSurfaceVariant),
-      TaskCompletionStatus.completed => Icon(Icons.check_circle_outline,
-          color: scheme.primary),
+      TaskCompletionStatus.failed => Icon(
+        Icons.error_outline,
+        color: scheme.error,
+      ),
+      TaskCompletionStatus.cancelled || TaskCompletionStatus.aborted => Icon(
+        Icons.cancel_outlined,
+        color: scheme.onSurfaceVariant,
+      ),
+      TaskCompletionStatus.completed => Icon(
+        Icons.check_circle_outline,
+        color: scheme.primary,
+      ),
       _ => Icon(Icons.schedule, color: scheme.onSurfaceVariant),
     };
   }
@@ -180,9 +188,21 @@ class _TaskTile extends ConsumerWidget {
             const SizedBox(height: AppSpacing.md),
             if (t.description != null) Text(t.description!),
             const SizedBox(height: AppSpacing.md),
-            _kv(context, context.l10n.adminTasksLastRunStatus, last.status?.name ?? '—'),
-            _kv(context, context.l10n.adminTasksLastRunStart, last.startTimeUtc?.toLocal().toString() ?? '—'),
-            _kv(context, context.l10n.adminTasksLastRunEnd, last.endTimeUtc?.toLocal().toString() ?? '—'),
+            _kv(
+              context,
+              context.l10n.adminTasksLastRunStatus,
+              last.status?.name ?? '—',
+            ),
+            _kv(
+              context,
+              context.l10n.adminTasksLastRunStart,
+              last.startTimeUtc?.toLocal().toString() ?? '—',
+            ),
+            _kv(
+              context,
+              context.l10n.adminTasksLastRunEnd,
+              last.endTimeUtc?.toLocal().toString() ?? '—',
+            ),
             if (last.startTimeUtc != null && last.endTimeUtc != null)
               _kv(
                 context,
@@ -190,7 +210,11 @@ class _TaskTile extends ConsumerWidget {
                 last.endTimeUtc!.difference(last.startTimeUtc!).toString(),
               ),
             if (last.errorMessage != null && last.errorMessage!.isNotEmpty)
-              _kv(context, context.l10n.adminTasksLastRunError, last.errorMessage!),
+              _kv(
+                context,
+                context.l10n.adminTasksLastRunError,
+                last.errorMessage!,
+              ),
           ],
         ),
       ),
@@ -230,9 +254,7 @@ class _TaskTile extends ConsumerWidget {
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }
@@ -243,9 +265,7 @@ class _TaskTile extends ConsumerWidget {
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }

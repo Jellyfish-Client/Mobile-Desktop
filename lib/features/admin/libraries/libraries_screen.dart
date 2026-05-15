@@ -6,6 +6,7 @@ import 'package:jellyfin_api/jellyfin_api.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/jellyfin/jellyfin_client.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../../shared/widgets/jf_confirm_dialog.dart';
 import 'libraries_providers.dart';
 import 'library_paths_picker.dart';
@@ -26,11 +27,12 @@ class AdminLibrariesScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(adminLibrariesProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import 'logs_providers.dart';
 
 class LogFileViewerScreen extends ConsumerWidget {
@@ -38,8 +39,10 @@ class LogFileViewerScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: async.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+      body: JfAsyncScaffold(
+        value: async,
+        maxWidth: double.infinity,
+        padding: EdgeInsets.zero,
         error: (e, _) => Center(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.xl),

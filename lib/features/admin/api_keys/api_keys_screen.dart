@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
+import '../../../app/theme/app_radius.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../../shared/widgets/jf_confirm_dialog.dart';
 import 'api_keys_providers.dart';
 
@@ -35,11 +37,12 @@ class AdminApiKeysScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(adminApiKeysProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -48,36 +51,32 @@ class AdminApiKeysScreen extends ConsumerWidget {
               ),
             ],
           ),
-          data: (keys) {
-            if (keys.isEmpty) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 120),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xl,
-                      ),
-                      child: Text(
-                        context.l10n.adminApiKeysEmpty,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+          isEmpty: (keys) => keys.isEmpty,
+          empty: ListView(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
                   ),
-                ],
-              );
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.md,
-                AppSpacing.lg,
-                AppSpacing.xxxl,
+                  child: Text(
+                    context.l10n.adminApiKeysEmpty,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-              itemCount: keys.length,
-              itemBuilder: (_, i) => _ApiKeyCard(entry: keys[i]),
-            );
-          },
+            ],
+          ),
+          data: (keys) => ListView.builder(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.md,
+              AppSpacing.lg,
+              AppSpacing.xxxl,
+            ),
+            itemCount: keys.length,
+            itemBuilder: (_, i) => _ApiKeyCard(entry: keys[i]),
+          ),
         ),
       ),
     );
@@ -137,9 +136,7 @@ class AdminApiKeysScreen extends ConsumerWidget {
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }
@@ -213,7 +210,7 @@ class _ApiKeyCard extends ConsumerWidget {
                   ),
                   decoration: BoxDecoration(
                     color: scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Row(
                     children: [
@@ -276,9 +273,9 @@ class _ApiKeyCard extends ConsumerWidget {
   Future<void> _copyToken(BuildContext context, String token) async {
     await Clipboard.setData(ClipboardData(text: token));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.adminApiKeysCopied)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.adminApiKeysCopied)));
   }
 
   Future<void> _onRevoke(
@@ -302,9 +299,7 @@ class _ApiKeyCard extends ConsumerWidget {
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }

@@ -6,6 +6,7 @@ import '../../core/bridge/bridge_services.dart';
 import '../../core/upcoming/models.dart';
 import '../../core/upcoming/upcoming_client.dart';
 import '../../l10n/l10n_extension.dart';
+import '../../shared/widgets/empty_state.dart';
 
 /// Range of upcoming releases to surface, in days from today.
 enum CalendarRange {
@@ -95,14 +96,22 @@ class CalendarScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.l10n.calendarTitle)),
       body: servicesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) =>
-            _EmptyState(message: context.l10n.calendarNoData),
+        error: (_, __) => EmptyState(
+          icon: Icons.calendar_today,
+          title: context.l10n.calendarNoData,
+        ),
         data: (services) {
           if (!services.pluginInstalled) {
-            return _EmptyState(message: context.l10n.calendarNoPlugin);
+            return EmptyState(
+              icon: Icons.calendar_today,
+              title: context.l10n.calendarNoPlugin,
+            );
           }
           if (!services.radarrAvailable && !services.sonarrAvailable) {
-            return _EmptyState(message: context.l10n.calendarNoServices);
+            return EmptyState(
+              icon: Icons.calendar_today,
+              title: context.l10n.calendarNoServices,
+            );
           }
           return Column(
             children: [
@@ -112,12 +121,15 @@ class CalendarScreen extends ConsumerWidget {
                 child: itemsAsync.when(
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
-                  error: (_, __) =>
-                      _EmptyState(message: context.l10n.calendarLoadError),
+                  error: (_, __) => EmptyState(
+                    icon: Icons.calendar_today,
+                    title: context.l10n.calendarLoadError,
+                  ),
                   data: (items) {
                     if (items.isEmpty) {
-                      return _EmptyState(
-                        message: context.l10n.calendarNoItems,
+                      return EmptyState(
+                        icon: Icons.calendar_today,
+                        title: context.l10n.calendarNoItems,
                       );
                     }
                     return _GroupedList(items: items);
@@ -330,26 +342,6 @@ class _UpcomingTile extends StatelessWidget {
       trailing: item.hasFile
           ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
           : null,
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-      ),
     );
   }
 }

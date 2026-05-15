@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
+import '../../../app/theme/app_radius.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../../shared/widgets/jf_confirm_dialog.dart';
 import 'plugins_providers.dart';
 
@@ -29,11 +31,12 @@ class AdminPluginsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.l10n.adminPlugins)),
       body: RefreshIndicator(
         onRefresh: () => ref.read(adminPluginsProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -44,21 +47,16 @@ class AdminPluginsScreen extends ConsumerWidget {
           ),
           data: (plugins) {
             if (plugins.isEmpty) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 120),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xl,
-                      ),
-                      child: Text(
-                        context.l10n.adminPluginsEmpty,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
                   ),
-                ],
+                  child: Text(
+                    context.l10n.adminPluginsEmpty,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               );
             }
             return ListView.builder(
@@ -136,12 +134,12 @@ class _PluginCard extends ConsumerWidget {
                   onChanged: (pluginId == null || version == null)
                       ? null
                       : (next) => _onToggle(
-                            context,
-                            ref,
-                            pluginId: pluginId,
-                            version: version,
-                            value: next,
-                          ),
+                          context,
+                          ref,
+                          pluginId: pluginId,
+                          version: version,
+                          value: next,
+                        ),
                 ),
                 PopupMenuButton<_PluginAction>(
                   tooltip: '',
@@ -190,17 +188,13 @@ class _PluginCard extends ConsumerWidget {
     required bool value,
   }) async {
     try {
-      await ref.read(adminPluginsProvider.notifier).setEnabled(
-            pluginId,
-            version,
-            value: value,
-          );
+      await ref
+          .read(adminPluginsProvider.notifier)
+          .setEnabled(pluginId, version, value: value);
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }
@@ -226,9 +220,7 @@ class _PluginCard extends ConsumerWidget {
     } on Object catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.adminFailurePrefix(e.toString())),
-        ),
+        SnackBar(content: Text(context.l10n.adminFailurePrefix(e.toString()))),
       );
     }
   }
@@ -248,59 +240,55 @@ class _StatusChip extends StatelessWidget {
 
     final (label, fg, bg) = switch (status) {
       PluginStatus.active => (
-          l.adminPluginsStatusActive,
-          scheme.onPrimaryContainer,
-          scheme.primaryContainer,
-        ),
+        l.adminPluginsStatusActive,
+        scheme.onPrimaryContainer,
+        scheme.primaryContainer,
+      ),
       PluginStatus.disabled => (
-          l.adminPluginsStatusDisabled,
-          scheme.onSurfaceVariant,
-          scheme.surfaceContainerHighest,
-        ),
+        l.adminPluginsStatusDisabled,
+        scheme.onSurfaceVariant,
+        scheme.surfaceContainerHighest,
+      ),
       PluginStatus.restart => (
-          l.adminPluginsStatusRestart,
-          scheme.onTertiaryContainer,
-          scheme.tertiaryContainer,
-        ),
+        l.adminPluginsStatusRestart,
+        scheme.onTertiaryContainer,
+        scheme.tertiaryContainer,
+      ),
       PluginStatus.malfunctioned => (
-          l.adminPluginsStatusMalfunctioned,
-          scheme.onErrorContainer,
-          scheme.errorContainer,
-        ),
+        l.adminPluginsStatusMalfunctioned,
+        scheme.onErrorContainer,
+        scheme.errorContainer,
+      ),
       PluginStatus.notSupported => (
-          l.adminPluginsStatusNotSupported,
-          scheme.onErrorContainer,
-          scheme.errorContainer,
-        ),
+        l.adminPluginsStatusNotSupported,
+        scheme.onErrorContainer,
+        scheme.errorContainer,
+      ),
       PluginStatus.deleted => (
-          l.adminPluginsStatusDeleted,
-          scheme.onErrorContainer,
-          scheme.errorContainer,
-        ),
+        l.adminPluginsStatusDeleted,
+        scheme.onErrorContainer,
+        scheme.errorContainer,
+      ),
       PluginStatus.superseded || PluginStatus.superceded => (
-          l.adminPluginsStatusSuperseded,
-          scheme.onSurfaceVariant,
-          scheme.surfaceContainerHighest,
-        ),
-      _ => (
-          '—',
-          scheme.onSurfaceVariant,
-          scheme.surfaceContainerHighest,
-        ),
+        l.adminPluginsStatusSuperseded,
+        scheme.onSurfaceVariant,
+        scheme.surfaceContainerHighest,
+      ),
+      _ => ('—', scheme.onSurfaceVariant, scheme.surfaceContainerHighest),
     };
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: fg,
-              fontWeight: FontWeight.w600,
-            ),
+          color: fg,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

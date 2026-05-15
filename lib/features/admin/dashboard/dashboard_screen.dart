@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/jellyfin/jellyfin_client.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../../shared/widgets/jf_confirm_dialog.dart';
 import '../../settings/widgets/settings_section.dart';
 import 'dashboard_providers.dart';
@@ -13,18 +14,20 @@ class AdminDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(adminSystemInfoProvider);
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.adminDashboard)),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(adminSystemInfoProvider.future),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: ref.watch(adminSystemInfoProvider),
+          // No max-width constraint — the ListView already handles its own
+          // layout within the full-width Scaffold body.
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),

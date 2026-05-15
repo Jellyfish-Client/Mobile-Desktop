@@ -5,6 +5,7 @@ import 'package:jellyfin_api/jellyfin_api.dart';
 
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../../shared/widgets/jf_confirm_dialog.dart';
 import 'devices_providers.dart';
 
@@ -19,11 +20,12 @@ class AdminDevicesScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.l10n.adminDevices)),
       body: RefreshIndicator(
         onRefresh: () => ref.read(adminDevicesProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -34,12 +36,7 @@ class AdminDevicesScreen extends ConsumerWidget {
           ),
           data: (devices) {
             if (devices.isEmpty) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 96),
-                  Center(child: Text(context.l10n.adminDevicesEmpty)),
-                ],
-              );
+              return Center(child: Text(context.l10n.adminDevicesEmpty));
             }
             return ListView.builder(
               padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),

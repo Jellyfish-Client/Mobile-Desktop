@@ -5,6 +5,7 @@ import 'package:jellyfin_api/jellyfin_api.dart';
 
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import '../../settings/widgets/settings_section.dart';
 
 import 'server_config_providers.dart';
@@ -20,11 +21,12 @@ class AdminServerConfigScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.l10n.adminServerConfig)),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(adminServerConfigProvider.future),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),

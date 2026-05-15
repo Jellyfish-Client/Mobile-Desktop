@@ -5,6 +5,7 @@ import 'package:jellyfin_api/jellyfin_api.dart';
 
 import '../../../app/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/jf_async_scaffold.dart';
 import 'activity_log_providers.dart';
 
 class AdminActivityLogScreen extends ConsumerStatefulWidget {
@@ -63,11 +64,12 @@ class _AdminActivityLogScreenState
       body: RefreshIndicator(
         onRefresh: () =>
             ref.read(adminActivityLogProvider.notifier).refresh(),
-        child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+        child: JfAsyncScaffold(
+          value: async,
+          maxWidth: double.infinity,
+          padding: EdgeInsets.zero,
           error: (e, _) => ListView(
             children: [
-              const SizedBox(height: 96),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.xl),
@@ -78,12 +80,7 @@ class _AdminActivityLogScreenState
           ),
           data: (state) {
             if (state.entries.isEmpty) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 96),
-                  Center(child: Text(l.adminActivityEmpty)),
-                ],
-              );
+              return Center(child: Text(l.adminActivityEmpty));
             }
             return ListView.builder(
               controller: _controller,
