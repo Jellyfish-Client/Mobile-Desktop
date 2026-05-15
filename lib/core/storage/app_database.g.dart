@@ -9,6 +9,52 @@ class $DownloadsTable extends Downloads
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $DownloadsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _attemptsMeta = const VerificationMeta(
+    'attempts',
+  );
+  @override
+  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
+    'attempts',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastAttemptAtMeta = const VerificationMeta(
+    'lastAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastAttemptAt =
+      GeneratedColumn<DateTime>(
+        'last_attempt_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _nextRetryAtMeta = const VerificationMeta(
+    'nextRetryAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextRetryAt = GeneratedColumn<DateTime>(
+    'next_retry_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _accountKeyMeta = const VerificationMeta(
     'accountKey',
   );
@@ -301,6 +347,10 @@ class $DownloadsTable extends Downloads
   );
   @override
   List<GeneratedColumn> get $columns => [
+    attempts,
+    lastAttemptAt,
+    nextRetryAt,
+    lastError,
     accountKey,
     itemId,
     itemType,
@@ -341,6 +391,36 @@ class $DownloadsTable extends Downloads
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('attempts')) {
+      context.handle(
+        _attemptsMeta,
+        attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
+      );
+    }
+    if (data.containsKey('last_attempt_at')) {
+      context.handle(
+        _lastAttemptAtMeta,
+        lastAttemptAt.isAcceptableOrUnknown(
+          data['last_attempt_at']!,
+          _lastAttemptAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('next_retry_at')) {
+      context.handle(
+        _nextRetryAtMeta,
+        nextRetryAt.isAcceptableOrUnknown(
+          data['next_retry_at']!,
+          _nextRetryAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
     if (data.containsKey('account_key')) {
       context.handle(
         _accountKeyMeta,
@@ -547,6 +627,22 @@ class $DownloadsTable extends Downloads
   DownloadRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return DownloadRow(
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+      lastAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_attempt_at'],
+      ),
+      nextRetryAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_retry_at'],
+      ),
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
       accountKey: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}account_key'],
@@ -670,6 +766,10 @@ class $DownloadsTable extends Downloads
 }
 
 class DownloadRow extends DataClass implements Insertable<DownloadRow> {
+  final int attempts;
+  final DateTime? lastAttemptAt;
+  final DateTime? nextRetryAt;
+  final String? lastError;
   final String accountKey;
   final String itemId;
   final String itemType;
@@ -698,6 +798,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   final DateTime createdAt;
   final DateTime? completedAt;
   const DownloadRow({
+    required this.attempts,
+    this.lastAttemptAt,
+    this.nextRetryAt,
+    this.lastError,
     required this.accountKey,
     required this.itemId,
     required this.itemType,
@@ -729,6 +833,16 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['attempts'] = Variable<int>(attempts);
+    if (!nullToAbsent || lastAttemptAt != null) {
+      map['last_attempt_at'] = Variable<DateTime>(lastAttemptAt);
+    }
+    if (!nullToAbsent || nextRetryAt != null) {
+      map['next_retry_at'] = Variable<DateTime>(nextRetryAt);
+    }
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
     map['account_key'] = Variable<String>(accountKey);
     map['item_id'] = Variable<String>(itemId);
     map['item_type'] = Variable<String>(itemType);
@@ -805,6 +919,16 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
 
   DownloadsCompanion toCompanion(bool nullToAbsent) {
     return DownloadsCompanion(
+      attempts: Value(attempts),
+      lastAttemptAt: lastAttemptAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastAttemptAt),
+      nextRetryAt: nextRetryAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextRetryAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
       accountKey: Value(accountKey),
       itemId: Value(itemId),
       itemType: Value(itemType),
@@ -881,6 +1005,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DownloadRow(
+      attempts: serializer.fromJson<int>(json['attempts']),
+      lastAttemptAt: serializer.fromJson<DateTime?>(json['lastAttemptAt']),
+      nextRetryAt: serializer.fromJson<DateTime?>(json['nextRetryAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
       accountKey: serializer.fromJson<String>(json['accountKey']),
       itemId: serializer.fromJson<String>(json['itemId']),
       itemType: serializer.fromJson<String>(json['itemType']),
@@ -918,6 +1046,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'attempts': serializer.toJson<int>(attempts),
+      'lastAttemptAt': serializer.toJson<DateTime?>(lastAttemptAt),
+      'nextRetryAt': serializer.toJson<DateTime?>(nextRetryAt),
+      'lastError': serializer.toJson<String?>(lastError),
       'accountKey': serializer.toJson<String>(accountKey),
       'itemId': serializer.toJson<String>(itemId),
       'itemType': serializer.toJson<String>(itemType),
@@ -951,6 +1083,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   }
 
   DownloadRow copyWith({
+    int? attempts,
+    Value<DateTime?> lastAttemptAt = const Value.absent(),
+    Value<DateTime?> nextRetryAt = const Value.absent(),
+    Value<String?> lastError = const Value.absent(),
     String? accountKey,
     String? itemId,
     String? itemType,
@@ -979,6 +1115,12 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
     DateTime? createdAt,
     Value<DateTime?> completedAt = const Value.absent(),
   }) => DownloadRow(
+    attempts: attempts ?? this.attempts,
+    lastAttemptAt: lastAttemptAt.present
+        ? lastAttemptAt.value
+        : this.lastAttemptAt,
+    nextRetryAt: nextRetryAt.present ? nextRetryAt.value : this.nextRetryAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
     accountKey: accountKey ?? this.accountKey,
     itemId: itemId ?? this.itemId,
     itemType: itemType ?? this.itemType,
@@ -1023,6 +1165,14 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   );
   DownloadRow copyWithCompanion(DownloadsCompanion data) {
     return DownloadRow(
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      lastAttemptAt: data.lastAttemptAt.present
+          ? data.lastAttemptAt.value
+          : this.lastAttemptAt,
+      nextRetryAt: data.nextRetryAt.present
+          ? data.nextRetryAt.value
+          : this.nextRetryAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
       accountKey: data.accountKey.present
           ? data.accountKey.value
           : this.accountKey,
@@ -1082,6 +1232,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   @override
   String toString() {
     return (StringBuffer('DownloadRow(')
+          ..write('attempts: $attempts, ')
+          ..write('lastAttemptAt: $lastAttemptAt, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError, ')
           ..write('accountKey: $accountKey, ')
           ..write('itemId: $itemId, ')
           ..write('itemType: $itemType, ')
@@ -1115,6 +1269,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
 
   @override
   int get hashCode => Object.hashAll([
+    attempts,
+    lastAttemptAt,
+    nextRetryAt,
+    lastError,
     accountKey,
     itemId,
     itemType,
@@ -1147,6 +1305,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is DownloadRow &&
+          other.attempts == this.attempts &&
+          other.lastAttemptAt == this.lastAttemptAt &&
+          other.nextRetryAt == this.nextRetryAt &&
+          other.lastError == this.lastError &&
           other.accountKey == this.accountKey &&
           other.itemId == this.itemId &&
           other.itemType == this.itemType &&
@@ -1177,6 +1339,10 @@ class DownloadRow extends DataClass implements Insertable<DownloadRow> {
 }
 
 class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
+  final Value<int> attempts;
+  final Value<DateTime?> lastAttemptAt;
+  final Value<DateTime?> nextRetryAt;
+  final Value<String?> lastError;
   final Value<String> accountKey;
   final Value<String> itemId;
   final Value<String> itemType;
@@ -1206,6 +1372,10 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
   final Value<DateTime?> completedAt;
   final Value<int> rowid;
   const DownloadsCompanion({
+    this.attempts = const Value.absent(),
+    this.lastAttemptAt = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
     this.accountKey = const Value.absent(),
     this.itemId = const Value.absent(),
     this.itemType = const Value.absent(),
@@ -1236,6 +1406,10 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
     this.rowid = const Value.absent(),
   });
   DownloadsCompanion.insert({
+    this.attempts = const Value.absent(),
+    this.lastAttemptAt = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
     this.accountKey = const Value.absent(),
     required String itemId,
     required String itemType,
@@ -1270,6 +1444,10 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
        status = Value(status),
        createdAt = Value(createdAt);
   static Insertable<DownloadRow> custom({
+    Expression<int>? attempts,
+    Expression<DateTime>? lastAttemptAt,
+    Expression<DateTime>? nextRetryAt,
+    Expression<String>? lastError,
     Expression<String>? accountKey,
     Expression<String>? itemId,
     Expression<String>? itemType,
@@ -1300,6 +1478,10 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (attempts != null) 'attempts': attempts,
+      if (lastAttemptAt != null) 'last_attempt_at': lastAttemptAt,
+      if (nextRetryAt != null) 'next_retry_at': nextRetryAt,
+      if (lastError != null) 'last_error': lastError,
       if (accountKey != null) 'account_key': accountKey,
       if (itemId != null) 'item_id': itemId,
       if (itemType != null) 'item_type': itemType,
@@ -1332,6 +1514,10 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
   }
 
   DownloadsCompanion copyWith({
+    Value<int>? attempts,
+    Value<DateTime?>? lastAttemptAt,
+    Value<DateTime?>? nextRetryAt,
+    Value<String?>? lastError,
     Value<String>? accountKey,
     Value<String>? itemId,
     Value<String>? itemType,
@@ -1362,6 +1548,10 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
     Value<int>? rowid,
   }) {
     return DownloadsCompanion(
+      attempts: attempts ?? this.attempts,
+      lastAttemptAt: lastAttemptAt ?? this.lastAttemptAt,
+      nextRetryAt: nextRetryAt ?? this.nextRetryAt,
+      lastError: lastError ?? this.lastError,
       accountKey: accountKey ?? this.accountKey,
       itemId: itemId ?? this.itemId,
       itemType: itemType ?? this.itemType,
@@ -1396,6 +1586,18 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (lastAttemptAt.present) {
+      map['last_attempt_at'] = Variable<DateTime>(lastAttemptAt.value);
+    }
+    if (nextRetryAt.present) {
+      map['next_retry_at'] = Variable<DateTime>(nextRetryAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
     if (accountKey.present) {
       map['account_key'] = Variable<String>(accountKey.value);
     }
@@ -1488,6 +1690,10 @@ class DownloadsCompanion extends UpdateCompanion<DownloadRow> {
   @override
   String toString() {
     return (StringBuffer('DownloadsCompanion(')
+          ..write('attempts: $attempts, ')
+          ..write('lastAttemptAt: $lastAttemptAt, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError, ')
           ..write('accountKey: $accountKey, ')
           ..write('itemId: $itemId, ')
           ..write('itemType: $itemType, ')
@@ -1840,6 +2046,52 @@ class $SyncQueueTable extends SyncQueue
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $SyncQueueTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _attemptsMeta = const VerificationMeta(
+    'attempts',
+  );
+  @override
+  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
+    'attempts',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastAttemptAtMeta = const VerificationMeta(
+    'lastAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastAttemptAt =
+      GeneratedColumn<DateTime>(
+        'last_attempt_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _nextRetryAtMeta = const VerificationMeta(
+    'nextRetryAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextRetryAt = GeneratedColumn<DateTime>(
+    'next_retry_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1906,39 +2158,18 @@ class $SyncQueueTable extends SyncQueue
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _attemptsMeta = const VerificationMeta(
-    'attempts',
-  );
-  @override
-  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
-    'attempts',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
-    'lastError',
-  );
-  @override
-  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
-    'last_error',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
   @override
   List<GeneratedColumn> get $columns => [
+    attempts,
+    lastAttemptAt,
+    nextRetryAt,
+    lastError,
     id,
     accountKey,
     itemId,
     operation,
     payloadJson,
     createdAt,
-    attempts,
-    lastError,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1952,6 +2183,36 @@ class $SyncQueueTable extends SyncQueue
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('attempts')) {
+      context.handle(
+        _attemptsMeta,
+        attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
+      );
+    }
+    if (data.containsKey('last_attempt_at')) {
+      context.handle(
+        _lastAttemptAtMeta,
+        lastAttemptAt.isAcceptableOrUnknown(
+          data['last_attempt_at']!,
+          _lastAttemptAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('next_retry_at')) {
+      context.handle(
+        _nextRetryAtMeta,
+        nextRetryAt.isAcceptableOrUnknown(
+          data['next_retry_at']!,
+          _nextRetryAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
@@ -1986,18 +2247,6 @@ class $SyncQueueTable extends SyncQueue
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
-    if (data.containsKey('attempts')) {
-      context.handle(
-        _attemptsMeta,
-        attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
-      );
-    }
-    if (data.containsKey('last_error')) {
-      context.handle(
-        _lastErrorMeta,
-        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
-      );
-    }
     return context;
   }
 
@@ -2007,6 +2256,22 @@ class $SyncQueueTable extends SyncQueue
   SyncQueueRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SyncQueueRow(
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+      lastAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_attempt_at'],
+      ),
+      nextRetryAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_retry_at'],
+      ),
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -2033,14 +2298,6 @@ class $SyncQueueTable extends SyncQueue
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
-      attempts: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}attempts'],
-      )!,
-      lastError: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}last_error'],
-      ),
     );
   }
 
@@ -2054,27 +2311,41 @@ class $SyncQueueTable extends SyncQueue
 }
 
 class SyncQueueRow extends DataClass implements Insertable<SyncQueueRow> {
+  final int attempts;
+  final DateTime? lastAttemptAt;
+  final DateTime? nextRetryAt;
+  final String? lastError;
   final int id;
   final String accountKey;
   final String itemId;
   final SyncOperation operation;
   final String payloadJson;
   final DateTime createdAt;
-  final int attempts;
-  final String? lastError;
   const SyncQueueRow({
+    required this.attempts,
+    this.lastAttemptAt,
+    this.nextRetryAt,
+    this.lastError,
     required this.id,
     required this.accountKey,
     required this.itemId,
     required this.operation,
     required this.payloadJson,
     required this.createdAt,
-    required this.attempts,
-    this.lastError,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['attempts'] = Variable<int>(attempts);
+    if (!nullToAbsent || lastAttemptAt != null) {
+      map['last_attempt_at'] = Variable<DateTime>(lastAttemptAt);
+    }
+    if (!nullToAbsent || nextRetryAt != null) {
+      map['next_retry_at'] = Variable<DateTime>(nextRetryAt);
+    }
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
     map['id'] = Variable<int>(id);
     map['account_key'] = Variable<String>(accountKey);
     map['item_id'] = Variable<String>(itemId);
@@ -2085,25 +2356,27 @@ class SyncQueueRow extends DataClass implements Insertable<SyncQueueRow> {
     }
     map['payload_json'] = Variable<String>(payloadJson);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['attempts'] = Variable<int>(attempts);
-    if (!nullToAbsent || lastError != null) {
-      map['last_error'] = Variable<String>(lastError);
-    }
     return map;
   }
 
   SyncQueueCompanion toCompanion(bool nullToAbsent) {
     return SyncQueueCompanion(
+      attempts: Value(attempts),
+      lastAttemptAt: lastAttemptAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastAttemptAt),
+      nextRetryAt: nextRetryAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextRetryAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
       id: Value(id),
       accountKey: Value(accountKey),
       itemId: Value(itemId),
       operation: Value(operation),
       payloadJson: Value(payloadJson),
       createdAt: Value(createdAt),
-      attempts: Value(attempts),
-      lastError: lastError == null && nullToAbsent
-          ? const Value.absent()
-          : Value(lastError),
     );
   }
 
@@ -2113,6 +2386,10 @@ class SyncQueueRow extends DataClass implements Insertable<SyncQueueRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SyncQueueRow(
+      attempts: serializer.fromJson<int>(json['attempts']),
+      lastAttemptAt: serializer.fromJson<DateTime?>(json['lastAttemptAt']),
+      nextRetryAt: serializer.fromJson<DateTime?>(json['nextRetryAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
       id: serializer.fromJson<int>(json['id']),
       accountKey: serializer.fromJson<String>(json['accountKey']),
       itemId: serializer.fromJson<String>(json['itemId']),
@@ -2121,14 +2398,16 @@ class SyncQueueRow extends DataClass implements Insertable<SyncQueueRow> {
       ),
       payloadJson: serializer.fromJson<String>(json['payloadJson']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      attempts: serializer.fromJson<int>(json['attempts']),
-      lastError: serializer.fromJson<String?>(json['lastError']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'attempts': serializer.toJson<int>(attempts),
+      'lastAttemptAt': serializer.toJson<DateTime?>(lastAttemptAt),
+      'nextRetryAt': serializer.toJson<DateTime?>(nextRetryAt),
+      'lastError': serializer.toJson<String?>(lastError),
       'id': serializer.toJson<int>(id),
       'accountKey': serializer.toJson<String>(accountKey),
       'itemId': serializer.toJson<String>(itemId),
@@ -2137,32 +2416,44 @@ class SyncQueueRow extends DataClass implements Insertable<SyncQueueRow> {
       ),
       'payloadJson': serializer.toJson<String>(payloadJson),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'attempts': serializer.toJson<int>(attempts),
-      'lastError': serializer.toJson<String?>(lastError),
     };
   }
 
   SyncQueueRow copyWith({
+    int? attempts,
+    Value<DateTime?> lastAttemptAt = const Value.absent(),
+    Value<DateTime?> nextRetryAt = const Value.absent(),
+    Value<String?> lastError = const Value.absent(),
     int? id,
     String? accountKey,
     String? itemId,
     SyncOperation? operation,
     String? payloadJson,
     DateTime? createdAt,
-    int? attempts,
-    Value<String?> lastError = const Value.absent(),
   }) => SyncQueueRow(
+    attempts: attempts ?? this.attempts,
+    lastAttemptAt: lastAttemptAt.present
+        ? lastAttemptAt.value
+        : this.lastAttemptAt,
+    nextRetryAt: nextRetryAt.present ? nextRetryAt.value : this.nextRetryAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
     id: id ?? this.id,
     accountKey: accountKey ?? this.accountKey,
     itemId: itemId ?? this.itemId,
     operation: operation ?? this.operation,
     payloadJson: payloadJson ?? this.payloadJson,
     createdAt: createdAt ?? this.createdAt,
-    attempts: attempts ?? this.attempts,
-    lastError: lastError.present ? lastError.value : this.lastError,
   );
   SyncQueueRow copyWithCompanion(SyncQueueCompanion data) {
     return SyncQueueRow(
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      lastAttemptAt: data.lastAttemptAt.present
+          ? data.lastAttemptAt.value
+          : this.lastAttemptAt,
+      nextRetryAt: data.nextRetryAt.present
+          ? data.nextRetryAt.value
+          : this.nextRetryAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
       id: data.id.present ? data.id.value : this.id,
       accountKey: data.accountKey.present
           ? data.accountKey.value
@@ -2173,129 +2464,159 @@ class SyncQueueRow extends DataClass implements Insertable<SyncQueueRow> {
           ? data.payloadJson.value
           : this.payloadJson,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      attempts: data.attempts.present ? data.attempts.value : this.attempts,
-      lastError: data.lastError.present ? data.lastError.value : this.lastError,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('SyncQueueRow(')
+          ..write('attempts: $attempts, ')
+          ..write('lastAttemptAt: $lastAttemptAt, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError, ')
           ..write('id: $id, ')
           ..write('accountKey: $accountKey, ')
           ..write('itemId: $itemId, ')
           ..write('operation: $operation, ')
           ..write('payloadJson: $payloadJson, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('attempts: $attempts, ')
-          ..write('lastError: $lastError')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(
+    attempts,
+    lastAttemptAt,
+    nextRetryAt,
+    lastError,
     id,
     accountKey,
     itemId,
     operation,
     payloadJson,
     createdAt,
-    attempts,
-    lastError,
   );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SyncQueueRow &&
+          other.attempts == this.attempts &&
+          other.lastAttemptAt == this.lastAttemptAt &&
+          other.nextRetryAt == this.nextRetryAt &&
+          other.lastError == this.lastError &&
           other.id == this.id &&
           other.accountKey == this.accountKey &&
           other.itemId == this.itemId &&
           other.operation == this.operation &&
           other.payloadJson == this.payloadJson &&
-          other.createdAt == this.createdAt &&
-          other.attempts == this.attempts &&
-          other.lastError == this.lastError);
+          other.createdAt == this.createdAt);
 }
 
 class SyncQueueCompanion extends UpdateCompanion<SyncQueueRow> {
+  final Value<int> attempts;
+  final Value<DateTime?> lastAttemptAt;
+  final Value<DateTime?> nextRetryAt;
+  final Value<String?> lastError;
   final Value<int> id;
   final Value<String> accountKey;
   final Value<String> itemId;
   final Value<SyncOperation> operation;
   final Value<String> payloadJson;
   final Value<DateTime> createdAt;
-  final Value<int> attempts;
-  final Value<String?> lastError;
   const SyncQueueCompanion({
+    this.attempts = const Value.absent(),
+    this.lastAttemptAt = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
     this.id = const Value.absent(),
     this.accountKey = const Value.absent(),
     this.itemId = const Value.absent(),
     this.operation = const Value.absent(),
     this.payloadJson = const Value.absent(),
     this.createdAt = const Value.absent(),
-    this.attempts = const Value.absent(),
-    this.lastError = const Value.absent(),
   });
   SyncQueueCompanion.insert({
+    this.attempts = const Value.absent(),
+    this.lastAttemptAt = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
     this.id = const Value.absent(),
     this.accountKey = const Value.absent(),
     required String itemId,
     required SyncOperation operation,
     this.payloadJson = const Value.absent(),
     required DateTime createdAt,
-    this.attempts = const Value.absent(),
-    this.lastError = const Value.absent(),
   }) : itemId = Value(itemId),
        operation = Value(operation),
        createdAt = Value(createdAt);
   static Insertable<SyncQueueRow> custom({
+    Expression<int>? attempts,
+    Expression<DateTime>? lastAttemptAt,
+    Expression<DateTime>? nextRetryAt,
+    Expression<String>? lastError,
     Expression<int>? id,
     Expression<String>? accountKey,
     Expression<String>? itemId,
     Expression<String>? operation,
     Expression<String>? payloadJson,
     Expression<DateTime>? createdAt,
-    Expression<int>? attempts,
-    Expression<String>? lastError,
   }) {
     return RawValuesInsertable({
+      if (attempts != null) 'attempts': attempts,
+      if (lastAttemptAt != null) 'last_attempt_at': lastAttemptAt,
+      if (nextRetryAt != null) 'next_retry_at': nextRetryAt,
+      if (lastError != null) 'last_error': lastError,
       if (id != null) 'id': id,
       if (accountKey != null) 'account_key': accountKey,
       if (itemId != null) 'item_id': itemId,
       if (operation != null) 'operation': operation,
       if (payloadJson != null) 'payload_json': payloadJson,
       if (createdAt != null) 'created_at': createdAt,
-      if (attempts != null) 'attempts': attempts,
-      if (lastError != null) 'last_error': lastError,
     });
   }
 
   SyncQueueCompanion copyWith({
+    Value<int>? attempts,
+    Value<DateTime?>? lastAttemptAt,
+    Value<DateTime?>? nextRetryAt,
+    Value<String?>? lastError,
     Value<int>? id,
     Value<String>? accountKey,
     Value<String>? itemId,
     Value<SyncOperation>? operation,
     Value<String>? payloadJson,
     Value<DateTime>? createdAt,
-    Value<int>? attempts,
-    Value<String?>? lastError,
   }) {
     return SyncQueueCompanion(
+      attempts: attempts ?? this.attempts,
+      lastAttemptAt: lastAttemptAt ?? this.lastAttemptAt,
+      nextRetryAt: nextRetryAt ?? this.nextRetryAt,
+      lastError: lastError ?? this.lastError,
       id: id ?? this.id,
       accountKey: accountKey ?? this.accountKey,
       itemId: itemId ?? this.itemId,
       operation: operation ?? this.operation,
       payloadJson: payloadJson ?? this.payloadJson,
       createdAt: createdAt ?? this.createdAt,
-      attempts: attempts ?? this.attempts,
-      lastError: lastError ?? this.lastError,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (lastAttemptAt.present) {
+      map['last_attempt_at'] = Variable<DateTime>(lastAttemptAt.value);
+    }
+    if (nextRetryAt.present) {
+      map['next_retry_at'] = Variable<DateTime>(nextRetryAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
@@ -2316,26 +2637,22 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueRow> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
-    if (attempts.present) {
-      map['attempts'] = Variable<int>(attempts.value);
-    }
-    if (lastError.present) {
-      map['last_error'] = Variable<String>(lastError.value);
-    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('SyncQueueCompanion(')
+          ..write('attempts: $attempts, ')
+          ..write('lastAttemptAt: $lastAttemptAt, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError, ')
           ..write('id: $id, ')
           ..write('accountKey: $accountKey, ')
           ..write('itemId: $itemId, ')
           ..write('operation: $operation, ')
           ..write('payloadJson: $payloadJson, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('attempts: $attempts, ')
-          ..write('lastError: $lastError')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -2387,6 +2704,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$DownloadsTableCreateCompanionBuilder =
     DownloadsCompanion Function({
+      Value<int> attempts,
+      Value<DateTime?> lastAttemptAt,
+      Value<DateTime?> nextRetryAt,
+      Value<String?> lastError,
       Value<String> accountKey,
       required String itemId,
       required String itemType,
@@ -2418,6 +2739,10 @@ typedef $$DownloadsTableCreateCompanionBuilder =
     });
 typedef $$DownloadsTableUpdateCompanionBuilder =
     DownloadsCompanion Function({
+      Value<int> attempts,
+      Value<DateTime?> lastAttemptAt,
+      Value<DateTime?> nextRetryAt,
+      Value<String?> lastError,
       Value<String> accountKey,
       Value<String> itemId,
       Value<String> itemType,
@@ -2457,6 +2782,26 @@ class $$DownloadsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastAttemptAt => $composableBuilder(
+    column: $table.lastAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get accountKey => $composableBuilder(
     column: $table.accountKey,
     builder: (column) => ColumnFilters(column),
@@ -2603,6 +2948,26 @@ class $$DownloadsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastAttemptAt => $composableBuilder(
+    column: $table.lastAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get accountKey => $composableBuilder(
     column: $table.accountKey,
     builder: (column) => ColumnOrderings(column),
@@ -2748,6 +3113,22 @@ class $$DownloadsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<int> get attempts =>
+      $composableBuilder(column: $table.attempts, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastAttemptAt => $composableBuilder(
+    column: $table.lastAttemptAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
   GeneratedColumn<String> get accountKey => $composableBuilder(
     column: $table.accountKey,
     builder: (column) => column,
@@ -2887,6 +3268,10 @@ class $$DownloadsTableTableManager
               $$DownloadsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
+                Value<int> attempts = const Value.absent(),
+                Value<DateTime?> lastAttemptAt = const Value.absent(),
+                Value<DateTime?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
                 Value<String> accountKey = const Value.absent(),
                 Value<String> itemId = const Value.absent(),
                 Value<String> itemType = const Value.absent(),
@@ -2916,6 +3301,10 @@ class $$DownloadsTableTableManager
                 Value<DateTime?> completedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DownloadsCompanion(
+                attempts: attempts,
+                lastAttemptAt: lastAttemptAt,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
                 accountKey: accountKey,
                 itemId: itemId,
                 itemType: itemType,
@@ -2947,6 +3336,10 @@ class $$DownloadsTableTableManager
               ),
           createCompanionCallback:
               ({
+                Value<int> attempts = const Value.absent(),
+                Value<DateTime?> lastAttemptAt = const Value.absent(),
+                Value<DateTime?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
                 Value<String> accountKey = const Value.absent(),
                 required String itemId,
                 required String itemType,
@@ -2976,6 +3369,10 @@ class $$DownloadsTableTableManager
                 Value<DateTime?> completedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DownloadsCompanion.insert(
+                attempts: attempts,
+                lastAttemptAt: lastAttemptAt,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
                 accountKey: accountKey,
                 itemId: itemId,
                 itemType: itemType,
@@ -3221,25 +3618,29 @@ typedef $$CachedResponsesTableProcessedTableManager =
     >;
 typedef $$SyncQueueTableCreateCompanionBuilder =
     SyncQueueCompanion Function({
+      Value<int> attempts,
+      Value<DateTime?> lastAttemptAt,
+      Value<DateTime?> nextRetryAt,
+      Value<String?> lastError,
       Value<int> id,
       Value<String> accountKey,
       required String itemId,
       required SyncOperation operation,
       Value<String> payloadJson,
       required DateTime createdAt,
-      Value<int> attempts,
-      Value<String?> lastError,
     });
 typedef $$SyncQueueTableUpdateCompanionBuilder =
     SyncQueueCompanion Function({
+      Value<int> attempts,
+      Value<DateTime?> lastAttemptAt,
+      Value<DateTime?> nextRetryAt,
+      Value<String?> lastError,
       Value<int> id,
       Value<String> accountKey,
       Value<String> itemId,
       Value<SyncOperation> operation,
       Value<String> payloadJson,
       Value<DateTime> createdAt,
-      Value<int> attempts,
-      Value<String?> lastError,
     });
 
 class $$SyncQueueTableFilterComposer
@@ -3251,6 +3652,26 @@ class $$SyncQueueTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastAttemptAt => $composableBuilder(
+    column: $table.lastAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
@@ -3281,16 +3702,6 @@ class $$SyncQueueTableFilterComposer
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
   );
-
-  ColumnFilters<int> get attempts => $composableBuilder(
-    column: $table.attempts,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get lastError => $composableBuilder(
-    column: $table.lastError,
-    builder: (column) => ColumnFilters(column),
-  );
 }
 
 class $$SyncQueueTableOrderingComposer
@@ -3302,6 +3713,26 @@ class $$SyncQueueTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastAttemptAt => $composableBuilder(
+    column: $table.lastAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
@@ -3331,16 +3762,6 @@ class $$SyncQueueTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
-
-  ColumnOrderings<int> get attempts => $composableBuilder(
-    column: $table.attempts,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get lastError => $composableBuilder(
-    column: $table.lastError,
-    builder: (column) => ColumnOrderings(column),
-  );
 }
 
 class $$SyncQueueTableAnnotationComposer
@@ -3352,6 +3773,22 @@ class $$SyncQueueTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<int> get attempts =>
+      $composableBuilder(column: $table.attempts, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastAttemptAt => $composableBuilder(
+    column: $table.lastAttemptAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
@@ -3373,12 +3810,6 @@ class $$SyncQueueTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<int> get attempts =>
-      $composableBuilder(column: $table.attempts, builder: (column) => column);
-
-  GeneratedColumn<String> get lastError =>
-      $composableBuilder(column: $table.lastError, builder: (column) => column);
 }
 
 class $$SyncQueueTableTableManager
@@ -3412,43 +3843,51 @@ class $$SyncQueueTableTableManager
               $$SyncQueueTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
+                Value<int> attempts = const Value.absent(),
+                Value<DateTime?> lastAttemptAt = const Value.absent(),
+                Value<DateTime?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
                 Value<int> id = const Value.absent(),
                 Value<String> accountKey = const Value.absent(),
                 Value<String> itemId = const Value.absent(),
                 Value<SyncOperation> operation = const Value.absent(),
                 Value<String> payloadJson = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<int> attempts = const Value.absent(),
-                Value<String?> lastError = const Value.absent(),
               }) => SyncQueueCompanion(
+                attempts: attempts,
+                lastAttemptAt: lastAttemptAt,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
                 id: id,
                 accountKey: accountKey,
                 itemId: itemId,
                 operation: operation,
                 payloadJson: payloadJson,
                 createdAt: createdAt,
-                attempts: attempts,
-                lastError: lastError,
               ),
           createCompanionCallback:
               ({
+                Value<int> attempts = const Value.absent(),
+                Value<DateTime?> lastAttemptAt = const Value.absent(),
+                Value<DateTime?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
                 Value<int> id = const Value.absent(),
                 Value<String> accountKey = const Value.absent(),
                 required String itemId,
                 required SyncOperation operation,
                 Value<String> payloadJson = const Value.absent(),
                 required DateTime createdAt,
-                Value<int> attempts = const Value.absent(),
-                Value<String?> lastError = const Value.absent(),
               }) => SyncQueueCompanion.insert(
+                attempts: attempts,
+                lastAttemptAt: lastAttemptAt,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
                 id: id,
                 accountKey: accountKey,
                 itemId: itemId,
                 operation: operation,
                 payloadJson: payloadJson,
                 createdAt: createdAt,
-                attempts: attempts,
-                lastError: lastError,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

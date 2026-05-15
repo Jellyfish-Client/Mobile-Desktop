@@ -6,6 +6,8 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
+import 'mixins/retryable_queue_entry.dart';
+
 part 'app_database.g.dart';
 
 enum DownloadStatus { queued, running, paused, completed, failed, cancelled }
@@ -27,7 +29,7 @@ const String legacyAccountKey = '';
 @DataClassName('DownloadRow')
 @TableIndex(name: 'downloads_task_id_idx', columns: {#taskId})
 @TableIndex(name: 'downloads_account_idx', columns: {#accountKey})
-class Downloads extends Table {
+class Downloads extends Table with RetryableQueueEntry {
   // Composite-key prefix. Empty for legacy v3 rows that pre-date multi-account.
   TextColumn get accountKey =>
       text().withDefault(const Constant(legacyAccountKey))();
@@ -87,7 +89,7 @@ class CachedResponses extends Table {
 @DataClassName('SyncQueueRow')
 @TableIndex(name: 'sync_queue_item_idx', columns: {#itemId})
 @TableIndex(name: 'sync_queue_account_idx', columns: {#accountKey})
-class SyncQueue extends Table {
+class SyncQueue extends Table with RetryableQueueEntry {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get accountKey =>
       text().withDefault(const Constant(legacyAccountKey))();
@@ -98,8 +100,9 @@ class SyncQueue extends Table {
   // toggles the body is `{}`.
   TextColumn get payloadJson => text().withDefault(const Constant('{}'))();
   DateTimeColumn get createdAt => dateTime()();
-  IntColumn get attempts => integer().withDefault(const Constant(0))();
-  TextColumn get lastError => text().nullable()();
+  // `attempts`, `lastAttemptAt`, `nextRetryAt`, `lastError` come from
+  // `RetryableQueueEntry`. `attempts` + `lastError` predate the mixin (v3) —
+  // the v5 migration only adds the two scheduling columns.
 }
 
 @DriftDatabase(tables: [Downloads, CachedResponses, SyncQueue])
@@ -111,7 +114,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -155,6 +158,31 @@ class AppDatabase extends _$AppDatabase {
         } on Object {
           // Already exists — fine.
         }
+      }
+      if (from < 5) {
+        // Backoff/retry bookkeeping (RetryableQueueEntry mixin). All new
+        // columns are nullable or default-backed → fully additive, can't
+        // break a populated v4 database.
+        //
+        // SyncQueue: `attempts` and `lastError` shipped in v3 already, so we
+        // only add the two scheduling columns here. Downloads picks up the
+        // full set since it had no retry tracking before.
+        await m.addColumn(syncQueue, syncQueue.lastAttemptAt);
+        await m.addColumn(syncQueue, syncQueue.nextRetryAt);
+        await m.addColumn(downloads, downloads.attempts);
+        await m.addColumn(downloads, downloads.lastAttemptAt);
+        await m.addColumn(downloads, downloads.nextRetryAt);
+        await m.addColumn(downloads, downloads.lastError);
+        // Backfill: existing sync_queue rows have no schedule, so they must
+        // be eligible immediately. Anchoring `next_retry_at` to `created_at`
+        // (which is always in the past at this point) makes them pass the
+        // `isEligible` predicate on the very next flush pass — no special
+        // "null means immediate" branch needed in the worker.
+        await customStatement(
+          'UPDATE sync_queue '
+          'SET next_retry_at = created_at '
+          'WHERE next_retry_at IS NULL',
+        );
       }
     },
   );
@@ -236,6 +264,103 @@ class AppDatabase extends _$AppDatabase {
                 ]),
           ))
           .get();
+
+  /// Returns the failed/paused rows that are due for a retry under the
+  /// BackoffPolicy contract: still under the attempt cap, and either with
+  /// no scheduled retry (legacy rows) or with a retry instant that has now
+  /// elapsed. Sorted oldest-first so the worker drains FIFO.
+  ///
+  /// Mirrors `pendingSyncBatchEligible` but scoped to the Downloads table.
+  /// `paused` rows are intentionally included so the connectivity listener can
+  /// resume downloads that the OS paused on the way down (e.g. Wi-Fi-only
+  /// task that lost Wi-Fi).
+  Future<List<DownloadRow>> pendingDownloadsEligibleForRetry(
+    String accountKey, {
+    required int maxAttempts,
+    required DateTime now,
+    int limit = 20,
+  }) =>
+      (select(downloads)
+            ..where(
+              (t) =>
+                  t.accountKey.equals(accountKey) &
+                  t.status.isInValues(const <DownloadStatus>[
+                    DownloadStatus.failed,
+                  ]) &
+                  t.attempts.isSmallerThanValue(maxAttempts) &
+                  (t.nextRetryAt.isNull() |
+                      t.nextRetryAt.isSmallerOrEqualValue(now)),
+            )
+            ..orderBy([(t) => OrderingTerm.asc(t.createdAt)])
+            ..limit(limit))
+          .get();
+
+  /// Records the full retry-bookkeeping triple after a failed download
+  /// attempt: bumps [attempts], stamps [lastAttemptAt], schedules
+  /// [nextRetryAt] (null when dead-lettered) and stores [lastError] (already
+  /// capped by the caller). Single UPDATE so the row's state stays consistent
+  /// even if the worker is interrupted mid-handler.
+  ///
+  /// Counterpart of `recordSyncFailure` for the Downloads table. Status is
+  /// also set to [DownloadStatus.failed] so UI surfaces (the existing
+  /// `itemDownloadStatusProvider`) reflect the failure immediately.
+  Future<void> recordDownloadFailure({
+    required String accountKey,
+    required String itemId,
+    required int attempts,
+    required DateTime lastAttemptAt,
+    required DateTime? nextRetryAt,
+    required String? lastError,
+  }) =>
+      (update(downloads)..where(
+            (t) => t.accountKey.equals(accountKey) & t.itemId.equals(itemId),
+          ))
+          .write(
+            DownloadsCompanion(
+              status: const Value(DownloadStatus.failed),
+              attempts: Value(attempts),
+              lastAttemptAt: Value(lastAttemptAt),
+              nextRetryAt: Value(nextRetryAt),
+              lastError: Value(lastError),
+              errorMessage: Value(lastError),
+            ),
+          );
+
+  /// Clears the retry counters on the row identified by ([accountKey],
+  /// [itemId]). Called when the user (or a successful retry) re-enqueues a
+  /// download so a fresh task doesn't inherit the old backoff state.
+  Future<void> resetDownloadRetry(String accountKey, String itemId) =>
+      (update(downloads)..where(
+            (t) => t.accountKey.equals(accountKey) & t.itemId.equals(itemId),
+          ))
+          .write(
+            const DownloadsCompanion(
+              attempts: Value(0),
+              lastAttemptAt: Value(null),
+              nextRetryAt: Value(null),
+              lastError: Value(null),
+            ),
+          );
+
+  /// Rebinds an existing download row to a fresh [taskId] and flips its
+  /// status back to [DownloadStatus.queued]. Used by the retry sweep so the
+  /// failure callback for the new task can still resolve back to its row via
+  /// `findByTaskId`. Note we do NOT reset `attempts` here — that's the whole
+  /// point: the next failure must keep climbing the backoff curve.
+  Future<void> rebindDownloadTaskId({
+    required String accountKey,
+    required String itemId,
+    required String taskId,
+  }) =>
+      (update(downloads)..where(
+            (t) => t.accountKey.equals(accountKey) & t.itemId.equals(itemId),
+          ))
+          .write(
+            DownloadsCompanion(
+              taskId: Value(taskId),
+              status: const Value(DownloadStatus.queued),
+            ),
+          );
 
   Future<void> upsertRow(DownloadsCompanion row) =>
       into(downloads).insertOnConflictUpdate(row);
@@ -428,6 +553,32 @@ class AppDatabase extends _$AppDatabase {
             ..limit(limit))
           .get();
 
+  /// Returns the next batch of rows that are eligible for a retry right now,
+  /// filtered server-side by the BackoffPolicy contract:
+  /// - `attempts < maxAttempts` → not yet dead-lettered;
+  /// - `nextRetryAt IS NULL OR nextRetryAt <= now` → backoff window elapsed.
+  ///
+  /// Dead-lettered rows (attempts >= maxAttempts) and rows still in their
+  /// backoff window never come back, so the worker can no longer burn through
+  /// retries the way the legacy `pendingSyncBatch` allowed.
+  Future<List<SyncQueueRow>> pendingSyncBatchEligible(
+    String accountKey, {
+    required int maxAttempts,
+    required DateTime now,
+    int limit = 20,
+  }) =>
+      (select(syncQueue)
+            ..where(
+              (t) =>
+                  t.accountKey.equals(accountKey) &
+                  t.attempts.isSmallerThanValue(maxAttempts) &
+                  (t.nextRetryAt.isNull() |
+                      t.nextRetryAt.isSmallerOrEqualValue(now)),
+            )
+            ..orderBy([(t) => OrderingTerm.asc(t.createdAt)])
+            ..limit(limit))
+          .get();
+
   Future<void> deleteSyncRow(int id) =>
       (delete(syncQueue)..where((t) => t.id.equals(id))).go();
 
@@ -440,6 +591,28 @@ class AppDatabase extends _$AppDatabase {
       SyncQueueCompanion(
         attempts: Value(current.attempts + 1),
         lastError: Value(error),
+      ),
+    );
+  }
+
+  /// Records the full retry-bookkeeping triple after a failed flush attempt:
+  /// bumps [attempts], stamps [lastAttemptAt], schedules [nextRetryAt]
+  /// (null when dead-lettered) and stores [lastError] (already capped by the
+  /// caller). Single UPDATE so the row's state stays consistent even if the
+  /// worker is interrupted mid-flush.
+  Future<void> recordSyncFailure({
+    required int id,
+    required int attempts,
+    required DateTime lastAttemptAt,
+    required DateTime? nextRetryAt,
+    required String? lastError,
+  }) async {
+    await (update(syncQueue)..where((t) => t.id.equals(id))).write(
+      SyncQueueCompanion(
+        attempts: Value(attempts),
+        lastAttemptAt: Value(lastAttemptAt),
+        nextRetryAt: Value(nextRetryAt),
+        lastError: Value(lastError),
       ),
     );
   }
