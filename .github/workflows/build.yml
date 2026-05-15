@@ -219,6 +219,18 @@ jobs:
       - name: Build Windows release
         run: flutter build windows --release
 
+      - name: Package portable ZIP
+        shell: pwsh
+        run: |
+          $version = "${{ needs.version.outputs.version }}"
+          $source = "build\windows\x64\runner\Release"
+          if (-not (Test-Path $source)) {
+            throw "Release folder not found at $source"
+          }
+          $zip = "Jellyfish_Windows_v${version}_Portable.zip"
+          Compress-Archive -Path "$source\*" -DestinationPath $zip -CompressionLevel Optimal -Force
+          Write-Host "Built portable: $zip ($([math]::Round((Get-Item $zip).Length/1MB,1)) MB)"
+
       - name: Install Inno Setup
         shell: pwsh
         run: choco install innosetup -y --no-progress
@@ -246,7 +258,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: Jellyfish_Windows_v*_Setup.exe
+          path: |
+            Jellyfish_Windows_v*_Setup.exe
+            Jellyfish_Windows_v*_Portable.zip
           if-no-files-found: error
 
   release:
@@ -283,3 +297,4 @@ jobs:
             Jellyfish_iOS_v*.ipa
             Jellyfish_macOS_v*.dmg
             Jellyfish_Windows_v*_Setup.exe
+            Jellyfish_Windows_v*_Portable.zip
