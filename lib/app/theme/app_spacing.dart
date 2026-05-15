@@ -8,4 +8,7 @@ class AppSpacing {
   static const double xl = 24;
   static const double xxl = 32;
   static const double xxxl = 48;
+
+  /// Section gap for desktop layouts — used between major content sections.
+  static const double sectionGapDesktop = 64;
 }

@@ -45,6 +45,7 @@ class AppTheme {
       brightness: scheme.brightness,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.bg,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: ZoomPageTransitionsBuilder(),
@@ -155,6 +156,27 @@ class AppTheme {
         ),
         textStyle: textTheme.bodySmall?.copyWith(color: scheme.onSurface),
       ),
+      scrollbarTheme: ScrollbarThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.dragged)) {
+            return scheme.onSurface.withValues(alpha: 0.54);
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return scheme.onSurface.withValues(alpha: 0.36);
+          }
+          return scheme.onSurface.withValues(alpha: 0.18);
+        }),
+        thickness: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.hovered) ||
+              states.contains(WidgetState.dragged)) {
+            return 8.0;
+          }
+          return 4.0;
+        }),
+        radius: const Radius.circular(AppRadius.pill),
+        interactive: true,
+      ),
+      focusColor: scheme.primary.withValues(alpha: 0.12),
     );
   }
 }

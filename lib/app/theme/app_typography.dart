@@ -10,6 +10,10 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTypography {
   const AppTypography._();
 
+  /// Maximum reading width for body text on desktop — optimized for ~75 chars
+  /// at Inter 15px (used in reading panels on desktop).
+  static const double maxReadingWidth = 560;
+
   static TextStyle display({
     double size = 48,
     FontWeight weight = FontWeight.w600,

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+enum WindowSizeClass { compact, medium, expanded, large, extraLarge }
+
+enum NavigationMode { burgerFab, railCompact, railExtended, drawerPermanent }
+
 class Breakpoints {
   const Breakpoints._();
 
@@ -111,6 +115,37 @@ class Breakpoints {
     if (width < tabletMax) return 560;
     return 640;
   }
+
+  /// Determines the [WindowSizeClass] for the given width.
+  /// Thresholds align with Material 3 Window Size Classes:
+  /// - compact: < 600
+  /// - medium: 600 - 904
+  /// - expanded: 905 - 1199
+  /// - large: 1200 - 1599
+  /// - extraLarge: >= 1600
+  static WindowSizeClass windowSizeClassFromWidth(double width) {
+    if (width < 600) return WindowSizeClass.compact;
+    if (width < 905) return WindowSizeClass.medium;
+    if (width < 1200) return WindowSizeClass.expanded;
+    if (width < 1600) return WindowSizeClass.large;
+    return WindowSizeClass.extraLarge;
+  }
+
+  /// Returns the default [NavigationMode] for the given [WindowSizeClass].
+  /// Follows the rule:
+  /// - compact -> [NavigationMode.burgerFab]
+  /// - medium -> [NavigationMode.railCompact]
+  /// - expanded -> [NavigationMode.railExtended]
+  /// - large / extraLarge -> [NavigationMode.drawerPermanent]
+  static NavigationMode navigationModeForWindowSize(WindowSizeClass sizeClass) {
+    return switch (sizeClass) {
+      WindowSizeClass.compact => NavigationMode.burgerFab,
+      WindowSizeClass.medium => NavigationMode.railCompact,
+      WindowSizeClass.expanded => NavigationMode.railExtended,
+      WindowSizeClass.large ||
+      WindowSizeClass.extraLarge => NavigationMode.drawerPermanent,
+    };
+  }
 }
 
 extension BreakpointsContext on BuildContext {
@@ -119,4 +154,12 @@ extension BreakpointsContext on BuildContext {
   bool get isPhone => Breakpoints.isPhone(bpWidth);
   bool get isTablet => Breakpoints.isTablet(bpWidth);
   bool get isDesktop => Breakpoints.isDesktop(bpWidth);
+
+  /// Returns the [WindowSizeClass] for the current screen width.
+  WindowSizeClass get windowSizeClass =>
+      Breakpoints.windowSizeClassFromWidth(bpWidth);
+
+  /// Returns the default [NavigationMode] for the current screen size.
+  NavigationMode get defaultNavigationMode =>
+      Breakpoints.navigationModeForWindowSize(windowSizeClass);
 }
