@@ -41,8 +41,9 @@ Future<void> main() async {
         androidNotificationChannelName: 'Jellyfish',
         androidNotificationChannelDescription: 'Playback controls',
         androidNotificationIcon: 'mipmap/ic_launcher',
-        androidStopForegroundOnPause: true,
-        androidNotificationOngoing: true,
+        // Android 14+: notification dismissible in pause, service exits foreground to reduce resource footprint.
+        androidStopForegroundOnPause: false,
+        androidNotificationOngoing: false,
         preloadArtwork: true,
       ),
     );
