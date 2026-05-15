@@ -100,6 +100,14 @@ class CastPlayerBackend implements PlayerBackend {
   @override
   Stream<bool> get bufferingStream => _bufferingController.stream;
 
+  /// Le Default Media Receiver n'expose pas de buffer ahead exploitable :
+  /// on émet une valeur unique zéro plutôt qu'une donnée fausse. La barre de
+  /// buffer du lockscreen reste alors collée au play head, ce qui est le
+  /// comportement attendu pour un flux distant piloté par le receiver.
+  @override
+  Stream<Duration> get bufferedPositionStream =>
+      Stream<Duration>.value(Duration.zero);
+
   @override
   Duration get position => _position;
 

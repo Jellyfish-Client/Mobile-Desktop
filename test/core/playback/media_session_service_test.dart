@@ -39,6 +39,7 @@ class _FakePlayerBackend extends Fake implements PlayerBackend {
   final _errorCtrl = StreamController<String>.broadcast();
   final _durationCtrl = StreamController<Duration>.broadcast();
   final _bufferingCtrl = StreamController<bool>.broadcast();
+  final _bufferedPositionCtrl = StreamController<Duration>.broadcast();
 
   @override
   Stream<BackendState> get stateStream => _stateCtrl.stream;
@@ -52,6 +53,8 @@ class _FakePlayerBackend extends Fake implements PlayerBackend {
   Stream<Duration> get durationStream => _durationCtrl.stream;
   @override
   Stream<bool> get bufferingStream => _bufferingCtrl.stream;
+  @override
+  Stream<Duration> get bufferedPositionStream => _bufferedPositionCtrl.stream;
 
   // Tracked calls
   int playCalls = 0;
@@ -92,6 +95,7 @@ class _FakePlayerBackend extends Fake implements PlayerBackend {
     await _errorCtrl.close();
     await _durationCtrl.close();
     await _bufferingCtrl.close();
+    await _bufferedPositionCtrl.close();
   }
 }
 

@@ -207,6 +207,9 @@ class MediaKitPlayerBackend implements PlayerBackend {
   Stream<bool> get bufferingStream => _player.stream.buffering;
 
   @override
+  Stream<Duration> get bufferedPositionStream => _player.stream.buffer;
+
+  @override
   Stream<bool> get completedStream => _completedController.stream;
 
   @override

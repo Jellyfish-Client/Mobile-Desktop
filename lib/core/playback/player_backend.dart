@@ -60,6 +60,11 @@ abstract class PlayerBackend {
   Stream<Duration> get durationStream;
   Stream<bool> get bufferingStream;
 
+  /// Continuously emits the latest buffered position — i.e. the timestamp up
+  /// to which the player has pre-loaded data. Used by the system media
+  /// session to draw the buffer ahead of the play head on the lockscreen.
+  Stream<Duration> get bufferedPositionStream;
+
   /// Edge-only stream — emits a single `true` when the source ends naturally.
   Stream<bool> get completedStream;
   Stream<BackendState> get stateStream;
