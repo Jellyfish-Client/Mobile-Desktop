@@ -1013,6 +1013,8 @@
   "@playerLockControls": {},
   "playerPictureInPicture": "Picture-in-Picture",
   "@playerPictureInPicture": {},
+  "playerPipUnavailableIos": "Picture-in-Picture non disponible sur iOS pour cette version",
+  "@playerPipUnavailableIos": {},
   "playerDismiss": "Ignorer",
   "@playerDismiss": {},
   "playerPlayNow": "Lire maintenant",
@@ -1800,5 +1802,31 @@
         "type": "String"
       }
     }
-  }
+  },
+  "playerUnlockControls": "Déverrouiller les commandes",
+  "@playerUnlockControls": {},
+  "playerBack": "Retour",
+  "@playerBack": {},
+  "playerPlay": "Lecture",
+  "@playerPlay": {},
+  "playerPause": "Pause",
+  "@playerPause": {},
+  "playerSeekBack": "Reculer de 10 secondes",
+  "@playerSeekBack": {},
+  "playerSeekForward": "Avancer de 10 secondes",
+  "@playerSeekForward": {},
+  "commonPlay": "Lecture",
+  "@commonPlay": {},
+  "heroDetails": "Détails",
+  "@heroDetails": {},
+  "heroFavoriteAdd": "Ajouter aux favoris",
+  "@heroFavoriteAdd": {},
+  "heroFavoriteRemove": "Retirer des favoris",
+  "@heroFavoriteRemove": {},
+  "commonErrorTitle": "Une erreur est survenue",
+  "@commonErrorTitle": {},
+  "commonErrorRetry": "Réessayer",
+  "@commonErrorRetry": {},
+  "commonEmptyTitle": "Rien à afficher",
+  "@commonEmptyTitle": {}
 }

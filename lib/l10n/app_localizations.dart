@@ -2468,6 +2468,12 @@ abstract class AppLocalizations {
   /// **'Picture-in-Picture'**
   String get playerPictureInPicture;
 
+  /// No description provided for @playerPipUnavailableIos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Picture-in-Picture non disponible sur iOS pour cette version'**
+  String get playerPipUnavailableIos;
+
   /// No description provided for @playerDismiss.
   ///
   /// In fr, this message translates to:
@@ -4393,6 +4399,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Diffusion sur {device}'**
   String castStartedSnack(String device);
+
+  /// No description provided for @playerUnlockControls.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déverrouiller les commandes'**
+  String get playerUnlockControls;
+
+  /// No description provided for @playerBack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get playerBack;
+
+  /// No description provided for @playerPlay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture'**
+  String get playerPlay;
+
+  /// No description provided for @playerPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pause'**
+  String get playerPause;
+
+  /// No description provided for @playerSeekBack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reculer de 10 secondes'**
+  String get playerSeekBack;
+
+  /// No description provided for @playerSeekForward.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avancer de 10 secondes'**
+  String get playerSeekForward;
+
+  /// No description provided for @commonPlay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture'**
+  String get commonPlay;
+
+  /// No description provided for @heroDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails'**
+  String get heroDetails;
+
+  /// No description provided for @heroFavoriteAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux favoris'**
+  String get heroFavoriteAdd;
+
+  /// No description provided for @heroFavoriteRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer des favoris'**
+  String get heroFavoriteRemove;
+
+  /// No description provided for @commonErrorTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur est survenue'**
+  String get commonErrorTitle;
+
+  /// No description provided for @commonErrorRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get commonErrorRetry;
+
+  /// No description provided for @commonEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à afficher'**
+  String get commonEmptyTitle;
 }
 
 class _AppLocalizationsDelegate

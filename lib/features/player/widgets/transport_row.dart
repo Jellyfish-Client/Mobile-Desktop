@@ -26,12 +26,16 @@ class TransportRow extends ConsumerWidget {
       child: Row(
         children: [
           IconButton(
+            tooltip: context.l10n.playerSeekBack,
             onPressed: () =>
                 backend.seek(state.position - const Duration(seconds: 10)),
             icon: const Icon(Icons.replay_10, color: Colors.white, size: 28),
           ),
           const SizedBox(width: 4),
           IconButton(
+            tooltip: state.isPlaying
+                ? context.l10n.playerPause
+                : context.l10n.playerPlay,
             onPressed: () async {
               if (state.isPlaying) {
                 await backend.pause();
@@ -49,6 +53,7 @@ class TransportRow extends ConsumerWidget {
           ),
           const SizedBox(width: 4),
           IconButton(
+            tooltip: context.l10n.playerSeekForward,
             onPressed: () =>
                 backend.seek(state.position + const Duration(seconds: 10)),
             icon: const Icon(Icons.forward_10, color: Colors.white, size: 28),

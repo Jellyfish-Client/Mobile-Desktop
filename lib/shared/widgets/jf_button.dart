@@ -31,6 +31,7 @@ class JfButton extends StatelessWidget {
     this.icon,
     this.loading = false,
     this.fullWidth = false,
+    this.semanticLabel,
     super.key,
   });
 
@@ -41,6 +42,7 @@ class JfButton extends StatelessWidget {
     bool loading = false,
     bool fullWidth = false,
     JfButtonSize size = JfButtonSize.md,
+    String? semanticLabel,
     Key? key,
   }) => JfButton(
     key: key,
@@ -50,6 +52,7 @@ class JfButton extends StatelessWidget {
     loading: loading,
     fullWidth: fullWidth,
     size: size,
+    semanticLabel: semanticLabel,
   );
 
   factory JfButton.secondary({
@@ -59,6 +62,7 @@ class JfButton extends StatelessWidget {
     bool loading = false,
     bool fullWidth = false,
     JfButtonSize size = JfButtonSize.md,
+    String? semanticLabel,
     Key? key,
   }) => JfButton(
     key: key,
@@ -69,6 +73,7 @@ class JfButton extends StatelessWidget {
     loading: loading,
     fullWidth: fullWidth,
     size: size,
+    semanticLabel: semanticLabel,
   );
 
   factory JfButton.ghost({
@@ -76,6 +81,7 @@ class JfButton extends StatelessWidget {
     required VoidCallback? onPressed,
     IconData? icon,
     JfButtonSize size = JfButtonSize.md,
+    String? semanticLabel,
     Key? key,
   }) => JfButton(
     key: key,
@@ -84,6 +90,7 @@ class JfButton extends StatelessWidget {
     variant: JfButtonVariant.ghost,
     icon: icon,
     size: size,
+    semanticLabel: semanticLabel,
   );
 
   factory JfButton.destructive({
@@ -92,6 +99,7 @@ class JfButton extends StatelessWidget {
     IconData? icon,
     bool loading = false,
     JfButtonSize size = JfButtonSize.md,
+    String? semanticLabel,
     Key? key,
   }) => JfButton(
     key: key,
@@ -101,6 +109,7 @@ class JfButton extends StatelessWidget {
     icon: icon,
     loading: loading,
     size: size,
+    semanticLabel: semanticLabel,
   );
 
   final String label;
@@ -110,6 +119,9 @@ class JfButton extends StatelessWidget {
   final IconData? icon;
   final bool loading;
   final bool fullWidth;
+
+  /// Accessibility label announced by screen readers. Falls back to [label].
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +229,12 @@ class JfButton extends StatelessWidget {
       ),
     );
 
-    return fullWidth ? SizedBox(width: double.infinity, child: btn) : btn;
+    final wrapped = Semantics(
+      button: true,
+      label: semanticLabel ?? label,
+      enabled: !disabled,
+      child: fullWidth ? SizedBox(width: double.infinity, child: btn) : btn,
+    );
+    return wrapped;
   }
 }

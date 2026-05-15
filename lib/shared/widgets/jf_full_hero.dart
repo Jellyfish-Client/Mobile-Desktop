@@ -4,8 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../app/theme/app_motion.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../app/theme/app_typography.dart';
+import '../../l10n/l10n_extension.dart';
 import 'jf_button.dart';
 
 /// One slide of [JfFullHero]. Carries the full editorial payload —
@@ -28,7 +30,7 @@ class JfFullHeroSlide {
     this.runtimeMinutes,
     this.genres = const [],
     this.isFavorite,
-    this.primaryLabel = 'Lecture',
+    this.primaryLabel,
     this.primaryIcon = Icons.play_arrow,
   });
 
@@ -45,7 +47,7 @@ class JfFullHeroSlide {
   final List<String> genres;
   final bool? isFavorite;
 
-  final String primaryLabel;
+  final String? primaryLabel;
   final IconData primaryIcon;
 }
 
@@ -119,10 +121,7 @@ class _JfFullHeroState extends State<JfFullHero> {
     }
   }
 
-  static bool _sameSlideIds(
-    List<JfFullHeroSlide> a,
-    List<JfFullHeroSlide> b,
-  ) {
+  static bool _sameSlideIds(List<JfFullHeroSlide> a, List<JfFullHeroSlide> b) {
     if (a.length != b.length) return false;
     for (var i = 0; i < a.length; i++) {
       if (a[i].id != b[i].id) return false;
@@ -169,7 +168,7 @@ class _JfFullHeroState extends State<JfFullHero> {
     final next = (_index + 1) % widget.slides.length;
     _controller.animateToPage(
       next,
-      duration: const Duration(milliseconds: 220),
+      duration: AppMotion.medium,
       curve: Curves.easeInOut,
     );
   }
@@ -210,6 +209,7 @@ class _JfFullHeroState extends State<JfFullHero> {
               // ── Foreground content ──────────────────────────────────────
               Positioned.fill(
                 child: AnimatedSwitcher(
+                  // 300ms: no exact token match (between medium=220 & slow=360)
                   duration: const Duration(milliseconds: 300),
                   switchInCurve: Curves.easeInOut,
                   // Override the default `Stack(alignment: center)` layout —
@@ -222,7 +222,8 @@ class _JfFullHeroState extends State<JfFullHero> {
                   layoutBuilder: (currentChild, previousChildren) => Stack(
                     fit: StackFit.expand,
                     children: [
-                      for (final c in previousChildren) Positioned.fill(child: c),
+                      for (final c in previousChildren)
+                        Positioned.fill(child: c),
                       if (currentChild != null)
                         Positioned.fill(child: currentChild),
                     ],
@@ -248,20 +249,20 @@ class _JfFullHeroState extends State<JfFullHero> {
                         : () => widget.onDetailTap!(widget.slides[_index]),
                     onFavoriteToggle: widget.onFavoriteToggle == null
                         ? null
-                        : () =>
-                              widget.onFavoriteToggle!(widget.slides[_index]),
+                        : () => widget.onFavoriteToggle!(widget.slides[_index]),
                   ),
                 ),
               ),
 
-              // ── Dot indicator, right-aligned (plugin parity) ───────────
               if (widget.slides.length > 1)
                 Positioned(
                   right: AppSpacing.lg,
                   bottom: AppSpacing.xxl + AppSpacing.lg,
-                  child: _DotIndicator(
-                    count: widget.slides.length,
-                    activeIndex: _index,
+                  child: ExcludeSemantics(
+                    child: _DotIndicator(
+                      count: widget.slides.length,
+                      activeIndex: _index,
+                    ),
                   ),
                 ),
             ],
@@ -404,15 +405,13 @@ class _BackdropPageState extends State<_BackdropPage>
           AnimatedBuilder(
             animation: _kenBurns,
             builder: (context, child) {
-              // easeOut curve : accélération rapide puis ralentissement —
-              // correspond exactement à Curves.easeOut de Moonfin.
               final t = Curves.easeOut.transform(_kenBurns.value);
               final scale = 1.0 + 0.08 * t;
               return Transform.scale(scale: scale, child: child);
             },
-            child: _BackdropImage(slide: widget.slide),
+            child: ExcludeSemantics(child: _BackdropImage(slide: widget.slide)),
           ),
-          const _ScrimLayer(),
+          const ExcludeSemantics(child: _ScrimLayer()),
         ],
       ),
     );
@@ -434,6 +433,7 @@ class _BackdropImage extends StatelessWidget {
       imageUrl: url,
       fit: BoxFit.cover,
       alignment: const Alignment(0, -0.25),
+      // 350ms: no exact token match (closest to slow=360)
       fadeInDuration: const Duration(milliseconds: 350),
       placeholder: (_, __) => const ColoredBox(color: AppColors.surface),
       errorWidget: (_, __, ___) => const ColoredBox(color: AppColors.surface),
@@ -811,13 +811,13 @@ class _ActionsRow extends StatelessWidget {
           _CircleButton(
             icon: Icons.info_outline,
             onTap: onDetailTap!,
-            tooltip: 'Détails',
+            tooltip: context.l10n.heroDetails,
           ),
           const SizedBox(width: AppSpacing.sm),
         ],
         Flexible(
           child: JfButton.primary(
-            label: slide.primaryLabel,
+            label: slide.primaryLabel ?? context.l10n.commonPlay,
             icon: slide.primaryIcon,
             onPressed: onPrimaryTap,
           ),
@@ -829,7 +829,9 @@ class _ActionsRow extends StatelessWidget {
                 ? Icons.favorite
                 : Icons.favorite_border,
             onTap: onFavoriteToggle!,
-            tooltip: 'Favori',
+            tooltip: (slide.isFavorite ?? false)
+                ? context.l10n.heroFavoriteRemove
+                : context.l10n.heroFavoriteAdd,
             iconColor: (slide.isFavorite ?? false)
                 ? const Color(0xFFE53935)
                 : Colors.white,
@@ -887,6 +889,7 @@ class _DotIndicator extends StatelessWidget {
       children: List.generate(count, (i) {
         final isActive = i == activeIndex;
         return AnimatedContainer(
+          // 300ms: no exact token match (between medium=220 & slow=360)
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           margin: const EdgeInsets.symmetric(horizontal: 3),
@@ -894,7 +897,9 @@ class _DotIndicator extends StatelessWidget {
           height: 6,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3),
-            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
+            color: isActive
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.4),
           ),
         );
       }),

@@ -1013,6 +1013,8 @@
   "@playerLockControls": {},
   "playerPictureInPicture": "Picture-in-Picture",
   "@playerPictureInPicture": {},
+  "playerPipUnavailableIos": "Picture-in-Picture not available on iOS for this version",
+  "@playerPipUnavailableIos": {},
   "playerDismiss": "Dismiss",
   "@playerDismiss": {},
   "playerPlayNow": "Play now",
@@ -1800,5 +1802,31 @@
         "type": "String"
       }
     }
-  }
+  },
+  "playerUnlockControls": "Unlock controls",
+  "@playerUnlockControls": {},
+  "playerBack": "Back",
+  "@playerBack": {},
+  "playerPlay": "Play",
+  "@playerPlay": {},
+  "playerPause": "Pause",
+  "@playerPause": {},
+  "playerSeekBack": "Seek back 10 seconds",
+  "@playerSeekBack": {},
+  "playerSeekForward": "Seek forward 10 seconds",
+  "@playerSeekForward": {},
+  "commonPlay": "Play",
+  "@commonPlay": {},
+  "heroDetails": "Details",
+  "@heroDetails": {},
+  "heroFavoriteAdd": "Add to favorites",
+  "@heroFavoriteAdd": {},
+  "heroFavoriteRemove": "Remove from favorites",
+  "@heroFavoriteRemove": {},
+  "commonErrorTitle": "Something went wrong",
+  "@commonErrorTitle": {},
+  "commonErrorRetry": "Retry",
+  "@commonErrorRetry": {},
+  "commonEmptyTitle": "Nothing to show",
+  "@commonEmptyTitle": {}
 }

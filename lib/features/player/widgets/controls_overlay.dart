@@ -19,17 +19,20 @@ class ControlsOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
-      ignoring: !visible,
-      child: AnimatedOpacity(
-        opacity: visible ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 180),
-        child: Column(
-          children: [
-            TopBar(itemId: itemId, onLock: onLock, onPip: onPip),
-            const Spacer(),
-            BottomBar(itemId: itemId),
-          ],
+    return ExcludeSemantics(
+      excluding: !visible,
+      child: IgnorePointer(
+        ignoring: !visible,
+        child: AnimatedOpacity(
+          opacity: visible ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 180),
+          child: Column(
+            children: [
+              TopBar(itemId: itemId, onLock: onLock, onPip: onPip),
+              const Spacer(),
+              BottomBar(itemId: itemId),
+            ],
+          ),
         ),
       ),
     );

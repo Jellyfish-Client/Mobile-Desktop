@@ -5,6 +5,7 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_radius.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../app/theme/app_typography.dart';
+import 'jf_tappable.dart';
 
 /// Magazine-style card. Backdrop image with the title rendered in Fraunces
 /// directly on top of the lower half, with a thin colored accent line under
@@ -18,6 +19,7 @@ class JfEditorialCard extends StatelessWidget {
     this.width = 240,
     this.aspectRatio = 3 / 4,
     this.onTap,
+    this.semanticLabel,
     super.key,
   });
 
@@ -28,17 +30,22 @@ class JfEditorialCard extends StatelessWidget {
   final double aspectRatio;
   final VoidCallback? onTap;
 
+  /// Accessibility label announced by screen readers. Falls back to [title].
+  final String? semanticLabel;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final shape = BorderRadius.circular(AppRadius.md);
 
-    return SizedBox(
-      width: width,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: shape,
+    return JfTappable(
+      semanticLabel: semanticLabel ?? title,
+      onTap: onTap,
+      borderRadius: shape,
+      haptic: HapticFeedbackType.selection,
+      child: SizedBox(
+        width: width,
         child: ClipRRect(
           borderRadius: shape,
           child: AspectRatio(
@@ -58,21 +65,20 @@ class JfEditorialCard extends StatelessWidget {
                 else
                   Container(color: scheme.surfaceContainerHigh),
 
-                // Layered scrim: subtle top vignette + strong bottom fade.
-                // The bottom needs to be dense enough to carry white Fraunces
-                // text at any poster luminance.
-                const DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0x44000000),
-                        Color(0x00000000),
-                        Color(0xBB000000),
-                        Color(0xEE000000),
-                      ],
-                      stops: [0.0, 0.35, 0.7, 1.0],
+                const ExcludeSemantics(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0x44000000),
+                          Color(0x00000000),
+                          Color(0xBB000000),
+                          Color(0xEE000000),
+                        ],
+                        stops: [0.0, 0.35, 0.7, 1.0],
+                      ),
                     ),
                   ),
                 ),
@@ -91,11 +97,9 @@ class JfEditorialCard extends StatelessWidget {
                           tagline!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelSmall?.copyWith(
+                          style: AppTypography.eyebrow(
                             color: AppColors.secondary,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.2,
-                          ),
+                          ).copyWith(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: AppSpacing.xs),
                       ],

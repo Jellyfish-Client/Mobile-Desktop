@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -38,6 +40,7 @@ class TopBar extends ConsumerWidget {
         child: Row(
           children: [
             IconButton(
+              tooltip: context.l10n.playerBack,
               onPressed: () => context.pop(),
               icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
@@ -79,6 +82,18 @@ class TopBar extends ConsumerWidget {
                   color: Colors.white,
                 ),
                 tooltip: context.l10n.playerPictureInPicture,
+              )
+            else if (Platform.isIOS)
+              Tooltip(
+                message: context.l10n.playerPipUnavailableIos,
+                child: IconButton(
+                  // null désactive le bouton tout en le rendant visible.
+                  onPressed: null,
+                  icon: Icon(
+                    Icons.picture_in_picture_alt,
+                    color: Colors.white.withValues(alpha: 0.38),
+                  ),
+                ),
               ),
             IconButton(
               onPressed: onLock,

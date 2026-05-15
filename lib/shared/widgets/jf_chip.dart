@@ -12,6 +12,7 @@ class JfChip extends StatelessWidget {
     this.icon,
     this.tone = JfChipTone.neutral,
     this.onTap,
+    this.semanticLabel,
     super.key,
   });
 
@@ -19,6 +20,9 @@ class JfChip extends StatelessWidget {
   final IconData? icon;
   final JfChipTone tone;
   final VoidCallback? onTap;
+
+  /// Accessibility label announced by screen readers. Falls back to [label].
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +78,14 @@ class JfChip extends StatelessWidget {
     if (onTap == null) {
       return Material(color: bg, shape: shape, child: inner);
     }
-    return Material(
-      color: bg,
-      shape: shape,
-      child: InkWell(onTap: onTap, customBorder: shape, child: inner),
+    return Semantics(
+      button: true,
+      label: semanticLabel ?? label,
+      child: Material(
+        color: bg,
+        shape: shape,
+        child: InkWell(onTap: onTap, customBorder: shape, child: inner),
+      ),
     );
   }
 }

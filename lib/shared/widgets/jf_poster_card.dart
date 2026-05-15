@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/app_radius.dart';
 import '../../app/theme/app_spacing.dart';
+import 'jf_tappable.dart';
 
 /// Vertical poster + metadata block, used in browse rows / search results.
 /// Pass a null [imageUrl] to render a placeholder.
@@ -17,6 +18,7 @@ class JfPosterCard extends StatelessWidget {
     this.overlay,
     this.dimmed = false,
     this.onTap,
+    this.semanticLabel,
     super.key,
   });
 
@@ -42,13 +44,18 @@ class JfPosterCard extends StatelessWidget {
   final bool dimmed;
   final VoidCallback? onTap;
 
+  /// Accessibility label announced by screen readers. Falls back to [title].
+  final String? semanticLabel;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final card = InkWell(
+    final card = JfTappable(
+      semanticLabel: semanticLabel ?? title,
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.md),
+      haptic: HapticFeedbackType.selection,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -84,22 +91,22 @@ class JfPosterCard extends StatelessWidget {
                         valueColor: AlwaysStoppedAnimation(scheme.primary),
                       ),
                     ),
-                  // Subtle vignette at the bottom — preserves poster readability
-                  // even when the artwork has a bright lower edge.
                   Positioned(
                     left: 0,
                     right: 0,
                     bottom: 0,
                     height: 36,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            const Color(0x00000000),
-                            Colors.black.withValues(alpha: 0.28),
-                          ],
+                    child: ExcludeSemantics(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              const Color(0x00000000),
+                              Colors.black.withValues(alpha: 0.28),
+                            ],
+                          ),
                         ),
                       ),
                     ),

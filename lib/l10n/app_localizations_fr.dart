@@ -1374,6 +1374,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get playerPictureInPicture => 'Picture-in-Picture';
 
   @override
+  String get playerPipUnavailableIos =>
+      'Picture-in-Picture non disponible sur iOS pour cette version';
+
+  @override
   String get playerDismiss => 'Ignorer';
 
   @override
@@ -2425,4 +2429,43 @@ class AppLocalizationsFr extends AppLocalizations {
   String castStartedSnack(String device) {
     return 'Diffusion sur $device';
   }
+
+  @override
+  String get playerUnlockControls => 'Déverrouiller les commandes';
+
+  @override
+  String get playerBack => 'Retour';
+
+  @override
+  String get playerPlay => 'Lecture';
+
+  @override
+  String get playerPause => 'Pause';
+
+  @override
+  String get playerSeekBack => 'Reculer de 10 secondes';
+
+  @override
+  String get playerSeekForward => 'Avancer de 10 secondes';
+
+  @override
+  String get commonPlay => 'Lecture';
+
+  @override
+  String get heroDetails => 'Détails';
+
+  @override
+  String get heroFavoriteAdd => 'Ajouter aux favoris';
+
+  @override
+  String get heroFavoriteRemove => 'Retirer des favoris';
+
+  @override
+  String get commonErrorTitle => 'Une erreur est survenue';
+
+  @override
+  String get commonErrorRetry => 'Réessayer';
+
+  @override
+  String get commonEmptyTitle => 'Rien à afficher';
 }

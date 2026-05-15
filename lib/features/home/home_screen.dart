@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/theme/app_radius.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../app/theme/app_typography.dart';
 import '../../core/bridge/bridge_error_bus.dart';
@@ -86,7 +87,7 @@ class HomeScreen extends ConsumerWidget {
             overview: media.overview,
             backdropUrl: seerrClient.backdropUrl(media),
             year: media.year,
-            primaryLabel: 'Demander',
+            primaryLabel: context.l10n.seerrRequest,
             primaryIcon: Icons.add_circle_outline,
           ),
         },
@@ -240,8 +241,7 @@ String _bridgeErrorText(BuildContext context, BridgeException e) {
   final l10n = context.l10n;
   return switch (e.kind) {
     BridgeErrorKind.noJellyseerrAccount => l10n.homeNoJellyseerrAccount,
-    BridgeErrorKind.jellyseerrNotConfigured =>
-      l10n.homeJellyseerrNotConfigured,
+    BridgeErrorKind.jellyseerrNotConfigured => l10n.homeJellyseerrNotConfigured,
     BridgeErrorKind.radarrNotConfigured => l10n.homeRadarrNotConfigured,
     BridgeErrorKind.sonarrNotConfigured => l10n.homeSonarrNotConfigured,
     BridgeErrorKind.upstreamUnreachable => l10n.homeUpstreamUnreachable,
@@ -259,7 +259,7 @@ class _PluginMissingBanner extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: scheme.errorContainer.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(color: scheme.error.withValues(alpha: 0.4)),
       ),
       child: Row(
