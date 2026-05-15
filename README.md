@@ -23,6 +23,7 @@
 
 ### Playback & media
 - **Native, performant player** powered by `media_kit` (mpv) with multi-track audio / subtitle support
+- **Chromecast** support targeting the official Jellyfin receiver: device discovery, mini-player, full Now Playing screen, audio/subtitle switching from the receiver tracks
 - **Picture-in-Picture** automatic on iOS / Android
 - **MediaSession** integration: lock-screen controls, Bluetooth headsets, CarPlay / Android Auto
 - **Auto-skip** intro / outro via Jellyfin Media Segments

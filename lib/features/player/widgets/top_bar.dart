@@ -6,6 +6,7 @@ import 'package:jellyfin_api/jellyfin_api.dart' show BaseItemKind;
 import '../../../core/jellyfin/models/jellyfin_item.dart';
 import '../../../core/playback/playback_providers.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../shared/widgets/cast_button.dart';
 import '../../details/_format.dart';
 
 class TopBar extends ConsumerWidget {
@@ -69,6 +70,7 @@ class TopBar extends ConsumerWidget {
                 ],
               ),
             ),
+            CastButton(itemId: itemId, color: Colors.white),
             if (onPip != null)
               IconButton(
                 onPressed: onPip,

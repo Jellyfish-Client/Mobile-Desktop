@@ -1750,5 +1750,55 @@
   "adminBackupRestoreConfirm2Confirm": "Oui, restaurer",
   "@adminBackupRestoreConfirm2Confirm": {},
   "adminBackupRestoreSnack": "Restauration lancée ; le serveur redémarre…",
-  "@adminBackupRestoreSnack": {}
+  "@adminBackupRestoreSnack": {},
+  "castButton": "Diffuser",
+  "@castButton": {},
+  "castSheetTitle": "Diffuser vers",
+  "@castSheetTitle": {},
+  "castSheetSearching": "Recherche d'appareils…",
+  "@castSheetSearching": {},
+  "castSheetEmpty": "Aucun appareil Chromecast trouvé sur votre réseau.",
+  "@castSheetEmpty": {},
+  "castSheetConnectedTo": "Connecté à {device}",
+  "@castSheetConnectedTo": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "castSheetDisconnect": "Déconnecter",
+  "@castSheetDisconnect": {},
+  "castConnecting": "Connexion à {device}…",
+  "@castConnecting": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "castConnectionFailed": "Impossible de se connecter à {device}",
+  "@castConnectionFailed": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "castMiniPlayerStop": "Arrêter la diffusion",
+  "@castMiniPlayerStop": {},
+  "castNowPlayingTitle": "Diffusion en cours",
+  "@castNowPlayingTitle": {},
+  "castNowPlayingVolume": "Volume du récepteur",
+  "@castNowPlayingVolume": {},
+  "castOfflineUnsupported": "Diffusion indisponible pour les fichiers téléchargés",
+  "@castOfflineUnsupported": {},
+  "castStartedSnack": "Diffusion sur {device}",
+  "@castStartedSnack": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  }
 }

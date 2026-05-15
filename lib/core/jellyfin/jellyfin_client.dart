@@ -390,10 +390,44 @@ class JellyfinClient {
 
   // -- Playback -------------------------------------------------------------
 
-  Future<PlaybackInfoResponse> playbackInfo(String itemId) async {
+  Future<PlaybackInfoResponse> playbackInfo(
+    String itemId, {
+    DeviceProfile? deviceProfile,
+    int? maxStreamingBitrate,
+    int? audioStreamIndex,
+    int? subtitleStreamIndex,
+    int? startTimeTicks,
+    String? mediaSourceId,
+  }) async {
     final res = await _api.getMediaInfoApi().getPostedPlaybackInfo(
       itemId: itemId,
-      playbackInfoDto: PlaybackInfoDto((b) => b..userId = _userId),
+      playbackInfoDto: PlaybackInfoDto(
+        (b) {
+          b.userId = _userId;
+          if (deviceProfile != null) b.deviceProfile.replace(deviceProfile);
+          if (maxStreamingBitrate != null) {
+            b.maxStreamingBitrate = maxStreamingBitrate;
+          }
+          if (audioStreamIndex != null) {
+            b.audioStreamIndex = audioStreamIndex;
+          }
+          if (subtitleStreamIndex != null) {
+            b.subtitleStreamIndex = subtitleStreamIndex;
+          }
+          if (startTimeTicks != null) b.startTimeTicks = startTimeTicks;
+          if (mediaSourceId != null) b.mediaSourceId = mediaSourceId;
+          if (deviceProfile != null) {
+            // When a profile is sent, the client is asking the server to
+            // pick the best playable source — let it auto-open live streams
+            // and decide direct/transcode itself.
+            b
+              ..autoOpenLiveStream = true
+              ..enableDirectPlay = true
+              ..enableDirectStream = true
+              ..enableTranscoding = true;
+          }
+        },
+      ),
     );
     return res.data!;
   }

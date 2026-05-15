@@ -1750,5 +1750,55 @@
   "adminBackupRestoreConfirm2Confirm": "Yes, restore",
   "@adminBackupRestoreConfirm2Confirm": {},
   "adminBackupRestoreSnack": "Restore in progress; the server is restarting…",
-  "@adminBackupRestoreSnack": {}
+  "@adminBackupRestoreSnack": {},
+  "castButton": "Cast",
+  "@castButton": {},
+  "castSheetTitle": "Cast to",
+  "@castSheetTitle": {},
+  "castSheetSearching": "Searching for devices…",
+  "@castSheetSearching": {},
+  "castSheetEmpty": "No Chromecast device found on your network.",
+  "@castSheetEmpty": {},
+  "castSheetConnectedTo": "Connected to {device}",
+  "@castSheetConnectedTo": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "castSheetDisconnect": "Disconnect",
+  "@castSheetDisconnect": {},
+  "castConnecting": "Connecting to {device}…",
+  "@castConnecting": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "castConnectionFailed": "Could not connect to {device}",
+  "@castConnectionFailed": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "castMiniPlayerStop": "Stop casting",
+  "@castMiniPlayerStop": {},
+  "castNowPlayingTitle": "Now casting",
+  "@castNowPlayingTitle": {},
+  "castNowPlayingVolume": "Receiver volume",
+  "@castNowPlayingVolume": {},
+  "castOfflineUnsupported": "Cast unavailable for downloaded files",
+  "@castOfflineUnsupported": {},
+  "castStartedSnack": "Casting to {device}",
+  "@castStartedSnack": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  }
 }

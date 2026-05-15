@@ -4315,6 +4315,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Restauration lancée ; le serveur redémarre…'**
   String get adminBackupRestoreSnack;
+
+  /// No description provided for @castButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diffuser'**
+  String get castButton;
+
+  /// No description provided for @castSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diffuser vers'**
+  String get castSheetTitle;
+
+  /// No description provided for @castSheetSearching.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche d\'appareils…'**
+  String get castSheetSearching;
+
+  /// No description provided for @castSheetEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun appareil Chromecast trouvé sur votre réseau.'**
+  String get castSheetEmpty;
+
+  /// No description provided for @castSheetConnectedTo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecté à {device}'**
+  String castSheetConnectedTo(String device);
+
+  /// No description provided for @castSheetDisconnect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déconnecter'**
+  String get castSheetDisconnect;
+
+  /// No description provided for @castConnecting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion à {device}…'**
+  String castConnecting(String device);
+
+  /// No description provided for @castConnectionFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de se connecter à {device}'**
+  String castConnectionFailed(String device);
+
+  /// No description provided for @castMiniPlayerStop.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter la diffusion'**
+  String get castMiniPlayerStop;
+
+  /// No description provided for @castNowPlayingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diffusion en cours'**
+  String get castNowPlayingTitle;
+
+  /// No description provided for @castNowPlayingVolume.
+  ///
+  /// In fr, this message translates to:
+  /// **'Volume du récepteur'**
+  String get castNowPlayingVolume;
+
+  /// No description provided for @castOfflineUnsupported.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diffusion indisponible pour les fichiers téléchargés'**
+  String get castOfflineUnsupported;
+
+  /// No description provided for @castStartedSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diffusion sur {device}'**
+  String castStartedSnack(String device);
 }
 
 class _AppLocalizationsDelegate

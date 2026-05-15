@@ -7,21 +7,34 @@ import '../../../core/playback/playback_providers.dart';
 import '../../../core/playback/player_backend.dart';
 import '../../../l10n/l10n_extension.dart';
 
-Future<void> showSubtitleAudioSheet(BuildContext context) {
+/// Affiche la sélection audio/sous-titres pour [backend]. Si non fourni, on
+/// retombe sur le backend local (`playerBackendProvider`) — utile pour
+/// l'écran player. L'écran Cast Now Playing passe explicitement le
+/// `castBackend` pour piloter le receiver à la place.
+Future<void> showSubtitleAudioSheet(
+  BuildContext context, {
+  PlayerBackend? backend,
+}) {
   return showModalBottomSheet(
     context: context,
     backgroundColor: AppColors.surfaceContainer,
     isScrollControlled: true,
-    builder: (_) => const _SubtitleAudioSheet(),
+    builder: (_) => _SubtitleAudioSheet(injectedBackend: backend),
   );
 }
 
 class _SubtitleAudioSheet extends ConsumerWidget {
-  const _SubtitleAudioSheet();
+  const _SubtitleAudioSheet({this.injectedBackend});
+  final PlayerBackend? injectedBackend;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final backend = ref.watch(playerBackendProvider);
+    // The explicit type is required: without it, the analyser keeps the
+    // local typed as `PlayerBackend?` (mirroring `injectedBackend`) and
+    // refuses subsequent member access on it.
+    // ignore: omit_local_variable_types
+    final PlayerBackend backend =
+        injectedBackend ?? ref.watch(playerBackendProvider);
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.lg),

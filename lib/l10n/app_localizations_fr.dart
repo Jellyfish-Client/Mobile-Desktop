@@ -2376,4 +2376,53 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get adminBackupRestoreSnack =>
       'Restauration lancée ; le serveur redémarre…';
+
+  @override
+  String get castButton => 'Diffuser';
+
+  @override
+  String get castSheetTitle => 'Diffuser vers';
+
+  @override
+  String get castSheetSearching => 'Recherche d\'appareils…';
+
+  @override
+  String get castSheetEmpty =>
+      'Aucun appareil Chromecast trouvé sur votre réseau.';
+
+  @override
+  String castSheetConnectedTo(String device) {
+    return 'Connecté à $device';
+  }
+
+  @override
+  String get castSheetDisconnect => 'Déconnecter';
+
+  @override
+  String castConnecting(String device) {
+    return 'Connexion à $device…';
+  }
+
+  @override
+  String castConnectionFailed(String device) {
+    return 'Impossible de se connecter à $device';
+  }
+
+  @override
+  String get castMiniPlayerStop => 'Arrêter la diffusion';
+
+  @override
+  String get castNowPlayingTitle => 'Diffusion en cours';
+
+  @override
+  String get castNowPlayingVolume => 'Volume du récepteur';
+
+  @override
+  String get castOfflineUnsupported =>
+      'Diffusion indisponible pour les fichiers téléchargés';
+
+  @override
+  String castStartedSnack(String device) {
+    return 'Diffusion sur $device';
+  }
 }

@@ -75,12 +75,28 @@ class MediaSourceResolver {
 
   String _absolutize(String relative) {
     if (relative.startsWith('http://') || relative.startsWith('https://')) {
-      return relative;
+      return _cleanQueryString(relative);
     }
     final base = _trimSlash(_session.serverUrl);
     final rel = relative.startsWith('/') ? relative.substring(1) : relative;
-    final glue = rel.contains('?') ? '&' : '?';
-    return '$base/$rel${glue}ApiKey=${_session.accessToken}';
+    // Current Jellyfin builds embed `ApiKey=` directly in the transcoding
+    // URL they hand back. Appending a second one (which is what we used to
+    // do unconditionally) produces a malformed query string that the
+    // Chromecast receiver rejects with "Invalid Request".
+    final hasApiKey =
+        rel.contains('ApiKey=') || rel.contains('api_key=');
+    final url = hasApiKey
+        ? '$base/$rel'
+        : '$base/$rel${rel.contains('?') ? '&' : '?'}ApiKey=${_session.accessToken}';
+    return _cleanQueryString(url);
+  }
+
+  /// Jellyfin's transcoding URL builder occasionally emits `master.m3u8?&…`
+  /// (an empty leading parameter). Most servers tolerate it but the
+  /// Chromecast Default Media Receiver is strict and rejects the whole
+  /// request. Same fix for the rare `&&` produced if two keys collide.
+  String _cleanQueryString(String url) {
+    return url.replaceAll('?&', '?').replaceAll('&&', '&');
   }
 
   String _trimSlash(String s) =>

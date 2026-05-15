@@ -8,6 +8,7 @@ import 'package:media_kit/media_kit.dart';
 import 'app/app.dart';
 import 'core/app_settings/app_locale_settings.dart';
 import 'core/auth/auth_controller.dart';
+import 'core/cast/cast_providers.dart';
 import 'core/downloads/download_manager.dart';
 import 'core/playback/media_session_service.dart';
 import 'core/storage/device_id.dart';
@@ -82,6 +83,16 @@ Future<void> main() async {
   // Eagerly create the DownloadManager so it subscribes to update events
   // and resumes tracked tasks from previous app runs.
   container.read(downloadManagerProvider);
+
+  // Cast SDK init — best-effort. If natives aren't available (emulator
+  // without Play Services, non-mobile platform, denied permissions),
+  // CastService.ensureInitialized swallows and isSupported stays false,
+  // which makes every CastButton hide itself.
+  try {
+    await container.read(castInitProvider.future);
+  } on Object {
+    // Already logged inside CastService; the feature stays inert.
+  }
 
   // Warm the Home rails in parallel with the first frame: if a session is
   // already restored, kick the network fetches now so they're already in

@@ -33,6 +33,7 @@ class EpisodeDetailView extends ConsumerWidget {
             expandedHeight: 240,
             pinned: true,
             stretch: true,
+            actions: [CastButton(itemId: item.id, color: Colors.white)],
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,

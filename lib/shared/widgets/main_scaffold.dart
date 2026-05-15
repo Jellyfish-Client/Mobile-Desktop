@@ -5,9 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme/breakpoints.dart';
+import '../../core/cast/cast_providers.dart';
 import '../../core/sync/sync_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n_extension.dart';
+import 'cast_mini_player.dart';
 
 class MainScaffold extends ConsumerStatefulWidget {
   const MainScaffold({required this.navigationShell, super.key});
@@ -119,7 +121,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
             // bottom-right corner. Tapping opens a bottom sheet listing
             // every destination — replaces the legacy NavigationBar.
             return Scaffold(
-              body: shell,
+              body: _WithCastMiniPlayer(child: shell),
               floatingActionButton: _NavBurgerFab(
                 tabs: tabs,
                 currentIndex: index,
@@ -156,7 +158,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
                     ),
                   ),
                   const VerticalDivider(width: 1, thickness: 1),
-                  Expanded(child: shell),
+                  Expanded(child: _WithCastMiniPlayer(child: shell)),
                 ],
               ),
             ),
@@ -172,6 +174,32 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
         shell.goBranch(0);
       },
       child: scaffold,
+    );
+  }
+}
+
+/// Wrappe `child` dans un Stack qui pose le mini-player Cast en bottom-overlay
+/// dès qu'une session est active. On le pose à `bottom: 80` pour rester
+/// au-dessus de la zone occupée par le burger FAB sur phone, et avec une
+/// marge horizontale modérée pour rester lisible sur tablette.
+class _WithCastMiniPlayer extends ConsumerWidget {
+  const _WithCastMiniPlayer({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final showMini = ref.watch(castNowPlayingProvider) != null;
+    return Stack(
+      children: [
+        child,
+        if (showMini)
+          const Positioned(
+            left: 8,
+            right: 8,
+            bottom: 80,
+            child: CastMiniPlayer(),
+          ),
+      ],
     );
   }
 }

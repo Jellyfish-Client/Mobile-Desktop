@@ -15,6 +15,9 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../core/auth/account_key.dart';
 import '../../core/auth/auth_controller.dart';
+import '../../core/cast/cast_device_profile.dart';
+import '../../core/cast/cast_player_backend.dart';
+import '../../core/cast/cast_providers.dart';
 import '../../core/downloads/download_manager.dart';
 import '../../core/downloads/download_settings.dart';
 import '../../core/jellyfin/jellyfin_client.dart';
@@ -109,6 +112,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   bool _disposed = false;
   bool _attachedToAudioHandler = false;
 
+  // True dès qu'on bascule en branche Cast : on n'instancie pas de
+  // VideoSurface dans build(), ce qui évite que media_kit crée un
+  // VideoOutput inutilisé puis throw une NPE bénigne au dispose
+  // ("Surface.release() on null") quand on push CastNowPlayingScreen.
+  bool _delegatingToCast = false;
+
   bool _inPip = false;
   StreamSubscription<PiPStatus>? _pipSub;
 
@@ -178,6 +187,17 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
         return;
       }
 
+      // Branche Cast — si une session est active, le PlayerScreen ne joue pas
+      // de vidéo localement : il hydrate le CastPlayerBackend, le pose dans
+      // castNowPlayingProvider, et délègue à l'écran CastNowPlayingScreen.
+      // Pas de PlaybackReportingService (le receiver Jellyfin remonte
+      // /Sessions/Playing*), pas de PiP (rien à shrinker).
+      if (ref.read(isCastConnectedProvider)) {
+        if (mounted) setState(() => _delegatingToCast = true);
+        await _initOnCast();
+        return;
+      }
+
       final client = ref.read(jellyfinClientProvider);
       final session = ref.read(authControllerProvider).valueOrNull?.session;
       if (session == null) {
@@ -220,6 +240,97 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       );
       if (mounted) context.pop();
     }
+  }
+
+  /// Hydrates a [CastPlayerBackend] and hands off to the Cast Now Playing
+  /// screen. The backend is owned by [castNowPlayingProvider] from there on
+  /// — its lifecycle is decoupled from this PlayerScreen.
+  ///
+  /// On vise le Default Media Receiver, donc on demande à Jellyfin de
+  /// résoudre la source pour un profil Chromecast (h264/aac, transcode HLS
+  /// si besoin) puis on envoie l'URL résultante au receiver. C'est aussi
+  /// l'app qui reporte `/Sessions/Playing*` (le receiver générique ignore
+  /// Jellyfin).
+  Future<void> _initOnCast() async {
+    final session = ref.read(authControllerProvider).valueOrNull?.session;
+    if (session == null) throw StateError('No session for Cast init');
+
+    final client = ref.read(jellyfinClientProvider);
+    final item = await ref.read(playerItemProvider(widget.itemId).future);
+
+    // PlaybackInfo avec DeviceProfile Chromecast — le serveur choisit le
+    // bon mode (Direct Play ou transcode HLS) selon ce que sait jouer la TV.
+    final info = await client.playbackInfo(
+      widget.itemId,
+      deviceProfile: chromecastDeviceProfile(),
+      audioStreamIndex: widget.extra?.audioStreamIndex,
+      subtitleStreamIndex: widget.extra?.subtitleStreamIndex,
+      mediaSourceId: widget.extra?.mediaSourceId,
+    );
+    final resolver = MediaSourceResolver(session);
+    final resolved = resolver.resolve(widget.itemId, info);
+
+    final resumeTicks = item.playbackPositionTicks ?? 0;
+    final startPos = (resumeTicks > 0 && !(item.played ?? false))
+        ? Duration(microseconds: resumeTicks ~/ 10)
+        : Duration.zero;
+
+    final urls = ref.read(jellyfinUrlServiceProvider);
+    final posterUrl = urls.imageUrl(item, type: 'Primary', maxWidth: 600);
+
+    final castBackend = CastPlayerBackend(
+      client: client,
+      item: item,
+      session: session,
+      posterUrl: posterUrl,
+      initialInfo: info,
+      initialAudioStreamIndex: widget.extra?.audioStreamIndex,
+      initialSubtitleStreamIndex: widget.extra?.subtitleStreamIndex,
+    );
+    await castBackend.open(resolved.streamUrl, startPosition: startPos);
+
+    // Reporting Jellyfin — l'app pousse `/Sessions/Playing*` car le Default
+    // Media Receiver ne le fait pas. On réutilise le PlaySessionId généré
+    // par le serveur lors du PlaybackInfo : il est déjà embarqué dans
+    // l'URL de transcoding envoyée au Chromecast, donc reporter avec un
+    // autre ID donnerait deux sessions concurrentes côté serveur.
+    final playSessionId = info.playSessionId ?? const Uuid().v4();
+    final reporting = PlaybackReportingService(
+      sink: OnlinePlaybackSink(
+        client: client,
+        itemId: widget.itemId,
+        playSessionId: playSessionId,
+        mediaSourceId: resolved.mediaSourceId,
+      ),
+      positionTicksProvider: () => castBackend.position.inMicroseconds * 10,
+    );
+    await reporting.start(startTicks: startPos.inMicroseconds * 10);
+
+    // Wire backend state changes to the reporting service so pause/play
+    // get pushed promptly instead of waiting for the 10s timer tick.
+    castBackend.stateStream.listen((s) {
+      if (s == BackendState.playing) {
+        reporting.onPauseChanged(paused: false);
+      } else if (s == BackendState.paused) {
+        reporting.onPauseChanged(paused: true);
+      }
+    });
+
+    await ref.read(castNowPlayingProvider.notifier).set(
+          CastNowPlaying(
+            item: item,
+            backend: castBackend,
+            session: session,
+            reporting: reporting,
+          ),
+        );
+
+    // Restaurer l'orientation portrait AVANT le push : `_exitImmersive` est
+    // appelé en fire-and-forget dans dispose(), il ne se déclenche donc pas
+    // assez tôt pour que CastNowPlayingScreen démarre en portrait. On force
+    // ici, et on attend que le natif ait pris la commande.
+    await _exitImmersive();
+    if (mounted) context.pushReplacement('/cast/now-playing');
   }
 
   /// Plays the local downloaded file. Best-effort resume from server-side
@@ -599,13 +710,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   @override
   void dispose() {
     _disposed = true;
+    // Restore orientation FIRST — before any ref.read that may throw if a
+    // provider has already been autoDisposed. If _exitImmersive() is called
+    // after an exception the screen stays locked in landscape.
+    unawaited(_exitImmersive());
     if (_attachedToAudioHandler) {
       // Fire-and-forget — detach cancels its subs internally and emits an
       // idle PlaybackState that clears the system notification.
-      ref.read(audioHandlerProvider).detachBackend();
+      try {
+        ref.read(audioHandlerProvider).detachBackend();
+      } on Object {
+        // Provider can already be autoDisposed when we're being torn down
+        // mid-transition; we just want to stop the system notification.
+      }
       _attachedToAudioHandler = false;
     }
-    unawaited(ref.read(pipServiceProvider).disableAutoEnter());
+    try {
+      unawaited(ref.read(pipServiceProvider).disableAutoEnter());
+    } on Object {
+      // Same: pipService may have been disposed before us.
+    }
     WidgetsBinding.instance.removeObserver(this);
     _controlsController.dispose();
     _doubleTapController.dispose();
@@ -622,12 +746,21 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       ScreenBrightness().resetScreenBrightness().catchError((_) {});
     }
     WakelockPlus.disable();
-    _exitImmersive();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_delegatingToCast) {
+      // Transition vers CastNowPlayingScreen en cours : on rend juste un
+      // écran noir. Ne PAS construire de VideoSurface ici — il
+      // instancierait media_kit pour rien et provoquerait un warning
+      // natif "Surface.release() on null" au dispose.
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator(color: Colors.white)),
+      );
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,

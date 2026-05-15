@@ -26,6 +26,7 @@ import '../features/admin/users/user_create_screen.dart';
 import '../features/admin/users/user_edit_screen.dart';
 import '../features/admin/users/users_list_screen.dart';
 import '../features/calendar/calendar_screen.dart';
+import '../features/cast/cast_now_playing_screen.dart';
 import '../features/details/detail_screen.dart';
 import '../features/details/offline_series_screen.dart';
 import '../features/downloads/downloads_screen.dart';
@@ -253,6 +254,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           itemId: state.pathParameters['id']!,
           extra: state.extra is PlayExtra ? state.extra! as PlayExtra : null,
         ),
+      ),
+      GoRoute(
+        path: '/cast/now-playing',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const CastNowPlayingScreen(),
       ),
       GoRoute(
         path: '/settings/downloads',

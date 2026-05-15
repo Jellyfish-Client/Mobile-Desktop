@@ -39,6 +39,7 @@ class MovieDetailView extends ConsumerWidget {
             expandedHeight: heroHeight,
             pinned: true,
             stretch: true,
+            actions: [CastButton(itemId: item.id, color: Colors.white)],
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,

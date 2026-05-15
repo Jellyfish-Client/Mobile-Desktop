@@ -80,5 +80,13 @@
 		</array>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Jellyfish a besoin d'accéder à vos photos pour changer votre avatar de profil.</string>
+		<key>NSLocalNetworkUsageDescription</key>
+		<string>Jellyfish a besoin du réseau local pour détecter les appareils Chromecast.</string>
+		<key>NSBonjourServices</key>
+		<array>
+			<string>_googlecast._tcp</string>
+			<string>_CC1AD845._googlecast._tcp</string>
+			<string>_F007D354._googlecast._tcp</string>
+		</array>
 	</dict>
 </plist>

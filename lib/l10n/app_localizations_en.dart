@@ -2359,4 +2359,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get adminBackupRestoreSnack =>
       'Restore in progress; the server is restarting…';
+
+  @override
+  String get castButton => 'Cast';
+
+  @override
+  String get castSheetTitle => 'Cast to';
+
+  @override
+  String get castSheetSearching => 'Searching for devices…';
+
+  @override
+  String get castSheetEmpty => 'No Chromecast device found on your network.';
+
+  @override
+  String castSheetConnectedTo(String device) {
+    return 'Connected to $device';
+  }
+
+  @override
+  String get castSheetDisconnect => 'Disconnect';
+
+  @override
+  String castConnecting(String device) {
+    return 'Connecting to $device…';
+  }
+
+  @override
+  String castConnectionFailed(String device) {
+    return 'Could not connect to $device';
+  }
+
+  @override
+  String get castMiniPlayerStop => 'Stop casting';
+
+  @override
+  String get castNowPlayingTitle => 'Now casting';
+
+  @override
+  String get castNowPlayingVolume => 'Receiver volume';
+
+  @override
+  String get castOfflineUnsupported => 'Cast unavailable for downloaded files';
+
+  @override
+  String castStartedSnack(String device) {
+    return 'Casting to $device';
+  }
 }
