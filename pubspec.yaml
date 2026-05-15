@@ -119,17 +119,15 @@ flutter:
 
 # --- Native splash --------------------------------------------------------
 # Generate with: dart run flutter_native_splash:create
-# Once you drop `assets/branding/logo.png` (1024×1024 transparent PNG) the
-# splash will use it. Until then the splash is a flat brand-coloured screen.
+# Uses the same safe-zone-padded asset as the Android 12+ splash and the
+# adaptive launcher foreground so the icon stays fully visible after the
+# circular mask is applied. `logo.png` (edge-to-edge) is reserved for
+# in-app rendering via the JfLogo widget.
 flutter_native_splash:
   color: "#000000"
   color_dark: "#000000"
-  image: assets/branding/logo.png
-  image_dark: assets/branding/logo.png
-  # Android 12+ wraps the splash icon in a 152dp circle and centre-crops
-  # anything larger. `logo.png` is edge-to-edge, so it gets clipped. Use the
-  # adaptive-icon foreground which is authored with 25% padding precisely for
-  # this masking shape — the splash logo then sits fully inside the circle.
+  image: assets/branding/icon_foreground.png
+  image_dark: assets/branding/icon_foreground.png
   android_12:
     color: "#000000"
     color_dark: "#000000"
