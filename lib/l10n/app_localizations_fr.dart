@@ -2689,4 +2689,58 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncPlayCreateGroupSubtitle => 'Créer un nouveau groupe';
+
+  @override
+  String get personPageRole => 'Acteur';
+
+  @override
+  String personPageTitleCount(String role, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString titres',
+      one: '1 titre',
+    );
+    return '$role · $_temp0';
+  }
+
+  @override
+  String get personFilterAll => 'Tout';
+
+  @override
+  String get personFilterMovies => 'Films';
+
+  @override
+  String get personFilterSeries => 'Séries';
+
+  @override
+  String get personFilterAllSemantics => 'Filtrer par tout';
+
+  @override
+  String get personFilterMoviesSemantics => 'Filtrer par films';
+
+  @override
+  String get personFilterSeriesSemantics => 'Filtrer par séries';
+
+  @override
+  String get personFilmographyEmptyTitle => 'Aucun titre disponible';
+
+  @override
+  String get personFilmographyEmpty =>
+      'Nous n\'avons trouvé aucun film ou série associé à cet artiste.';
+
+  @override
+  String personPhotoSemantics(String name) {
+    return 'Photo de $name';
+  }
+
+  @override
+  String get searchPersonsSection => 'Personnes';
+
+  @override
+  String get searchPersonsTitle => 'Acteurs et équipe';
 }

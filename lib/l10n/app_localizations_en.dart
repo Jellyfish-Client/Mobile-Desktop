@@ -2665,4 +2665,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncPlayCreateGroupSubtitle => 'Create a new group';
+
+  @override
+  String get personPageRole => 'Actor';
+
+  @override
+  String personPageTitleCount(String role, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString titles',
+      one: '1 title',
+    );
+    return '$role · $_temp0';
+  }
+
+  @override
+  String get personFilterAll => 'All';
+
+  @override
+  String get personFilterMovies => 'Movies';
+
+  @override
+  String get personFilterSeries => 'Series';
+
+  @override
+  String get personFilterAllSemantics => 'Filter by all';
+
+  @override
+  String get personFilterMoviesSemantics => 'Filter by movies';
+
+  @override
+  String get personFilterSeriesSemantics => 'Filter by series';
+
+  @override
+  String get personFilmographyEmptyTitle => 'No titles available';
+
+  @override
+  String get personFilmographyEmpty =>
+      'We couldn\'t find any movies or series for this person.';
+
+  @override
+  String personPhotoSemantics(String name) {
+    return 'Photo of $name';
+  }
+
+  @override
+  String get searchPersonsSection => 'People';
+
+  @override
+  String get searchPersonsTitle => 'Cast & crew';
 }

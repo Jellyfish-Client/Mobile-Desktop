@@ -6,6 +6,7 @@ import 'package:jellyfin_api/jellyfin_api.dart' show BaseItemDto;
 import '../../core/jellyfin/jellyfin_client.dart';
 import '../../core/jellyfin/mappers/base_item_dto_mapper.dart';
 import '../../core/jellyfin/models/jellyfin_item.dart';
+import '../../core/jellyfin/models/jellyfin_person.dart';
 import '../../core/jellyfin/root_kinds.dart';
 import '../../core/seerr/models.dart';
 import '../../core/seerr/seerr_client.dart';
@@ -16,6 +17,7 @@ class SearchState {
     this.query = '',
     this.isLoading = false,
     this.jellyfin = const [],
+    this.persons = const [],
     this.seerr = const [],
     this.seerrCollections = const [],
     this.jellyfinError,
@@ -25,6 +27,7 @@ class SearchState {
   final String query;
   final bool isLoading;
   final List<JellyfinItem> jellyfin;
+  final List<JellyfinPerson> persons;
   final List<SeerrMedia> seerr;
   final List<SeerrCollection> seerrCollections;
   final Object? jellyfinError;
@@ -32,12 +35,16 @@ class SearchState {
 
   bool get isEmpty => query.trim().isEmpty;
   bool get hasResults =>
-      jellyfin.isNotEmpty || seerr.isNotEmpty || seerrCollections.isNotEmpty;
+      jellyfin.isNotEmpty ||
+      persons.isNotEmpty ||
+      seerr.isNotEmpty ||
+      seerrCollections.isNotEmpty;
 
   SearchState copyWith({
     String? query,
     bool? isLoading,
     List<JellyfinItem>? jellyfin,
+    List<JellyfinPerson>? persons,
     List<SeerrMedia>? seerr,
     List<SeerrCollection>? seerrCollections,
     Object? jellyfinError,
@@ -47,6 +54,7 @@ class SearchState {
       query: query ?? this.query,
       isLoading: isLoading ?? this.isLoading,
       jellyfin: jellyfin ?? this.jellyfin,
+      persons: persons ?? this.persons,
       seerr: seerr ?? this.seerr,
       seerrCollections: seerrCollections ?? this.seerrCollections,
       jellyfinError: jellyfinError,
@@ -120,6 +128,19 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
       return rankByRelevance(items, query);
     }, fallback: const []);
 
+    final personsFuture = _safe<List<JellyfinPerson>>(() async {
+      final dtos = await jellyfinClient.searchPersons(query, limit: 12);
+      return [
+        for (final dto in dtos)
+          if (dto.id != null)
+            JellyfinPerson(
+              id: dto.id,
+              name: dto.name,
+              primaryImageTag: dto.imageTags?.asMap()['Primary'],
+            ),
+      ];
+    }, fallback: const []);
+
     final seerrFuture = seerrClient.isLinked
         ? _safe<_SeerrSearchPayload>(() async {
             final result = await seerrClient.search(query);
@@ -135,13 +156,18 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
             ),
           );
 
-    final (jfOutcome, seerrOutcome) = await (jellyfinFuture, seerrFuture).wait;
+    final (jfOutcome, personsOutcome, seerrOutcome) = await (
+      jellyfinFuture,
+      personsFuture,
+      seerrFuture,
+    ).wait;
 
     if (requestId != _requestId) return;
 
     state = state.copyWith(
       isLoading: false,
       jellyfin: jfOutcome.value,
+      persons: personsOutcome.value,
       seerr: seerrOutcome.value.media,
       seerrCollections: seerrOutcome.value.collections,
       jellyfinError: jfOutcome.error,

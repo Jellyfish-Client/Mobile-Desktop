@@ -34,6 +34,7 @@ import '../features/home/home_screen.dart';
 import '../features/library/library_screen.dart';
 import '../features/onboarding/login_screen.dart';
 import '../features/onboarding/onboarding_server_screen.dart';
+import '../features/person/person_detail_screen.dart';
 import '../features/player/play_extra.dart';
 import '../features/player/player_screen.dart';
 import '../features/requests/requests_screen.dart';
@@ -235,6 +236,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, state) =>
             DetailScreen(itemId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/person/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, state) =>
+            PersonDetailScreen(personId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/offline/series/:id',

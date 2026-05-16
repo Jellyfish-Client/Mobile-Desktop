@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jellyfin_api/jellyfin_api.dart' show PersonKind;
 
 import '../../../app/theme/app_spacing.dart';
@@ -59,28 +60,33 @@ class _CastTile extends StatelessWidget {
     final url = urls.personUrl(person, maxWidth: 200);
     final name = person.name ?? '';
     final role = person.role ?? '';
+    final personId = person.id;
 
-    return SizedBox(
+    final avatar = Hero(
+      tag: 'person-avatar-${personId ?? name}',
+      child: ClipOval(
+        child: SizedBox(
+          width: 84,
+          height: 84,
+          child: url != null
+              ? CachedNetworkImage(
+                  imageUrl: url,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) =>
+                      Container(color: scheme.surfaceContainerHigh),
+                  errorWidget: (_, __, ___) => JfAvatarInitials(name: name),
+                )
+              : JfAvatarInitials(name: name),
+        ),
+      ),
+    );
+
+    final tile = SizedBox(
       width: 96,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ClipOval(
-            child: SizedBox(
-              width: 84,
-              height: 84,
-              child: url != null
-                  ? CachedNetworkImage(
-                      imageUrl: url,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) =>
-                          Container(color: scheme.surfaceContainerHigh),
-                      errorWidget: (_, __, ___) =>
-                          _Initials(name: name, scheme: scheme),
-                    )
-                  : _Initials(name: name, scheme: scheme),
-            ),
-          ),
+          avatar,
           const SizedBox(height: AppSpacing.sm),
           Text(
             name,
@@ -106,40 +112,14 @@ class _CastTile extends StatelessWidget {
         ],
       ),
     );
-  }
-}
 
-class _Initials extends StatelessWidget {
-  const _Initials({required this.name, required this.scheme});
+    if (personId == null) return tile;
 
-  final String name;
-  final ColorScheme scheme;
-
-  @override
-  Widget build(BuildContext context) {
-    final initials = _initialsOf(name);
-    return Container(
-      color: scheme.surfaceContainerHigh,
-      alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: TextStyle(
-          color: scheme.onSurfaceVariant,
-          fontWeight: FontWeight.w700,
-          fontSize: 22,
-        ),
-      ),
+    return JfTappable(
+      semanticLabel: name,
+      onTap: () => context.push('/person/$personId'),
+      borderRadius: BorderRadius.circular(8),
+      child: tile,
     );
-  }
-
-  static String _initialsOf(String name) {
-    final parts = name
-        .split(RegExp(r'\s+'))
-        .where((s) => s.isNotEmpty)
-        .toList();
-    if (parts.isEmpty) return '?';
-    if (parts.length == 1) return parts.first.characters.first.toUpperCase();
-    return (parts.first.characters.first + parts.last.characters.first)
-        .toUpperCase();
   }
 }

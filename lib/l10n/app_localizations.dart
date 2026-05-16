@@ -4867,6 +4867,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Créer un nouveau groupe'**
   String get syncPlayCreateGroupSubtitle;
+
+  /// No description provided for @personPageRole.
+  ///
+  /// In fr, this message translates to:
+  /// **'Acteur'**
+  String get personPageRole;
+
+  /// No description provided for @personPageTitleCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{role} · {count, plural, one{1 titre} other{{count} titres}}'**
+  String personPageTitleCount(String role, int count);
+
+  /// No description provided for @personFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get personFilterAll;
+
+  /// No description provided for @personFilterMovies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Films'**
+  String get personFilterMovies;
+
+  /// No description provided for @personFilterSeries.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séries'**
+  String get personFilterSeries;
+
+  /// No description provided for @personFilterAllSemantics.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer par tout'**
+  String get personFilterAllSemantics;
+
+  /// No description provided for @personFilterMoviesSemantics.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer par films'**
+  String get personFilterMoviesSemantics;
+
+  /// No description provided for @personFilterSeriesSemantics.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer par séries'**
+  String get personFilterSeriesSemantics;
+
+  /// No description provided for @personFilmographyEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun titre disponible'**
+  String get personFilmographyEmptyTitle;
+
+  /// No description provided for @personFilmographyEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous n\'avons trouvé aucun film ou série associé à cet artiste.'**
+  String get personFilmographyEmpty;
+
+  /// No description provided for @personPhotoSemantics.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo de {name}'**
+  String personPhotoSemantics(String name);
+
+  /// No description provided for @searchPersonsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnes'**
+  String get searchPersonsSection;
+
+  /// No description provided for @searchPersonsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Acteurs et équipe'**
+  String get searchPersonsTitle;
 }
 
 class _AppLocalizationsDelegate

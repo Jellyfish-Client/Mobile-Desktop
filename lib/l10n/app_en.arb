@@ -1988,5 +1988,38 @@
   "syncPlayJoinDialogTitle": "Join a group",
   "@syncPlayJoinDialogTitle": {},
   "syncPlayCreateGroupSubtitle": "Create a new group",
-  "@syncPlayCreateGroupSubtitle": {}
+  "@syncPlayCreateGroupSubtitle": {},
+  "personPageRole": "Actor",
+  "@personPageRole": {},
+  "personPageTitleCount": "{role} · {count, plural, one{1 title} other{{count} titles}}",
+  "@personPageTitleCount": {
+    "placeholders": {
+      "role": { "type": "String" },
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "personFilterAll": "All",
+  "@personFilterAll": {},
+  "personFilterMovies": "Movies",
+  "@personFilterMovies": {},
+  "personFilterSeries": "Series",
+  "@personFilterSeries": {},
+  "personFilterAllSemantics": "Filter by all",
+  "@personFilterAllSemantics": {},
+  "personFilterMoviesSemantics": "Filter by movies",
+  "@personFilterMoviesSemantics": {},
+  "personFilterSeriesSemantics": "Filter by series",
+  "@personFilterSeriesSemantics": {},
+  "personFilmographyEmptyTitle": "No titles available",
+  "@personFilmographyEmptyTitle": {},
+  "personFilmographyEmpty": "We couldn't find any movies or series for this person.",
+  "@personFilmographyEmpty": {},
+  "personPhotoSemantics": "Photo of {name}",
+  "@personPhotoSemantics": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "searchPersonsSection": "People",
+  "@searchPersonsSection": {},
+  "searchPersonsTitle": "Cast & crew",
+  "@searchPersonsTitle": {}
 }

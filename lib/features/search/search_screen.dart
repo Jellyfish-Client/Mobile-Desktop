@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import '../../app/theme/app_spacing.dart';
 import '../../app/theme/breakpoints.dart';
 import '../../core/jellyfin/jellyfin_url_service.dart';
 import '../../core/jellyfin/models/jellyfin_item.dart';
+import '../../core/jellyfin/models/jellyfin_person.dart';
 import '../../core/network/offline_mode_provider.dart';
 import '../../core/seerr/models.dart';
 import '../../core/seerr/seerr_client.dart';
@@ -139,8 +141,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             state.seerrError != null);
     final showJellyfinSection =
         state.jellyfin.isNotEmpty || state.jellyfinError != null;
+    final showPersonsSection = state.persons.isNotEmpty;
 
-    if (!showJellyfinSection && !showSeerrSection) {
+    if (!showJellyfinSection && !showSeerrSection && !showPersonsSection) {
       return [
         SliverFillRemaining(
           hasScrollBody: false,
@@ -154,6 +157,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     }
 
     return [
+      if (showPersonsSection) ...[
+        SliverToBoxAdapter(
+          child: SearchSectionHeader(
+            eyebrow: context.l10n.searchPersonsSection,
+            title: context.l10n.searchPersonsTitle,
+            count: state.persons.length,
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: _PersonsRail(persons: state.persons, urls: urls),
+        ),
+      ],
       if (showJellyfinSection) ...[
         SliverToBoxAdapter(
           child: SearchSectionHeader(
@@ -309,6 +324,78 @@ Widget _posterGrid({
       );
     },
   );
+}
+
+class _PersonsRail extends StatelessWidget {
+  const _PersonsRail({required this.persons, required this.urls});
+
+  final List<JellyfinPerson> persons;
+  final JellyfinUrlService urls;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return SizedBox(
+      height: 152,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        itemCount: persons.length,
+        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
+        itemBuilder: (context, i) {
+          final p = persons[i];
+          final name = p.name ?? '';
+          final id = p.id;
+          final url = urls.personUrl(p, maxWidth: 200);
+          final tile = SizedBox(
+            width: 96,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Hero(
+                  tag: 'person-avatar-${id ?? name}',
+                  child: ClipOval(
+                    child: SizedBox(
+                      width: 84,
+                      height: 84,
+                      child: url != null
+                          ? CachedNetworkImage(
+                              imageUrl: url,
+                              fit: BoxFit.cover,
+                              placeholder: (_, __) =>
+                                  Container(color: scheme.surfaceContainerHigh),
+                              errorWidget: (_, __, ___) =>
+                                  JfAvatarInitials(name: name),
+                            )
+                          : JfAvatarInitials(name: name),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          );
+          if (id == null) return tile;
+          return JfTappable(
+            semanticLabel: name,
+            onTap: () => context.push('/person/$id'),
+            borderRadius: BorderRadius.circular(8),
+            child: tile,
+          );
+        },
+      ),
+    );
+  }
 }
 
 class _SeerrCollectionsRail extends StatelessWidget {

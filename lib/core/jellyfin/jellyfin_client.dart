@@ -353,6 +353,49 @@ class JellyfinClient {
     return res.data!;
   }
 
+  /// Items (movies + series + …) in which [personId] is credited. Used by the
+  /// person detail screen to build the local filmography. The Items endpoint
+  /// supports `personIds`, which scopes the result server-side; `recursive`
+  /// makes the search span the whole library tree.
+  Future<List<BaseItemDto>> itemsByPerson(
+    String personId, {
+    List<BaseItemKind>? includeItemTypes,
+    int limit = 200,
+  }) async {
+    final res = await _api.getItemsApi().getItems(
+      userId: _userId,
+      personIds: BuiltList<String>.of(<String>[personId]),
+      includeItemTypes: includeItemTypes == null
+          ? null
+          : BuiltList<BaseItemKind>.of(includeItemTypes),
+      recursive: true,
+      sortBy: BuiltList<ItemSortBy>.of(<ItemSortBy>[
+        ItemSortBy.productionYear,
+        ItemSortBy.premiereDate,
+      ]),
+      sortOrder: BuiltList<SortOrder>.of(<SortOrder>[SortOrder.descending]),
+      limit: limit,
+      fields: BuiltList<ItemFields>.of(<ItemFields>[
+        ItemFields.overview,
+        ItemFields.providerIds,
+      ]),
+    );
+    return res.data?.items?.toList() ?? const [];
+  }
+
+  /// Person-only search used by the global search screen to surface actors
+  /// as a separate section. Returns lightweight BaseItemDto entries (id, name,
+  /// imageTags) sourced from the Jellyfin `/Persons` endpoint.
+  Future<List<BaseItemDto>> searchPersons(String query, {int limit = 8}) async {
+    if (query.trim().isEmpty) return const [];
+    final res = await _api.getPersonsApi().getPersons(
+      userId: _userId,
+      searchTerm: query,
+      limit: limit,
+    );
+    return res.data?.items?.toList() ?? const [];
+  }
+
   Future<List<BaseItemDto>> seasons(String seriesId) async {
     final res = await _api.getTvShowsApi().getSeasons(
       seriesId: seriesId,
@@ -401,33 +444,31 @@ class JellyfinClient {
   }) async {
     final res = await _api.getMediaInfoApi().getPostedPlaybackInfo(
       itemId: itemId,
-      playbackInfoDto: PlaybackInfoDto(
-        (b) {
-          b.userId = _userId;
-          if (deviceProfile != null) b.deviceProfile.replace(deviceProfile);
-          if (maxStreamingBitrate != null) {
-            b.maxStreamingBitrate = maxStreamingBitrate;
-          }
-          if (audioStreamIndex != null) {
-            b.audioStreamIndex = audioStreamIndex;
-          }
-          if (subtitleStreamIndex != null) {
-            b.subtitleStreamIndex = subtitleStreamIndex;
-          }
-          if (startTimeTicks != null) b.startTimeTicks = startTimeTicks;
-          if (mediaSourceId != null) b.mediaSourceId = mediaSourceId;
-          if (deviceProfile != null) {
-            // When a profile is sent, the client is asking the server to
-            // pick the best playable source — let it auto-open live streams
-            // and decide direct/transcode itself.
-            b
-              ..autoOpenLiveStream = true
-              ..enableDirectPlay = true
-              ..enableDirectStream = true
-              ..enableTranscoding = true;
-          }
-        },
-      ),
+      playbackInfoDto: PlaybackInfoDto((b) {
+        b.userId = _userId;
+        if (deviceProfile != null) b.deviceProfile.replace(deviceProfile);
+        if (maxStreamingBitrate != null) {
+          b.maxStreamingBitrate = maxStreamingBitrate;
+        }
+        if (audioStreamIndex != null) {
+          b.audioStreamIndex = audioStreamIndex;
+        }
+        if (subtitleStreamIndex != null) {
+          b.subtitleStreamIndex = subtitleStreamIndex;
+        }
+        if (startTimeTicks != null) b.startTimeTicks = startTimeTicks;
+        if (mediaSourceId != null) b.mediaSourceId = mediaSourceId;
+        if (deviceProfile != null) {
+          // When a profile is sent, the client is asking the server to
+          // pick the best playable source — let it auto-open live streams
+          // and decide direct/transcode itself.
+          b
+            ..autoOpenLiveStream = true
+            ..enableDirectPlay = true
+            ..enableDirectStream = true
+            ..enableTranscoding = true;
+        }
+      }),
     );
     return res.data!;
   }

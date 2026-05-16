@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../bridge/bridge_dio_provider.dart';
@@ -467,6 +468,81 @@ class SeerrClient {
     } on Object catch (_) {
       return const [];
     }
+  }
+
+  // -- Person -------------------------------------------------------------
+
+  /// Bridge passthrough of Seerr's `/person/{id}`. Returns `null` when Seerr
+  /// isn't linked or the server can't resolve the id — callers fall back to
+  /// the Jellyfin metadata (which may already carry the biography).
+  Future<SeerrPersonDetail?> personDetails(int tmdbPersonId) async {
+    if (!isLinked) return null;
+    try {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '${_prefix}person/$tmdbPersonId',
+      );
+      final data = res.data;
+      if (data == null) return null;
+      final name = data['name'] as String?;
+      if (name == null) return null;
+      return SeerrPersonDetail(
+        tmdbId: tmdbPersonId,
+        name: name,
+        biography: data['biography'] as String?,
+        profilePath: data['profilePath'] as String?,
+        knownForDepartment: data['knownForDepartment'] as String?,
+        birthday: data['birthday'] as String?,
+        placeOfBirth: data['placeOfBirth'] as String?,
+      );
+    } on Object {
+      return null;
+    }
+  }
+
+  /// Bridge passthrough of Seerr's `/person/{id}/combined_credits`. Flattens
+  /// the `cast` array into [SeerrMedia] entries, deduplicated by `(type, tmdbId)`
+  /// (Seerr lists a title once per role: same actor in two seasons of a series
+  /// would otherwise appear twice). Crew entries are ignored — this is for an
+  /// actor filmography view, not a director's.
+  Future<List<SeerrMedia>> personCombinedCredits(int tmdbPersonId) async {
+    if (!isLinked) return const [];
+    try {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '${_prefix}person/$tmdbPersonId/combined_credits',
+      );
+      final raw = (res.data?['cast'] as List?) ?? const [];
+      final seen = <String>{};
+      final out = <SeerrMedia>[];
+      for (final entry in raw) {
+        if (entry is! Map) continue;
+        final json = Map<String, dynamic>.from(entry);
+        final mediaType = json['mediaType'] as String?;
+        final SeerrMedia? media;
+        switch (mediaType) {
+          case 'movie':
+            media = _mapMovieJson(json);
+          case 'tv':
+            media = _mapTvJson(json);
+          default:
+            media = null;
+        }
+        if (media == null) continue;
+        final key = '${media.type.name}:${media.tmdbId}';
+        if (seen.add(key)) out.add(media);
+      }
+      return out;
+    } on Object catch (e) {
+      debugPrint('SeerrClient.personCombinedCredits($tmdbPersonId) failed: $e');
+      return const [];
+    }
+  }
+
+  /// TMDB person profile image. Returns `null` when the person has no photo —
+  /// the UI falls back to initials in that case.
+  String? personProfileUrl(SeerrPersonDetail person, {String size = 'w300'}) {
+    final p = person.profilePath;
+    if (p == null || p.isEmpty) return null;
+    return 'https://image.tmdb.org/t/p/$size$p';
   }
 
   // -- Requests ------------------------------------------------------------

@@ -1988,5 +1988,38 @@
   "syncPlayJoinDialogTitle": "Rejoindre un groupe",
   "@syncPlayJoinDialogTitle": {},
   "syncPlayCreateGroupSubtitle": "Créer un nouveau groupe",
-  "@syncPlayCreateGroupSubtitle": {}
+  "@syncPlayCreateGroupSubtitle": {},
+  "personPageRole": "Acteur",
+  "@personPageRole": {},
+  "personPageTitleCount": "{role} · {count, plural, one{1 titre} other{{count} titres}}",
+  "@personPageTitleCount": {
+    "placeholders": {
+      "role": { "type": "String" },
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "personFilterAll": "Tout",
+  "@personFilterAll": {},
+  "personFilterMovies": "Films",
+  "@personFilterMovies": {},
+  "personFilterSeries": "Séries",
+  "@personFilterSeries": {},
+  "personFilterAllSemantics": "Filtrer par tout",
+  "@personFilterAllSemantics": {},
+  "personFilterMoviesSemantics": "Filtrer par films",
+  "@personFilterMoviesSemantics": {},
+  "personFilterSeriesSemantics": "Filtrer par séries",
+  "@personFilterSeriesSemantics": {},
+  "personFilmographyEmptyTitle": "Aucun titre disponible",
+  "@personFilmographyEmptyTitle": {},
+  "personFilmographyEmpty": "Nous n'avons trouvé aucun film ou série associé à cet artiste.",
+  "@personFilmographyEmpty": {},
+  "personPhotoSemantics": "Photo de {name}",
+  "@personPhotoSemantics": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "searchPersonsSection": "Personnes",
+  "@searchPersonsSection": {},
+  "searchPersonsTitle": "Acteurs et équipe",
+  "@searchPersonsTitle": {}
 }

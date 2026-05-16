@@ -140,6 +140,29 @@ class SeerrWatchProvider {
   final String? logoPath;
 }
 
+/// A TMDB person (actor / director / …), as returned by Seerr's `/person/{id}`
+/// endpoint. Surfaced on the Jellyfish person detail screen as a biography
+/// fallback when the local Jellyfin metadata is missing.
+class SeerrPersonDetail {
+  const SeerrPersonDetail({
+    required this.tmdbId,
+    required this.name,
+    this.biography,
+    this.profilePath,
+    this.knownForDepartment,
+    this.birthday,
+    this.placeOfBirth,
+  });
+
+  final int tmdbId;
+  final String name;
+  final String? biography;
+  final String? profilePath;
+  final String? knownForDepartment;
+  final String? birthday;
+  final String? placeOfBirth;
+}
+
 /// One genre slide from `/discover/genreslider/{movie|tv}`. Backdrops are
 /// raw TMDB paths (prefixed with `/`), turned into URLs by `SeerrClient`.
 class SeerrGenreSlide {

@@ -8,6 +8,7 @@ export 'cast_device_sheet.dart';
 export 'cast_mini_player.dart';
 export 'empty_state.dart';
 export 'jf_atmosphere.dart';
+export 'jf_avatar_initials.dart';
 export 'jf_backdrop_header.dart';
 export 'jf_button.dart';
 export 'jf_card.dart';
@@ -28,6 +29,7 @@ export 'jf_rail_header.dart';
 export 'jf_reading_panel.dart';
 export 'jf_section_title.dart';
 export 'jf_spotlight_card.dart';
+export 'jf_tappable.dart';
 export 'jf_text_field.dart';
 export 'sync_play_button.dart';
 
