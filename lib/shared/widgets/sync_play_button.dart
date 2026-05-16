@@ -169,7 +169,19 @@ class SyncPlayButton extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => SyncPlayPanel(onClose: () => Navigator.of(context).pop()),
+      builder: (sheetContext) => SyncPlayPanel(
+        // On capture le `sheetContext` du builder du ModalBottomSheet plutôt
+        // que le `context` du parent. Sans ça, `Navigator.of(context)` remonte
+        // au navigator racine de GoRouter et pop la route courante de l'app
+        // (crash : « popped the last page off of the stack »).
+        // `canPop` protège contre les invocations multiples du callback :
+        // le panel rappelle `onClose` en post-frame quand `group == null`,
+        // ce qui peut se produire plusieurs fois lors de re-builds Riverpod.
+        onClose: () {
+          final navigator = Navigator.of(sheetContext);
+          if (navigator.canPop()) navigator.pop();
+        },
+      ),
     );
   }
 }
