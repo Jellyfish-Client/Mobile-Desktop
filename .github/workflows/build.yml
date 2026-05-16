@@ -288,7 +288,11 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          # Publish directly so the `release.published` event fires and the
+          # discord-release.yml workflow picks it up. Drafts never trigger
+          # release events, so notifications stayed silent in 1.4.x.
+          draft: false
+          make_latest: true
           name: Jellyfish ${{ github.ref_name }}
           body: ${{ steps.changelog.outputs.content }}
           files: |
