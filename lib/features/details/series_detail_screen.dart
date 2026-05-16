@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/theme/app_motion.dart';
 import '../../app/theme/app_radius.dart';
 import '../../app/theme/app_spacing.dart';
+import '../../app/theme/app_typography.dart';
 import '../../app/theme/breakpoints.dart';
 import '../../core/downloads/download_manager.dart';
 import '../../core/jellyfin/jellyfin_url_service.dart';
@@ -15,11 +17,11 @@ import '../../shared/widgets/widgets.dart';
 import '_format.dart';
 import 'detail_providers.dart';
 import 'widgets/cast_row.dart';
+import 'widgets/detail_chrome.dart';
 import 'widgets/jellyfin_similar_row.dart';
 import 'widgets/missing_poster_card.dart';
 import 'widgets/seerr_recommendations_row.dart';
 import 'widgets/seerr_request_sheet.dart';
-import 'widgets/studios_row.dart';
 
 class SeriesDetailView extends ConsumerWidget {
   const SeriesDetailView({required this.item, super.key});
@@ -36,6 +38,7 @@ class SeriesDetailView extends ConsumerWidget {
     final tmdb = item.tmdbId;
 
     final heroHeight = Breakpoints.detailHeroHeight(MediaQuery.sizeOf(context));
+    final hInset = detailAppBarInset(context);
 
     return Scaffold(
       body: CustomScrollView(
@@ -44,9 +47,24 @@ class SeriesDetailView extends ConsumerWidget {
             expandedHeight: heroHeight,
             pinned: true,
             stretch: true,
+            leading: hInset > 0
+                ? Padding(
+                    padding: EdgeInsets.only(left: hInset),
+                    child: const BackButton(color: Colors.white),
+                  )
+                : null,
+            leadingWidth: hInset > 0 ? hInset + 56 : null,
             actions: [
-              const SyncPlayButton(color: Colors.white),
-              CastButton(itemId: item.id, color: Colors.white),
+              Padding(
+                padding: EdgeInsets.only(right: hInset),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SyncPlayButton(color: Colors.white),
+                    CastButton(itemId: item.id, color: Colors.white),
+                  ],
+                ),
+              ),
             ],
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
@@ -62,20 +80,31 @@ class SeriesDetailView extends ConsumerWidget {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.lg,
-                  AppSpacing.lg,
-                  AppSpacing.sm,
+              const SizedBox(height: AppSpacing.lg),
+              JfReadingPanel(
+                maxWidth: 900,
+                child: MetadataStrip(
+                  year: item.productionYear,
+                  officialRating: item.officialRating,
+                  communityRating: item.communityRating,
+                  genres: item.genres,
                 ),
-                child: _SeriesBody(item: item),
               ),
-
               const SizedBox(height: AppSpacing.lg),
-              JfReadingPanel(maxWidth: 1100, child: CastRow(item: item)),
-
-              const SizedBox(height: AppSpacing.lg),
+              JfReadingPanel(
+                maxWidth: 700,
+                child: _SeriesActions(seriesId: seriesId, series: item),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              if (item.overview != null && item.overview!.isNotEmpty) ...[
+                JfReadingPanel(
+                  maxWidth: 700,
+                  child: SynopsisExpander(text: item.overview!),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+              ],
+              JfReadingPanel(maxWidth: 700, child: _SeriesFacts(item: item)),
+              const SizedBox(height: AppSpacing.xxl),
               JfReadingPanel(
                 maxWidth: 1100,
                 child: _SeasonsAndEpisodes(seriesId: seriesId),
@@ -92,6 +121,9 @@ class SeriesDetailView extends ConsumerWidget {
                   ),
                 ),
               ],
+
+              const SizedBox(height: AppSpacing.xxl),
+              JfReadingPanel(maxWidth: 1100, child: CastRow(item: item)),
 
               const SizedBox(height: AppSpacing.lg),
               JfReadingPanel(
@@ -118,199 +150,114 @@ class SeriesDetailView extends ConsumerWidget {
   }
 }
 
-/// Vertical on phone, two-column actions+text layout on desktop. Mirrors
-/// `_MovieBody` so the look stays consistent across detail screens.
-class _SeriesBody extends StatelessWidget {
-  const _SeriesBody({required this.item});
-
-  final JellyfinItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, c) {
-        if (c.maxWidth >= 900) {
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1100),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 360, child: _NextUpCta(seriesId: item.id)),
-                  const SizedBox(width: AppSpacing.xl),
-                  Expanded(child: _SeriesMetadata(item: item)),
-                ],
-              ),
-            ),
-          );
-        }
-        return JfReadingPanel(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _SeriesMetadata(item: item),
-              const SizedBox(height: AppSpacing.lg),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 360),
-                  child: _NextUpCta(seriesId: item.id),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _SeriesMetadata extends StatelessWidget {
-  const _SeriesMetadata({required this.item});
-
-  final JellyfinItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            if (item.productionYear != null)
-              JfChip(label: '${item.productionYear}'),
-            if (item.officialRating != null && item.officialRating!.isNotEmpty)
-              JfChip(label: item.officialRating!),
-            if (item.communityRating != null)
-              JfChip(
-                icon: Icons.star_rounded,
-                label: item.communityRating!.toStringAsFixed(1),
-                tone: JfChipTone.warning,
-              ),
-          ],
-        ),
-        if (item.genres.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              for (final g in item.genres)
-                JfChip(label: g, tone: JfChipTone.info),
-            ],
-          ),
-        ],
-        if (item.studios.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.sm),
-          StudiosRow(item: item),
-        ],
-        if (item.overview != null && item.overview!.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.lg),
-          Text(
-            item.overview!,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-/// Smart Play/Resume CTA driven by `seriesNextUpProvider`. Falls back to a
-/// generic "Play" label while the next-up query is pending so the page never
-/// renders without a primary action.
-class _NextUpCta extends ConsumerWidget {
-  const _NextUpCta({required this.seriesId});
+/// Smart Play/Resume cluster for the series page. The pill resolves to the
+/// next-up episode (resumable or first unwatched) and falls back to a
+/// disabled "No episodes" pill while loading or when the series is empty.
+class _SeriesActions extends ConsumerWidget {
+  const _SeriesActions({required this.seriesId, required this.series});
 
   final String seriesId;
+  final JellyfinItem series;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final nextUpAsync = ref.watch(seriesNextUpProvider(seriesId));
-
     final l = context.l10n;
+
     return nextUpAsync.when(
-      loading: () => JfButton.primary(
-        label: l.detailsPlay,
-        icon: Icons.play_arrow,
-        fullWidth: true,
-        size: JfButtonSize.lg,
-        loading: true,
-        onPressed: null,
+      loading: () => ActionCluster(
+        primaryLabel: l.detailsPlay,
+        primaryIcon: Icons.play_arrow_rounded,
+        onPrimary: null,
+        secondaries: _secondaries(context, ref),
       ),
-      error: (_, __) => JfButton.primary(
-        label: l.detailsPlay,
-        icon: Icons.play_arrow,
-        fullWidth: true,
-        size: JfButtonSize.lg,
-        onPressed: null,
+      error: (_, __) => ActionCluster(
+        primaryLabel: l.detailsPlay,
+        primaryIcon: Icons.play_arrow_rounded,
+        onPrimary: null,
+        secondaries: _secondaries(context, ref),
       ),
       data: (ep) {
         if (ep == null) {
-          return JfButton.primary(
-            label: l.detailsNoEpisodes,
-            icon: Icons.play_arrow,
-            fullWidth: true,
-            size: JfButtonSize.lg,
-            onPressed: null,
+          return ActionCluster(
+            primaryLabel: l.detailsNoEpisodes,
+            primaryIcon: Icons.play_arrow_rounded,
+            onPrimary: null,
+            secondaries: _secondaries(context, ref),
           );
         }
         final code = formatEpisodeCode(ep);
         final isResume = ep.hasResumePosition;
         final verb = isResume ? l.detailsResume : l.detailsPlay;
-        final label = code.isEmpty
-            ? '$verb — ${ep.name ?? ''}'
-            : '$verb $code — ${ep.name ?? ''}';
-        final progress = ep.resumeProgress;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            JfButton.primary(
-              label: label,
-              icon: Icons.play_arrow,
-              fullWidth: true,
-              size: JfButtonSize.lg,
-              onPressed: () => context.push('/play/${ep.id}'),
-            ),
-            if (progress != null) ...[
-              const SizedBox(height: AppSpacing.sm),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.pill),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 3,
-                  backgroundColor: scheme.surfaceContainerHigh,
-                  valueColor: AlwaysStoppedAnimation(scheme.primary),
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                l.detailsResumeFrom(formatRuntime(ep.playbackPositionTicks)),
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ],
+        final caption = code.isEmpty
+            ? (ep.name ?? '')
+            : '$code — ${ep.name ?? ''}';
+        return ActionCluster(
+          primaryLabel: verb,
+          primaryIcon: Icons.play_arrow_rounded,
+          onPrimary: () => context.push('/play/${ep.id}'),
+          progress: ep.resumeProgress,
+          resumeCaption: caption,
+          secondaries: _secondaries(context, ref),
         );
       },
     );
   }
+
+  List<ActionChipSpec> _secondaries(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    return [
+      ActionChipSpec(
+        icon: Icons.add_rounded,
+        label: l.detailsAddToList,
+        onTap: () {},
+      ),
+      ActionChipSpec.custom(
+        builder: (_) => DownloadIconButton(itemId: series.id),
+        label: l.downloadButtonDownload,
+      ),
+      ActionChipSpec(
+        icon: (series.played ?? false)
+            ? Icons.check_circle_rounded
+            : Icons.check_rounded,
+        label: l.detailsWatched,
+        active: series.played ?? false,
+        onTap: () {},
+      ),
+    ];
+  }
 }
 
-/// Renders the season pill row and the episode list for the currently-
-/// selected season. Defaults the selection to the season of the next-up
-/// episode, falling back to the first season.
+class _SeriesFacts extends StatelessWidget {
+  const _SeriesFacts({required this.item});
+
+  final JellyfinItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final rows = <(String, String)>[
+      if (item.studios.isNotEmpty)
+        (
+          l.detailsStudios,
+          [
+            for (final s in item.studios)
+              if (s.name != null && s.name!.isNotEmpty) s.name!,
+          ].join(' · '),
+        ),
+      if (item.premiereDate != null)
+        (l.detailsReleaseDate, formatAirDate(item.premiereDate)),
+      if (item.officialRating != null && item.officialRating!.isNotEmpty)
+        (l.detailsOfficialRating, item.officialRating!),
+      if (item.genres.isNotEmpty) (l.detailsGenres, item.genres.join(' · ')),
+    ];
+    return FactList(rows: rows);
+  }
+}
+
+/// Season selector + episode list. Switches between a pill row (≤5 seasons)
+/// and a dropdown menu (6+) to keep the header compact for long-running
+/// shows.
 class _SeasonsAndEpisodes extends ConsumerWidget {
   const _SeasonsAndEpisodes({required this.seriesId});
 
@@ -328,9 +275,6 @@ class _SeasonsAndEpisodes extends ConsumerWidget {
         if (seasons.isEmpty) return const SizedBox.shrink();
 
         final selected = ref.watch(selectedSeasonProvider(seriesId));
-        // Seed selection: prefer the next-up's season, else the first one.
-        // Wait until next-up has resolved (data or error) so we don't flash
-        // S1 when the user actually has a resume position in a later season.
         if (selected == null) {
           if (nextUpAsync.isLoading) {
             return const SizedBox(height: 220, child: JfLoading());
@@ -348,25 +292,41 @@ class _SeasonsAndEpisodes extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            JfSectionTitle(
-              title: context.l10n.detailsEpisodes,
-              action: IconButton(
-                icon: const Icon(Icons.download_outlined),
-                tooltip: context.l10n.detailsDownloadSeason,
-                onPressed: () => ref
-                    .read(downloadManagerProvider)
-                    .enqueueSeason(seriesId: seriesId, seasonId: selected),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Row(
+                children: [
+                  Text(
+                    context.l10n.detailsEpisodes.toUpperCase(),
+                    style: AppTypography.eyebrow(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const Spacer(),
+                  _SeasonControl(
+                    seasons: seasons,
+                    selectedId: selected,
+                    onSelect: (id) => ref
+                        .read(selectedSeasonProvider(seriesId).notifier)
+                        .state = id,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  IconButton(
+                    icon: const Icon(Icons.download_outlined),
+                    tooltip: context.l10n.detailsDownloadSeason,
+                    onPressed: () => ref
+                        .read(downloadManagerProvider)
+                        .enqueueSeason(seriesId: seriesId, seasonId: selected),
+                  ),
+                ],
               ),
             ),
-            _SeasonPills(
-              seasons: seasons,
-              selectedId: selected,
-              onSelect: (id) =>
-                  ref.read(selectedSeasonProvider(seriesId).notifier).state =
-                      id,
-            ),
             const SizedBox(height: AppSpacing.sm),
-            _EpisodesList(seriesId: seriesId, seasonId: selected),
+            _EpisodesList(
+              seriesId: seriesId,
+              seasonId: selected,
+              nextUpId: nextUpAsync.valueOrNull?.id,
+            ),
           ],
         );
       },
@@ -374,8 +334,36 @@ class _SeasonsAndEpisodes extends ConsumerWidget {
   }
 }
 
-class _SeasonPills extends StatelessWidget {
-  const _SeasonPills({
+class _SeasonControl extends StatelessWidget {
+  const _SeasonControl({
+    required this.seasons,
+    required this.selectedId,
+    required this.onSelect,
+  });
+
+  final List<JellyfinItem> seasons;
+  final String selectedId;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    if (seasons.length <= 5) {
+      return _SeasonPillRow(
+        seasons: seasons,
+        selectedId: selectedId,
+        onSelect: onSelect,
+      );
+    }
+    return _SeasonDropdown(
+      seasons: seasons,
+      selectedId: selectedId,
+      onSelect: onSelect,
+    );
+  }
+}
+
+class _SeasonPillRow extends StatelessWidget {
+  const _SeasonPillRow({
     required this.seasons,
     required this.selectedId,
     required this.onSelect,
@@ -390,57 +378,155 @@ class _SeasonPills extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return SizedBox(
-      height: 40,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        itemCount: seasons.length,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
-        itemBuilder: (context, i) {
-          final season = seasons[i];
-          final id = season.id;
-          final isSelected = id == selectedId;
-          final bg = isSelected ? scheme.primary : scheme.surfaceContainerHigh;
-          final fg = isSelected ? scheme.onPrimary : scheme.onSurfaceVariant;
-          final shape = RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-          );
-          return Material(
-            color: bg,
-            shape: shape,
-            child: InkWell(
-              onTap: () => onSelect(id),
-              customBorder: shape,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.xs + 2,
-                ),
-                child: Center(
-                  child: Text(
-                    season.name ??
-                        context.l10n.detailsSeason(season.indexNumber ?? 0),
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: fg,
-                      fontWeight: FontWeight.w600,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 480),
+      child: SizedBox(
+        height: 36,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: seasons.length,
+          separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+          itemBuilder: (context, i) {
+            final season = seasons[i];
+            final id = season.id;
+            final isSelected = id == selectedId;
+            final shape = RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              side: BorderSide(
+                color: isSelected
+                    ? scheme.onSurface
+                    : scheme.outline.withValues(alpha: 0.6),
+              ),
+            );
+            return AnimatedContainer(
+              duration: AppMotion.fast,
+              decoration: ShapeDecoration(
+                shape: shape,
+                color: isSelected ? scheme.onSurface : Colors.transparent,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                shape: shape,
+                child: InkWell(
+                  onTap: () => onSelect(id),
+                  customBorder: shape,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md + 2,
+                      vertical: AppSpacing.xs + 2,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _shortName(context, season),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: isSelected
+                              ? scheme.surface
+                              : scheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  String _shortName(BuildContext context, JellyfinItem season) {
+    final n = season.indexNumber;
+    if (n != null) return 'S$n';
+    return season.name ?? '?';
+  }
+}
+
+class _SeasonDropdown extends StatelessWidget {
+  const _SeasonDropdown({
+    required this.seasons,
+    required this.selectedId,
+    required this.onSelect,
+  });
+
+  final List<JellyfinItem> seasons;
+  final String selectedId;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final selected = seasons.firstWhere(
+      (s) => s.id == selectedId,
+      orElse: () => seasons.first,
+    );
+    return PopupMenuButton<String>(
+      tooltip: '',
+      initialValue: selectedId,
+      onSelected: onSelect,
+      offset: const Offset(0, 40),
+      color: scheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        side: BorderSide(color: scheme.outline.withValues(alpha: 0.6)),
+      ),
+      itemBuilder: (context) => [
+        for (final s in seasons)
+          PopupMenuItem<String>(
+            value: s.id,
+            child: Text(
+              s.name ?? context.l10n.detailsSeason(s.indexNumber ?? 0),
+              style: theme.textTheme.bodyMedium,
             ),
-          );
-        },
+          ),
+      ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md + 2,
+          vertical: AppSpacing.xs + 2,
+        ),
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+          border: Border.all(color: scheme.outline.withValues(alpha: 0.6)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              selected.name ??
+                  context.l10n.detailsSeason(selected.indexNumber ?? 0),
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 18,
+              color: scheme.onSurfaceVariant,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _EpisodesList extends ConsumerWidget {
-  const _EpisodesList({required this.seriesId, required this.seasonId});
+  const _EpisodesList({
+    required this.seriesId,
+    required this.seasonId,
+    required this.nextUpId,
+  });
 
   final String seriesId;
   final String seasonId;
+  final String? nextUpId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -469,39 +555,43 @@ class _EpisodesList extends ConsumerWidget {
             ),
           );
         }
-        return ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: episodes.length,
-          separatorBuilder: (_, __) => Divider(
-            height: 1,
-            color: scheme.outlineVariant,
-            indent: AppSpacing.lg,
-            endIndent: AppSpacing.lg,
+        return AnimatedSwitcher(
+          duration: AppMotion.medium,
+          switchInCurve: AppMotion.standard,
+          switchOutCurve: AppMotion.standard,
+          child: ListView.separated(
+            key: ValueKey(seasonId),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            itemCount: episodes.length,
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.xs),
+            itemBuilder: (context, index) {
+              final ep = episodes[index];
+              final isNextUp = ep.id == nextUpId;
+              final continueLabel = ep.hasResumePosition
+                  ? context.l10n.detailsContinue
+                  : context.l10n.detailsNextUp;
+              return JfEpisodeTile(
+                title: ep.name ?? '',
+                episodeNumber: ep.indexNumber,
+                imageUrl: urls.landscapeUrl(ep, maxWidth: 320),
+                runtime: formatRuntime(ep.runTimeTicks),
+                overview: ep.overview,
+                progress: ep.resumeProgress,
+                watched: ep.played ?? false,
+                nextUp: isNextUp,
+                nextUpLabel: isNextUp ? continueLabel : null,
+                onTap: () => context.push('/items/${ep.id}'),
+              );
+            },
           ),
-          itemBuilder: (context, index) {
-            final ep = episodes[index];
-            return JfEpisodeTile(
-              title: ep.name ?? '',
-              episodeNumber: ep.indexNumber,
-              imageUrl: urls.landscapeUrl(ep, maxWidth: 320),
-              runtime: formatRuntime(ep.runTimeTicks),
-              overview: ep.overview,
-              progress: ep.resumeProgress,
-              watched: ep.played ?? false,
-              onTap: () => context.push('/items/${ep.id}'),
-            );
-          },
         );
       },
     );
   }
 }
 
-/// Horizontal row of poster cards for seasons present on TMDB but absent
-/// from the user's Jellyfin library. Tap a poster to request the season via
-/// Seerr. The row is hidden when there's nothing missing (or Seerr isn't
-/// linked), so the section costs no vertical space in the happy path.
 class _MissingSeasonsRow extends ConsumerWidget {
   const _MissingSeasonsRow({
     required this.seriesId,
@@ -513,14 +603,6 @@ class _MissingSeasonsRow extends ConsumerWidget {
   final int tmdbId;
   final JellyfinItem seriesItem;
 
-  /// Builds a SeerrMedia stub from the Jellyfin series item so the existing
-  /// request sheet (poster + synopsis + season picker) can be opened.
-  ///
-  /// The series itself is typically `partiallyAvailable` (some seasons in,
-  /// some missing) — passing that verbatim would disable the submit button.
-  /// We override availability to `unknown` for the requestable case, but
-  /// preserve `pending`/`processing` when the tapped season is already in
-  /// flight so the sheet shows "Already requested" and blocks a duplicate.
   SeerrMedia _seriesAsSeerrMedia(SeerrAvailability seasonAvailability) {
     final passthrough =
         seasonAvailability == SeerrAvailability.pending ||

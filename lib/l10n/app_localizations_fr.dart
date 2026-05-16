@@ -1181,6 +1181,55 @@ class AppLocalizationsFr extends AppLocalizations {
       'Cette collection ne contient pas encore d\'éléments.';
 
   @override
+  String get detailsReadMore => 'Plus';
+
+  @override
+  String get detailsReadLess => 'Réduire';
+
+  @override
+  String get detailsAddToList => 'Ma liste';
+
+  @override
+  String get detailsRemoveFromList => 'Retirer';
+
+  @override
+  String get detailsMarkWatched => 'Marquer comme vu';
+
+  @override
+  String get detailsMarkUnwatched => 'Marquer comme non vu';
+
+  @override
+  String get detailsTrailer => 'Bande-annonce';
+
+  @override
+  String get detailsContinue => 'Continuer';
+
+  @override
+  String get detailsNextUp => 'Prochain';
+
+  @override
+  String detailsEpisodeOverline(String number) {
+    return 'ÉPISODE $number';
+  }
+
+  @override
+  String detailsBackToSeries(String series) {
+    return 'Retour à $series';
+  }
+
+  @override
+  String get detailsStudios => 'Studios';
+
+  @override
+  String get detailsReleaseDate => 'Sortie';
+
+  @override
+  String get detailsOfficialRating => 'Classification';
+
+  @override
+  String get detailsGenres => 'Genres';
+
+  @override
   String get castSectionTitle => 'Distribution';
 
   @override

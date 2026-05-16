@@ -1,12 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../app/theme/app_motion.dart';
 import '../../app/theme/app_radius.dart';
 import '../../app/theme/app_spacing.dart';
+import '../../app/theme/app_typography.dart';
 
 /// Horizontal episode row: 16:9 still on the left, title/number/runtime on the
 /// right. Optional progress bar and "watched" badge surface playback state.
-class JfEpisodeTile extends StatelessWidget {
+///
+/// When [nextUp] is true the tile is promoted: the card gets a thin white
+/// rim with a soft glow, and an overline label (provided by [nextUpLabel])
+/// is rendered above the title. This is how we visually anchor the "Continuer
+/// — S2 · E4" episode in a season list.
+class JfEpisodeTile extends StatefulWidget {
   const JfEpisodeTile({
     required this.title,
     required this.episodeNumber,
@@ -15,6 +22,8 @@ class JfEpisodeTile extends StatelessWidget {
     this.overview,
     this.progress,
     this.watched = false,
+    this.nextUp = false,
+    this.nextUpLabel,
     this.onTap,
     super.key,
   });
@@ -26,95 +35,131 @@ class JfEpisodeTile extends StatelessWidget {
   final String? overview;
   final double? progress;
   final bool watched;
+  final bool nextUp;
+  final String? nextUpLabel;
   final VoidCallback? onTap;
+
+  @override
+  State<JfEpisodeTile> createState() => _JfEpisodeTileState();
+}
+
+class _JfEpisodeTileState extends State<JfEpisodeTile> {
+  bool _hovering = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final shape = BorderRadius.circular(AppRadius.sm);
+    final shape = BorderRadius.circular(AppRadius.md);
+
+    final isDimmed = widget.watched && !widget.nextUp;
 
     final heading = [
-      if (episodeNumber != null)
+      if (widget.episodeNumber != null)
         TextSpan(
-          text: '$episodeNumber · ',
+          text: '${widget.episodeNumber} · ',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: scheme.onSurfaceVariant,
             fontWeight: FontWeight.w600,
           ),
         ),
       TextSpan(
-        text: title,
+        text: widget.title,
         style: theme.textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w600,
         ),
       ),
     ];
 
-    return InkWell(
-      onTap: onTap,
+    final card = AnimatedContainer(
+      duration: AppMotion.fast,
+      curve: AppMotion.standard,
+      decoration: BoxDecoration(
+        color: widget.nextUp
+            ? scheme.surface
+            : (_hovering ? scheme.surface : Colors.transparent),
+        borderRadius: shape,
+        border: widget.nextUp
+            ? Border.all(color: scheme.onSurface, width: 1.2)
+            : null,
+        boxShadow: widget.nextUp
+            ? [
+                BoxShadow(
+                  color: scheme.onSurface.withValues(alpha: 0.08),
+                  blurRadius: 18,
+                  spreadRadius: 0,
+                ),
+              ]
+            : null,
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm + 2,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thumbnail
             ClipRRect(
-              borderRadius: shape,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
               child: SizedBox(
-                width: 128,
+                width: 160,
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      if (imageUrl != null)
-                        CachedNetworkImage(
-                          imageUrl: imageUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) =>
-                              Container(color: scheme.surfaceContainerHigh),
-                          errorWidget: (_, __, ___) =>
-                              Container(color: scheme.surfaceContainerHigh),
-                        )
-                      else
-                        Container(color: scheme.surfaceContainerHigh),
+                      Opacity(
+                        opacity: isDimmed ? 0.55 : 1,
+                        child: widget.imageUrl != null
+                            ? CachedNetworkImage(
+                                imageUrl: widget.imageUrl!,
+                                fit: BoxFit.cover,
+                                placeholder: (_, __) =>
+                                    Container(color: scheme.surfaceContainerHigh),
+                                errorWidget: (_, __, ___) =>
+                                    Container(color: scheme.surfaceContainerHigh),
+                              )
+                            : Container(color: scheme.surfaceContainerHigh),
+                      ),
 
-                      if (watched)
-                        Positioned(
-                          top: 4,
-                          right: 4,
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: scheme.primary,
-                              borderRadius: BorderRadius.circular(
-                                AppRadius.pill,
-                              ),
-                            ),
+                      // Hover overlay (desktop): subtle dim + centred play
+                      // glyph. Mobile devices never trigger hover events so
+                      // this stays hidden on touch.
+                      AnimatedOpacity(
+                        duration: AppMotion.fast,
+                        opacity: _hovering ? 1 : 0,
+                        child: ColoredBox(
+                          color: const Color(0x66000000),
+                          child: Center(
                             child: Icon(
-                              Icons.check_rounded,
-                              size: 12,
-                              color: scheme.onPrimary,
+                              Icons.play_arrow_rounded,
+                              size: 36,
+                              color: scheme.onSurface,
                             ),
                           ),
                         ),
+                      ),
 
-                      if (progress != null && progress! > 0)
+                      if (widget.watched && !widget.nextUp)
+                        Positioned(
+                          top: 6,
+                          right: 6,
+                          child: _WatchedBadge(scheme: scheme),
+                        ),
+
+                      if (widget.progress != null && widget.progress! > 0)
                         Positioned(
                           left: 0,
                           right: 0,
                           bottom: 0,
                           child: LinearProgressIndicator(
-                            value: progress!.clamp(0, 1),
+                            value: widget.progress!.clamp(0, 1),
                             minHeight: 3,
                             backgroundColor: Colors.white.withValues(
-                              alpha: 0.25,
+                              alpha: 0.2,
                             ),
-                            valueColor: AlwaysStoppedAnimation(scheme.primary),
+                            valueColor: AlwaysStoppedAnimation(scheme.onSurface),
                           ),
                         ),
                     ],
@@ -125,43 +170,95 @@ class JfEpisodeTile extends StatelessWidget {
 
             const SizedBox(width: AppSpacing.md),
 
-            // Text column
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(children: heading),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (runtime != null && runtime!.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      runtime!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.nextUp && widget.nextUpLabel != null) ...[
+                      Text(
+                        widget.nextUpLabel!,
+                        style: AppTypography.eyebrow(
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs + 2),
+                    ],
+                    Opacity(
+                      opacity: isDimmed ? 0.65 : 1,
+                      child: Text.rich(
+                        TextSpan(children: heading),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ],
-                  if (overview != null && overview!.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      overview!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        height: 1.4,
+                    if (widget.runtime != null &&
+                        widget.runtime!.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        widget.runtime!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
+                    ],
+                    if (widget.overview != null &&
+                        widget.overview!.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Opacity(
+                        opacity: isDimmed ? 0.6 : 1,
+                        child: Text(
+                          widget.overview!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: widget.onTap,
+          borderRadius: shape,
+          child: card,
+        ),
+      ),
+    );
+  }
+}
+
+class _WatchedBadge extends StatelessWidget {
+  const _WatchedBadge({required this.scheme});
+
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        color: const Color(0xCC000000),
+        shape: BoxShape.circle,
+        border: Border.all(color: const Color(0x33FFFFFF)),
+      ),
+      child: Icon(Icons.check_rounded, size: 14, color: scheme.onSurface),
     );
   }
 }

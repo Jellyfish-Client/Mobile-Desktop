@@ -1168,6 +1168,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailsBoxSetEmptyMessage => 'This collection has no items yet.';
 
   @override
+  String get detailsReadMore => 'More';
+
+  @override
+  String get detailsReadLess => 'Less';
+
+  @override
+  String get detailsAddToList => 'My list';
+
+  @override
+  String get detailsRemoveFromList => 'Remove';
+
+  @override
+  String get detailsMarkWatched => 'Mark as watched';
+
+  @override
+  String get detailsMarkUnwatched => 'Mark as unwatched';
+
+  @override
+  String get detailsTrailer => 'Trailer';
+
+  @override
+  String get detailsContinue => 'Continue';
+
+  @override
+  String get detailsNextUp => 'Next up';
+
+  @override
+  String detailsEpisodeOverline(String number) {
+    return 'EPISODE $number';
+  }
+
+  @override
+  String detailsBackToSeries(String series) {
+    return 'Back to $series';
+  }
+
+  @override
+  String get detailsStudios => 'Studios';
+
+  @override
+  String get detailsReleaseDate => 'Release';
+
+  @override
+  String get detailsOfficialRating => 'Rating';
+
+  @override
+  String get detailsGenres => 'Genres';
+
+  @override
   String get castSectionTitle => 'Cast';
 
   @override

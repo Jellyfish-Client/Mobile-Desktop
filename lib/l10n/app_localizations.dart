@@ -2150,6 +2150,96 @@ abstract class AppLocalizations {
   /// **'Cette collection ne contient pas encore d\'éléments.'**
   String get detailsBoxSetEmptyMessage;
 
+  /// No description provided for @detailsReadMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus'**
+  String get detailsReadMore;
+
+  /// No description provided for @detailsReadLess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réduire'**
+  String get detailsReadLess;
+
+  /// No description provided for @detailsAddToList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma liste'**
+  String get detailsAddToList;
+
+  /// No description provided for @detailsRemoveFromList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get detailsRemoveFromList;
+
+  /// No description provided for @detailsMarkWatched.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marquer comme vu'**
+  String get detailsMarkWatched;
+
+  /// No description provided for @detailsMarkUnwatched.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marquer comme non vu'**
+  String get detailsMarkUnwatched;
+
+  /// No description provided for @detailsTrailer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bande-annonce'**
+  String get detailsTrailer;
+
+  /// No description provided for @detailsContinue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get detailsContinue;
+
+  /// No description provided for @detailsNextUp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochain'**
+  String get detailsNextUp;
+
+  /// No description provided for @detailsEpisodeOverline.
+  ///
+  /// In fr, this message translates to:
+  /// **'ÉPISODE {number}'**
+  String detailsEpisodeOverline(String number);
+
+  /// No description provided for @detailsBackToSeries.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour à {series}'**
+  String detailsBackToSeries(String series);
+
+  /// No description provided for @detailsStudios.
+  ///
+  /// In fr, this message translates to:
+  /// **'Studios'**
+  String get detailsStudios;
+
+  /// No description provided for @detailsReleaseDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sortie'**
+  String get detailsReleaseDate;
+
+  /// No description provided for @detailsOfficialRating.
+  ///
+  /// In fr, this message translates to:
+  /// **'Classification'**
+  String get detailsOfficialRating;
+
+  /// No description provided for @detailsGenres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Genres'**
+  String get detailsGenres;
+
   /// No description provided for @castSectionTitle.
   ///
   /// In fr, this message translates to:

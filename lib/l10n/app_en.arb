@@ -847,6 +847,48 @@
   "@detailsBoxSetEmpty": {},
   "detailsBoxSetEmptyMessage": "This collection has no items yet.",
   "@detailsBoxSetEmptyMessage": {},
+  "detailsReadMore": "More",
+  "@detailsReadMore": {},
+  "detailsReadLess": "Less",
+  "@detailsReadLess": {},
+  "detailsAddToList": "My list",
+  "@detailsAddToList": {},
+  "detailsRemoveFromList": "Remove",
+  "@detailsRemoveFromList": {},
+  "detailsMarkWatched": "Mark as watched",
+  "@detailsMarkWatched": {},
+  "detailsMarkUnwatched": "Mark as unwatched",
+  "@detailsMarkUnwatched": {},
+  "detailsTrailer": "Trailer",
+  "@detailsTrailer": {},
+  "detailsContinue": "Continue",
+  "@detailsContinue": {},
+  "detailsNextUp": "Next up",
+  "@detailsNextUp": {},
+  "detailsEpisodeOverline": "EPISODE {number}",
+  "@detailsEpisodeOverline": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsBackToSeries": "Back to {series}",
+  "@detailsBackToSeries": {
+    "placeholders": {
+      "series": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsStudios": "Studios",
+  "@detailsStudios": {},
+  "detailsReleaseDate": "Release",
+  "@detailsReleaseDate": {},
+  "detailsOfficialRating": "Rating",
+  "@detailsOfficialRating": {},
+  "detailsGenres": "Genres",
+  "@detailsGenres": {},
   "castSectionTitle": "Cast",
   "@castSectionTitle": {},
   "seerrDiscoverTitle": "Discover on Seerr",
