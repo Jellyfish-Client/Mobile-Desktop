@@ -1,0 +1,75 @@
+name: Discord release notification
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          script: |
+            const webhook = process.env.WEBHOOK;
+            if (!webhook) {
+              core.warning('DISCORD_WEBHOOK_URL secret not set — skipping Discord notification.');
+              return;
+            }
+
+            const release = context.payload.release;
+            const assets = release.assets || [];
+            const find = (pattern) => assets.find((a) => pattern.test(a.name));
+
+            const apk      = find(/Android.*\.apk$/i);
+            const aab      = find(/Android.*\.aab$/i);
+            const ipa      = find(/iOS.*\.ipa$/i);
+            const dmg      = find(/macOS.*\.dmg$/i);
+            const winSetup = find(/Windows.*Setup\.exe$/i);
+            const winZip   = find(/Windows.*Portable\.zip$/i);
+
+            const link = (label, asset) =>
+              asset ? `[${label}](${asset.browser_download_url})` : null;
+            const join = (...parts) => parts.filter(Boolean).join(' • ');
+
+            const downloads = [];
+            if (apk || aab)         downloads.push(`🤖 **Android** — ${join(link('APK', apk), link('AAB', aab))}`);
+            if (ipa)                downloads.push(`🍎 **iOS** — ${link('IPA (unsigned)', ipa)}`);
+            if (dmg)                downloads.push(`💻 **macOS** — ${link('DMG', dmg)}`);
+            if (winSetup || winZip) downloads.push(`🪟 **Windows** — ${join(link('Setup', winSetup), link('Portable', winZip))}`);
+
+            const downloadsSection = downloads.length
+              ? '\n\n**📥 Téléchargements**\n' + downloads.join('\n')
+              : '';
+
+            // Discord embed description limit: 4096 chars. Reserve room for the downloads block.
+            let body = (release.body || '').trim();
+            const maxBody = 4096 - downloadsSection.length - 32;
+            if (body.length > maxBody) body = body.slice(0, maxBody - 1).trimEnd() + '…';
+
+            const payload = {
+              username: 'Jellyfish Releases',
+              embeds: [{
+                title: `🐟 ${release.name || release.tag_name}`,
+                url: release.html_url,
+                description: body + downloadsSection,
+                color: 0x0175C2,
+                footer: { text: `Version ${release.tag_name}` },
+                timestamp: release.published_at || new Date().toISOString(),
+              }],
+            };
+
+            const res = await fetch(webhook, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+              const text = await res.text();
+              core.setFailed(`Discord webhook failed: ${res.status} ${text}`);
+            } else {
+              core.info(`Posted release ${release.tag_name} to Discord.`);
+            }
