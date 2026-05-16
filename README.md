@@ -19,6 +19,12 @@
 
 **Jellyfish** is a cross-platform client for [Jellyfin](https://jellyfin.org) with native integration of [Jellyseerr](https://docs.jellyseerr.dev) for content requests. Designed to deliver a smooth, polished and complete experience on mobile, tablet, desktop and web.
 
+> [!IMPORTANT]
+> **The [Jellyfish Bridge](https://github.com/Jellyfish-Client/plugin) Jellyfin server plugin is required for full functionality.**
+> Jellyfish does **not** talk directly to Jellyseerr / Radarr / Sonarr — every call is proxied server-side by the Bridge plugin behind your Jellyfin auth.
+> Without it the app still works as a pure Jellyfin client, but you'll lose: Jellyseerr requests, the "Other titles" rails on details pages, the actor / person filmography augmented with TMDB credits, missing-season pickers, search results from outside the library, and the admin Radarr / Sonarr views.
+> Install it on your Jellyfin server from the [Jellyfish-Client repository](https://github.com/Jellyfish-Client/plugin#install-on-jellyfin) (one-click via the plugin catalog).
+
 ## Features
 
 ### Playback & media
@@ -42,9 +48,10 @@
 - Local **Drift database** for metadata, sync queue and playback state
 - **Full offline mode**: browse, play and mark items offline, queue replay on reconnection
 
-### Jellyseerr integration
+### Jellyseerr integration *(requires the [Bridge plugin](https://github.com/Jellyfish-Client/plugin))*
 - Request movies & series from within the app
 - Track **requests** and their status
+- Actor / person pages augmented with TMDB filmography
 - **Admin** dashboard to manage requests (10 admin modules)
 
 ### Multi-account
@@ -93,7 +100,8 @@ lib/
 ### Prerequisites
 - Flutter **3.32+** and Dart **3.11+**
 - Xcode 15+ (iOS / macOS), Android Studio (Android), CMake (Linux/Windows)
-- A reachable **Jellyfin** server (and optionally **Jellyseerr**)
+- A reachable **Jellyfin** server with the **[Jellyfish Bridge plugin](https://github.com/Jellyfish-Client/plugin)** installed — required for Jellyseerr / Radarr / Sonarr features (the app falls back to Jellyfin-only mode without it)
+- *(Optional)* a **Jellyseerr** instance reachable from the Jellyfin host so the Bridge can proxy requests to it
 
 ### Installation
 
