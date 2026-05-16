@@ -7,6 +7,7 @@ import '../../core/upcoming/models.dart';
 import '../../core/upcoming/upcoming_client.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/sync_play_button.dart';
 
 /// Range of upcoming releases to surface, in days from today.
 enum CalendarRange {
@@ -93,7 +94,10 @@ class CalendarScreen extends ConsumerWidget {
     final itemsAsync = ref.watch(calendarItemsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.calendarTitle)),
+      appBar: AppBar(
+        title: Text(context.l10n.calendarTitle),
+        actions: const [SyncPlayButton()],
+      ),
       body: servicesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => EmptyState(

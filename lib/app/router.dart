@@ -161,7 +161,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, __) => const AccountsScreen(),
       ),
-      // IndexedStack-backed shell so the 6 tabs stay mounted across switches.
+      // IndexedStack-backed shell so the tabs stay mounted across switches.
       // This keeps Home's Riverpod providers alive when the user pops into
       // Library/Search/etc. mid-fetch, instead of disposing them and
       // re-running the network calls on the way back.

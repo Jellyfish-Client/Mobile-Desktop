@@ -2516,4 +2516,104 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drawerShowTooltip => 'Show navigation';
+
+  @override
+  String get syncPlayTabLabel => 'Watch Together';
+
+  @override
+  String get syncPlayCreateButton => 'Create a group';
+
+  @override
+  String get syncPlayCreateDialogTitle => 'New group';
+
+  @override
+  String get syncPlayCreateGroupNameLabel => 'Group name';
+
+  @override
+  String get syncPlayCreateGroupNameHint => 'E.g. Movie night';
+
+  @override
+  String get syncPlayCreateGroupNameRequired =>
+      'Name is required (1–50 characters)';
+
+  @override
+  String syncPlayMembersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '1 member',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get syncPlayLeaveButton => 'Leave group';
+
+  @override
+  String get syncPlayLeaveConfirmTitle => 'Leave group?';
+
+  @override
+  String get syncPlayLeaveConfirmBody =>
+      'You will be disconnected from the watch party session.';
+
+  @override
+  String get syncPlayJoinButton => 'Join';
+
+  @override
+  String get syncPlayJoinError => 'Could not join group';
+
+  @override
+  String get syncPlayCreateError => 'Could not create group';
+
+  @override
+  String get syncPlayErrLibraryDenied => 'Library access denied by the group';
+
+  @override
+  String get syncPlayErrGroupGone => 'This group no longer exists';
+
+  @override
+  String get syncPlayErrNotInGroup => 'You are no longer a member of any group';
+
+  @override
+  String get syncPlayErrTransport => 'Connection error — please retry';
+
+  @override
+  String get syncPlayIndicatorTooltip => 'Watch Together active';
+
+  @override
+  String get syncPlayCastConflictTooltip => 'Leave Cast to use Watch Together';
+
+  @override
+  String get syncPlayPanelTitle => 'Group';
+
+  @override
+  String get syncPlayPanelMembersHeading => 'Members';
+
+  @override
+  String get syncPlayPanelQueueHeading => 'Queue';
+
+  @override
+  String get syncPlayPanelControlsRepeat => 'Repeat';
+
+  @override
+  String get syncPlayPanelControlsShuffle => 'Shuffle';
+
+  @override
+  String get syncPlayStateIdle => 'Idle';
+
+  @override
+  String get syncPlayStatePaused => 'Paused';
+
+  @override
+  String get syncPlayStatePlaying => 'Playing';
+
+  @override
+  String get syncPlayStateWaiting => 'Buffering…';
+
+  @override
+  String get syncPlayJoinDialogTitle => 'Join a group';
+
+  @override
+  String get syncPlayCreateGroupSubtitle => 'Create a new group';
 }

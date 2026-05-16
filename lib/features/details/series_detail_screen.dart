@@ -44,7 +44,10 @@ class SeriesDetailView extends ConsumerWidget {
             expandedHeight: heroHeight,
             pinned: true,
             stretch: true,
-            actions: [CastButton(itemId: item.id, color: Colors.white)],
+            actions: [
+              const SyncPlayButton(color: Colors.white),
+              CastButton(itemId: item.id, color: Colors.white),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,
@@ -292,9 +295,7 @@ class _NextUpCta extends ConsumerWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                l.detailsResumeFrom(
-                  formatRuntime(ep.playbackPositionTicks),
-                ),
+                l.detailsResumeFrom(formatRuntime(ep.playbackPositionTicks)),
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -418,9 +419,8 @@ class _SeasonPills extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    season.name ?? context.l10n.detailsSeason(
-                      season.indexNumber ?? 0,
-                    ),
+                    season.name ??
+                        context.l10n.detailsSeason(season.indexNumber ?? 0),
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: fg,
                       fontWeight: FontWeight.w600,
@@ -565,7 +565,9 @@ class _MissingSeasonsRow extends ConsumerWidget {
                     const SizedBox(width: AppSpacing.sm),
                 itemBuilder: (context, i) {
                   final s = missing[i];
-                  final label = s.name ?? context.l10n.detailsMissingSeason(s.seasonNumber);
+                  final label =
+                      s.name ??
+                      context.l10n.detailsMissingSeason(s.seasonNumber);
                   return SizedBox(
                     width: 120,
                     child: MissingPosterCard(

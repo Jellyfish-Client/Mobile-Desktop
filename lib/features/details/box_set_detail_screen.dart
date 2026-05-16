@@ -46,6 +46,7 @@ class BoxSetDetailView extends ConsumerWidget {
             expandedHeight: heroHeight,
             pinned: true,
             stretch: true,
+            actions: const [SyncPlayButton(color: Colors.white)],
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,

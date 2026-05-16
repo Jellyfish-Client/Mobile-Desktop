@@ -4597,6 +4597,186 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Afficher la navigation'**
   String get drawerShowTooltip;
+
+  /// No description provided for @syncPlayTabLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visionnage groupé'**
+  String get syncPlayTabLabel;
+
+  /// No description provided for @syncPlayCreateButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un groupe'**
+  String get syncPlayCreateButton;
+
+  /// No description provided for @syncPlayCreateDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau groupe'**
+  String get syncPlayCreateDialogTitle;
+
+  /// No description provided for @syncPlayCreateGroupNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du groupe'**
+  String get syncPlayCreateGroupNameLabel;
+
+  /// No description provided for @syncPlayCreateGroupNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex : Soirée ciné'**
+  String get syncPlayCreateGroupNameHint;
+
+  /// No description provided for @syncPlayCreateGroupNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom est obligatoire (1–50 caractères)'**
+  String get syncPlayCreateGroupNameRequired;
+
+  /// No description provided for @syncPlayMembersCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 membre} other{{count} membres}}'**
+  String syncPlayMembersCount(int count);
+
+  /// No description provided for @syncPlayLeaveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter le groupe'**
+  String get syncPlayLeaveButton;
+
+  /// No description provided for @syncPlayLeaveConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter le groupe ?'**
+  String get syncPlayLeaveConfirmTitle;
+
+  /// No description provided for @syncPlayLeaveConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous serez déconnecté de la session de visionnage groupé.'**
+  String get syncPlayLeaveConfirmBody;
+
+  /// No description provided for @syncPlayJoinButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre'**
+  String get syncPlayJoinButton;
+
+  /// No description provided for @syncPlayJoinError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de rejoindre le groupe'**
+  String get syncPlayJoinError;
+
+  /// No description provided for @syncPlayCreateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de créer le groupe'**
+  String get syncPlayCreateError;
+
+  /// No description provided for @syncPlayErrLibraryDenied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès à la bibliothèque refusé par le groupe'**
+  String get syncPlayErrLibraryDenied;
+
+  /// No description provided for @syncPlayErrGroupGone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce groupe n\'existe plus'**
+  String get syncPlayErrGroupGone;
+
+  /// No description provided for @syncPlayErrNotInGroup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous n\'êtes plus membre d\'un groupe'**
+  String get syncPlayErrNotInGroup;
+
+  /// No description provided for @syncPlayErrTransport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur de connexion — réessayez'**
+  String get syncPlayErrTransport;
+
+  /// No description provided for @syncPlayIndicatorTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visionnage groupé actif'**
+  String get syncPlayIndicatorTooltip;
+
+  /// No description provided for @syncPlayCastConflictTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quittez Cast pour utiliser le visionnage groupé'**
+  String get syncPlayCastConflictTooltip;
+
+  /// No description provided for @syncPlayPanelTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Groupe'**
+  String get syncPlayPanelTitle;
+
+  /// No description provided for @syncPlayPanelMembersHeading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Membres'**
+  String get syncPlayPanelMembersHeading;
+
+  /// No description provided for @syncPlayPanelQueueHeading.
+  ///
+  /// In fr, this message translates to:
+  /// **'File d\'attente'**
+  String get syncPlayPanelQueueHeading;
+
+  /// No description provided for @syncPlayPanelControlsRepeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Répétition'**
+  String get syncPlayPanelControlsRepeat;
+
+  /// No description provided for @syncPlayPanelControlsShuffle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aléatoire'**
+  String get syncPlayPanelControlsShuffle;
+
+  /// No description provided for @syncPlayStateIdle.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente'**
+  String get syncPlayStateIdle;
+
+  /// No description provided for @syncPlayStatePaused.
+  ///
+  /// In fr, this message translates to:
+  /// **'En pause'**
+  String get syncPlayStatePaused;
+
+  /// No description provided for @syncPlayStatePlaying.
+  ///
+  /// In fr, this message translates to:
+  /// **'En lecture'**
+  String get syncPlayStatePlaying;
+
+  /// No description provided for @syncPlayStateWaiting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chargement…'**
+  String get syncPlayStateWaiting;
+
+  /// No description provided for @syncPlayJoinDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre un groupe'**
+  String get syncPlayJoinDialogTitle;
+
+  /// No description provided for @syncPlayCreateGroupSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un nouveau groupe'**
+  String get syncPlayCreateGroupSubtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -97,6 +97,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 ),
               ),
             ),
+            actions: const [SyncPlayButton()],
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(2),
               child: SizedBox(

@@ -42,38 +42,40 @@ class AppNavigationShell extends ConsumerStatefulWidget {
 
 /// Trios d'icônes pour chaque onglet. Les labels sont résolus depuis
 /// [AppLocalizations] au moment du build pour suivre la locale active.
-List<DrawerNavTabSpec> _tabsOf(AppLocalizations l10n) => [
-  DrawerNavTabSpec(
-    icon: Icons.home_outlined,
-    selectedIcon: Icons.home,
-    label: l10n.navHome,
-  ),
-  DrawerNavTabSpec(
-    icon: Icons.video_library_outlined,
-    selectedIcon: Icons.video_library,
-    label: l10n.navLibrary,
-  ),
-  DrawerNavTabSpec(
-    icon: Icons.search_outlined,
-    selectedIcon: Icons.search,
-    label: l10n.navSearch,
-  ),
-  DrawerNavTabSpec(
-    icon: Icons.calendar_month_outlined,
-    selectedIcon: Icons.calendar_month,
-    label: l10n.navCalendar,
-  ),
-  DrawerNavTabSpec(
-    icon: Icons.download_outlined,
-    selectedIcon: Icons.download,
-    label: l10n.navDownloads,
-  ),
-  DrawerNavTabSpec(
-    icon: Icons.settings_outlined,
-    selectedIcon: Icons.settings,
-    label: l10n.navSettings,
-  ),
-];
+List<DrawerNavTabSpec> _tabsOf(AppLocalizations l10n) {
+  return [
+    DrawerNavTabSpec(
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home,
+      label: l10n.navHome,
+    ),
+    DrawerNavTabSpec(
+      icon: Icons.video_library_outlined,
+      selectedIcon: Icons.video_library,
+      label: l10n.navLibrary,
+    ),
+    DrawerNavTabSpec(
+      icon: Icons.search_outlined,
+      selectedIcon: Icons.search,
+      label: l10n.navSearch,
+    ),
+    DrawerNavTabSpec(
+      icon: Icons.calendar_month_outlined,
+      selectedIcon: Icons.calendar_month,
+      label: l10n.navCalendar,
+    ),
+    DrawerNavTabSpec(
+      icon: Icons.download_outlined,
+      selectedIcon: Icons.download,
+      label: l10n.navDownloads,
+    ),
+    DrawerNavTabSpec(
+      icon: Icons.settings_outlined,
+      selectedIcon: Icons.settings,
+      label: l10n.navSettings,
+    ),
+  ];
+}
 
 class _AppNavigationShellState extends ConsumerState<AppNavigationShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();

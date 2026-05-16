@@ -8,6 +8,7 @@ import '../../core/storage/app_database.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/jf_section_title.dart';
+import '../../shared/widgets/sync_play_button.dart';
 import 'widgets/download_tile.dart';
 
 // ---------------------------------------------------------------------------
@@ -122,6 +123,7 @@ class DownloadsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.downloadsTitle),
         actions: [
+          const SyncPlayButton(),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             tooltip: l10n.downloadsSettings,

@@ -64,6 +64,12 @@ dependencies:
   # Connectivity (offline mode detection)
   connectivity_plus: ^6.0.5
 
+  # WebSocket transport (SyncPlay session channel)
+  web_socket_channel: ^3.0.1
+  # Two-way channel abstraction used by [JellyfinWebSocket]; transitive via
+  # web_socket_channel but referenced directly to satisfy depend_on_referenced.
+  stream_channel: ^2.1.2
+
   # Misc
   intl: any
   cupertino_icons: ^1.0.8

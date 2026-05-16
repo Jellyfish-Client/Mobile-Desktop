@@ -192,19 +192,33 @@ class HomeScreen extends ConsumerWidget {
           // Subtle film-grain overlay.
           const Positioned.fill(child: JfGrainOverlay(opacity: 0.035)),
 
-          // Floating search entry — opens unified Jellyfin + Seerr search.
+          // Floating top-right cluster — SyncPlay (desktop only) + Search.
+          // Both buttons share the same translucent-black background so they
+          // read as a coherent action group over the hero backdrop.
           Positioned(
             top: topInset + AppSpacing.sm,
             right: AppSpacing.lg,
-            child: Material(
-              color: Colors.black.withValues(alpha: 0.45),
-              shape: const CircleBorder(),
-              clipBehavior: Clip.antiAlias,
-              child: IconButton(
-                icon: const Icon(Icons.search, color: Colors.white),
-                tooltip: context.l10n.homeSearch,
-                onPressed: () => context.go('/search'),
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Material(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: const SyncPlayButton(color: Colors.white),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Material(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: IconButton(
+                    icon: const Icon(Icons.search, color: Colors.white),
+                    tooltip: context.l10n.homeSearch,
+                    onPressed: () => context.go('/search'),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

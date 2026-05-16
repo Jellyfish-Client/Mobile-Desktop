@@ -74,7 +74,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             title: Text(context.l10n.libraryTitle),
             pinned: true,
             floating: true,
-            actions: const [CastButton()],
+            actions: const [SyncPlayButton(), CastButton()],
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(116),
               child: Padding(

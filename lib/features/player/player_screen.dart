@@ -36,6 +36,8 @@ import '../../core/playback/playback_reporting_service.dart';
 import '../../core/playback/player_backend.dart';
 import '../../core/playback/segments_provider.dart';
 import '../../core/storage/app_database_provider.dart';
+import '../../features/syncplay/data/sync_play_player_bridge.dart';
+import '../../features/syncplay/data/sync_play_providers.dart';
 import '../../l10n/l10n_extension.dart';
 import '../details/_format.dart';
 import 'play_extra.dart';
@@ -63,6 +65,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
   late final String _playSessionId = const Uuid().v4();
   PlaybackReportingService? _reporting;
+
+  /// Pont SyncPlay actif uniquement sur desktop quand l'utilisateur est dans
+  /// un groupe. Instancié dans [_initialize] après le wiring du backend ;
+  /// libéré dans [dispose].
+  SyncPlayPlayerBridge? _syncPlayBridge;
 
   // Visibility of the player chrome (top bar, bottom bar, side controls).
   // Owns its own auto-hide timer so toggling does not rebuild the Scaffold.
@@ -229,8 +236,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       _reporting = PlaybackReportingService(
         sink: _buildSink(client, resolved.mediaSourceId),
         positionTicksProvider: () => backend.position.inMicroseconds * 10,
+        isSyncPlayActive: () => ref.read(syncPlayInGroupProvider),
       );
       await _reporting!.start(startTicks: startPos.inMicroseconds * 10);
+      _maybeAttachSyncPlayBridge(backend);
     } on Object catch (e, st) {
       _log.warning('Player initialization failed', e, st);
       if (!mounted) return;
@@ -373,8 +382,32 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     _reporting = PlaybackReportingService(
       sink: _buildSink(client, widget.itemId),
       positionTicksProvider: () => backend.position.inMicroseconds * 10,
+      isSyncPlayActive: () => ref.read(syncPlayInGroupProvider),
     );
     await _reporting!.start(startTicks: startPos.inMicroseconds * 10);
+    _maybeAttachSyncPlayBridge(backend);
+  }
+
+  /// Branche le bridge SyncPlay si toutes les conditions sont réunies :
+  /// - desktop (pas de double-reporting concurrent sur mobile pour le MVP),
+  /// - une session SyncPlay est déjà active (l'utilisateur a rejoint un
+  ///   groupe avant d'ouvrir le player ; le panneau UI assurera ce join).
+  void _maybeAttachSyncPlayBridge(PlayerBackend backend) {
+    if (!_caps.isDesktop) return;
+    if (!ref.read(syncPlayInGroupProvider)) return;
+    if (_syncPlayBridge != null) return;
+    final bridge = SyncPlayPlayerBridge.fromWidgetRef(
+      ref: ref,
+      backend: backend,
+      onSwitchItem: (itemId) {
+        if (!mounted) return;
+        // Délégué au router pour cohérence avec _playNextUp — le bridge
+        // ne connaît pas go_router et le PlayerScreen est le point unique
+        // qui sait disposer le backend avant la transition.
+        context.pushReplacement('/play/$itemId');
+      },
+    )..attach();
+    _syncPlayBridge = bridge;
   }
 
   void _attachAudioHandler({
@@ -600,6 +633,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     final clamped = newPos < Duration.zero ? Duration.zero : newPos;
     await backend.seek(clamped);
     _reporting?.onSeek();
+    _syncPlayBridge?.notifyLocalSeek(clamped);
     if (!mounted) return;
     _doubleTapController.show(left: isLeft);
   }
@@ -742,6 +776,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     _positionSub?.cancel();
     _pipSub?.cancel();
     _volumeSub?.cancel();
+    _syncPlayBridge?.detach();
+    _syncPlayBridge = null;
     _reporting?.stop();
     if (_caps.supportsScreenBrightness) {
       ScreenBrightness().resetScreenBrightness().catchError((_) {});
@@ -814,8 +850,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                   segment: _activeSkipSegment!,
                   onSkip: () async {
                     final backend = ref.read(playerBackendProvider);
-                    await backend.seek(_activeSkipSegment!.end);
+                    final target = _activeSkipSegment!.end;
+                    await backend.seek(target);
                     _reporting?.onSeek();
+                    _syncPlayBridge?.notifyLocalSeek(target);
                   },
                 ),
               if (_showNextUp && !_locked) _buildNextUp(),

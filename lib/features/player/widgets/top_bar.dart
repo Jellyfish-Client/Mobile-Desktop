@@ -9,6 +9,7 @@ import '../../../core/jellyfin/models/jellyfin_item.dart';
 import '../../../core/playback/playback_providers.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../../shared/widgets/cast_button.dart';
+import '../../../shared/widgets/sync_play_button.dart';
 import '../../details/_format.dart';
 
 class TopBar extends ConsumerWidget {
@@ -26,6 +27,7 @@ class TopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final item = ref.watch(playerItemProvider(itemId)).valueOrNull;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
       decoration: const BoxDecoration(
@@ -73,6 +75,9 @@ class TopBar extends ConsumerWidget {
                 ],
               ),
             ),
+            // Bouton SyncPlay — rendu visible ou non selon la plateforme
+            // en interne (desktop uniquement).
+            const SyncPlayButton(color: Colors.white),
             CastButton(itemId: itemId, color: Colors.white),
             if (onPip != null)
               IconButton(
