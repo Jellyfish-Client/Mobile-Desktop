@@ -8,15 +8,11 @@ import '../../app/theme/app_typography.dart';
 import '../../core/bridge/bridge_error_bus.dart';
 import '../../core/bridge/bridge_errors.dart';
 import '../../core/bridge/bridge_services.dart';
-import '../../core/jellyfin/jellyfin_url_service.dart';
 import '../../core/jellyfin/user_views_provider.dart';
 import '../../core/network/offline_mode_provider.dart';
-import '../../core/seerr/seerr_client.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../main.dart' show appStartStopwatch;
 import '../../shared/widgets/widgets.dart';
-import '../details/widgets/seerr_request_sheet.dart';
-import 'hero_featured.dart';
 import 'home_providers.dart';
 import 'home_sections_controller.dart';
 import 'offline_home_screen.dart';
@@ -47,10 +43,13 @@ class HomeScreen extends ConsumerWidget {
       );
       ref.read(bridgeErrorBusProvider.notifier).state = null;
     });
-    final servicesAsync = ref.watch(bridgeServicesProvider);
-    final pluginMissing = servicesAsync.valueOrNull?.pluginInstalled == false;
-    final urls = ref.watch(jellyfinUrlServiceProvider);
-    final seerrClient = ref.watch(seerrClientProvider);
+    // `select` keeps this screen from rebuilding on every bridgeServices
+    // state transition — only the pluginInstalled flag matters here.
+    final pluginMissing = ref.watch(
+      bridgeServicesProvider.select(
+        (a) => a.valueOrNull?.pluginInstalled == false,
+      ),
+    );
     final sectionsAsync = ref.watch(homeSectionsControllerProvider);
     if (!_homePaintLogged && sectionsAsync.hasValue) {
       _homePaintLogged = true;
@@ -60,38 +59,6 @@ class HomeScreen extends ConsumerWidget {
         );
       });
     }
-    final featured =
-        ref.watch(featuredCarouselItemsProvider).valueOrNull ?? const [];
-
-    final heroSlides = <JfFullHeroSlide>[
-      for (final fItem in featured)
-        switch (fItem) {
-          HeroJellyfinItem(:final item) => JfFullHeroSlide(
-            id: 'jf_${item.id}',
-            title: item.name ?? '',
-            overview: item.overview,
-            backdropUrl: urls.imageUrl(item, type: 'Backdrop', maxWidth: 1600),
-            logoUrl: urls.imageUrl(item, type: 'Logo', maxWidth: 600),
-            year: item.productionYear,
-            rating: item.communityRating,
-            ageRating: item.officialRating,
-            runtimeMinutes: item.runTimeTicks == null
-                ? null
-                : item.runTimeTicks! ~/ 600000000,
-            genres: item.genres,
-            isFavorite: item.isFavorite,
-          ),
-          HeroSeerrItem(:final media) => JfFullHeroSlide(
-            id: 'seer_${media.tmdbId}_${media.type.name}',
-            title: media.title,
-            overview: media.overview,
-            backdropUrl: seerrClient.backdropUrl(media),
-            year: media.year,
-            primaryLabel: context.l10n.seerrRequest,
-            primaryIcon: Icons.add_circle_outline,
-          ),
-        },
-    ];
 
     final topInset = MediaQuery.paddingOf(context).top;
 
@@ -109,8 +76,6 @@ class HomeScreen extends ConsumerWidget {
                 ..invalidate(latestItemsProvider)
                 ..invalidate(nextUpItemsProvider)
                 ..invalidate(recentlyPlayedItemsProvider)
-                ..invalidate(featuredPoolProvider)
-                ..invalidate(featuredCarouselItemsProvider)
                 ..invalidate(tasteProfileProvider)
                 ..invalidate(recommendationRailsProvider)
                 ..invalidate(userViewsProvider)
@@ -134,38 +99,27 @@ class HomeScreen extends ConsumerWidget {
             },
             child: CustomScrollView(
               slivers: [
-                if (pluginMissing)
-                  SliverToBoxAdapter(
-                    child: SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.lg,
-                          AppSpacing.md,
-                          AppSpacing.lg,
-                          0,
-                        ),
-                        child: _PluginMissingBanner(),
-                      ),
-                    ),
-                  ),
-                // ── Hero plein écran ────────────────────────────────────────
+                // Status-bar inset + room for the floating search/syncplay
+                // cluster (48px touch target below `topInset + sm`). The
+                // full-bleed hero used to absorb the notch; this spacer
+                // replaces it now that the first rail leads the scroll view.
                 SliverToBoxAdapter(
-                  child: JfFullHero(
-                    topPadding: topInset,
-                    slides: heroSlides,
-                    onPrimaryTap: (slide) =>
-                        _onHeroAction(context, slide, featured),
-                    onDetailTap: (slide) {
-                      if (slide.id.startsWith('jf_')) {
-                        final itemId = slide.id.substring(3);
-                        if (itemId.isNotEmpty) {
-                          context.push('/items/$itemId');
-                        }
-                      }
-                    },
+                  child: SizedBox(
+                    height: topInset + AppSpacing.sm + 48 + AppSpacing.md,
                   ),
                 ),
+                if (pluginMissing)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        0,
+                        AppSpacing.lg,
+                        AppSpacing.md,
+                      ),
+                      child: _PluginMissingBanner(),
+                    ),
+                  ),
 
                 // ── Sections ────────────────────────────────────────────────
                 // No global loading skeleton — each rail manages its own
@@ -173,16 +127,34 @@ class HomeScreen extends ConsumerWidget {
                 // wait for the (lightweight) catalog/userViews resolution
                 // produces a visible "loading screen" feel; an empty body is
                 // better since the first rail typically lands within 100ms.
+                //
+                // SliverList + builder delegate so sections are built (and
+                // their providers watched, hence their network fetches
+                // started) lazily as they approach the viewport — a
+                // SliverToBoxAdapter per section used to mount every Seerr
+                // rail at the first frame and fire ~25 below-the-fold
+                // requests during cold start.
+                // skipLoadingOnReload: the catalog re-emits once when the
+                // reco seeds land (and on pull-to-refresh) — without it the
+                // transient AsyncLoading would blank the whole section list
+                // for a frame before repainting.
                 ...sectionsAsync.when(
+                  skipLoadingOnReload: true,
                   loading: () => const <Widget>[],
                   error: (_, __) => const <Widget>[],
                   data: (state) => [
-                    for (final section in state.visible)
-                      SliverToBoxAdapter(
-                        key: ValueKey(section.id),
-                        child: HomeSectionView(section: section),
-                      ),
-                    SliverToBoxAdapter(child: _ExhaustedFooter()),
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        if (index == state.visible.length) {
+                          return _ExhaustedFooter();
+                        }
+                        final section = state.visible[index];
+                        return KeyedSubtree(
+                          key: ValueKey(section.id),
+                          child: HomeSectionView(section: section),
+                        );
+                      }, childCount: state.visible.length + 1),
+                    ),
                   ],
                 ),
               ],
@@ -194,7 +166,7 @@ class HomeScreen extends ConsumerWidget {
 
           // Floating top-right cluster — SyncPlay (desktop only) + Search.
           // Both buttons share the same translucent-black background so they
-          // read as a coherent action group over the hero backdrop.
+          // read as a coherent action group over the scrolling content.
           Positioned(
             top: topInset + AppSpacing.sm,
             right: AppSpacing.lg,
@@ -224,30 +196,6 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-}
-
-void _onHeroAction(
-  BuildContext context,
-  JfFullHeroSlide slide,
-  List<HeroFeaturedItem> featured,
-) {
-  // The slide id encodes the source so the primary CTA branches without
-  // needing a second lookup table: `jf_<itemId>` plays/opens the Jellyfin
-  // item, `seer_<tmdbId>_<type>` opens the Seerr request sheet.
-  if (slide.id.startsWith('jf_')) {
-    final itemId = slide.id.substring(3);
-    if (itemId.isNotEmpty) context.push('/items/$itemId');
-    return;
-  }
-  if (slide.id.startsWith('seer_')) {
-    final match = featured
-        .whereType<HeroSeerrItem>()
-        .where((s) => s.id == slide.id)
-        .firstOrNull;
-    if (match != null) {
-      showSeerrRequestSheet(context, media: match.media);
-    }
   }
 }
 

@@ -1,6 +1,7 @@
-import 'dart:math';
+import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jellyfin_api/jellyfin_api.dart';
 
@@ -24,7 +25,6 @@ import '../../core/seerr/models.dart';
 import '../../core/seerr/seerr_client.dart';
 import '../../core/upcoming/models.dart';
 import '../../core/upcoming/upcoming_client.dart';
-import 'hero_featured.dart';
 import 'home_catalog.dart';
 import 'home_section.dart';
 import 'reco_seeds.dart';
@@ -66,24 +66,30 @@ class _CachedListNotifier<TState, TStorage>
     ref.keepAlive();
     final cache = ref.read(cacheRepositoryProvider);
     final rawCached = await cache.read(cacheKey);
-    final cached = rawCached == null ? null : decode(rawCached);
+    // Decode OFF the main isolate: BaseItemDto is a 154-field built_value
+    // graph and a synchronous decode of a 24-100 item blob janks the very
+    // frames where the home is painting. `decode` callbacks capture nothing
+    // (top-level tear-offs / stateless closures) so they are isolate-safe.
+    final cached = rawCached == null ? null : await compute(decode, rawCached);
     List<TState>? cachedMapped;
     if (cached != null) {
-      // Paint the cached list synchronously so the UI doesn't flash a
-      // skeleton on cold start. The fresh fetch below decides whether to
-      // re-emit.
+      // Paint the cached list so the UI doesn't flash a skeleton on cold
+      // start. The fresh fetch below decides whether to re-emit.
       cachedMapped = mapState(cached);
       state = AsyncData(cachedMapped);
     }
     final fresh = await fetch(ref);
-    final encodedFresh = encode(fresh);
-    await cache.write(cacheKey, encodedFresh);
+    // Encode off-main for the same jank reason as the decode above. The
+    // disk write itself is fire-and-forget: persistence is best-effort and
+    // must never gate the fresh emission to the UI.
+    final encodedFresh = await compute(encode, fresh);
+    cache.write(cacheKey, encodedFresh).ignore();
     // SWR dedup: when the freshly-fetched payload is byte-identical to the
     // cached payload we already emitted, return the SAME mapped reference
     // so Riverpod's equality check skips the redundant second emission.
     // Without this, derived providers like [tasteProfileProvider] →
     // [recommendationRailsProvider] would re-execute their full
-    // computation (including 4-5 network calls) for a result that is
+    // computation (including network calls) for a result that is
     // structurally identical to the one they just produced.
     if (cachedMapped != null && rawCached == encodedFresh) {
       return cachedMapped;
@@ -125,15 +131,17 @@ class _CachedListFamilyNotifier<TState, TStorage, K>
     final cache = ref.read(cacheRepositoryProvider);
     final key = cacheKeyFor(arg);
     final raw = await cache.read(key);
-    final cached = raw == null ? null : decode(raw);
+    // Same off-main decode/encode + fire-and-forget persistence rationale
+    // as [_CachedListNotifier.build].
+    final cached = raw == null ? null : await compute(decode, raw);
     List<TState>? cachedMapped;
     if (cached != null) {
       cachedMapped = mapState(cached);
       state = AsyncData(cachedMapped);
     }
     final fresh = await fetch(ref, arg);
-    final encodedFresh = encode(fresh);
-    await cache.write(key, encodedFresh);
+    final encodedFresh = await compute(encode, fresh);
+    cache.write(key, encodedFresh).ignore();
     if (cachedMapped != null && raw == encodedFresh) {
       return cachedMapped;
     }
@@ -250,52 +258,30 @@ final recentlyPlayedItemsProvider =
       ),
     );
 
-/// SWR-cached pool of "hero-eligible" Jellyfin items.
+/// Completes once the core Jellyfin home fetches have settled (success OR
+/// failure). Every Seerr/bridge provider awaits this before hitting the
+/// network so the cold-start bandwidth and connection slots go to Jellyfin
+/// first — "Jellyfin d'abord, Seerr ensuite". On-disk cache paints are
+/// unaffected: SWR notifiers emit their cached payload *before* the gated
+/// fetch runs, so gating only delays the Seerr revalidate, never a paint.
 ///
-/// Mirrors the query the `IAmParadox27/jellyfin-plugin-media-bar` plugin runs
-/// (random unwatched Movies/Series with both Logo + Backdrop artwork). We
-/// keep this list cached on disk so a cold start can paint a slide from
-/// memory while the fresh shuffle lands in the background; the
-/// shuffle-on-each-build over [featuredCarouselItemsProvider] gives session
-/// variety without re-hitting the server.
-final featuredPoolProvider =
-    AsyncNotifierProvider.autoDispose<
-      _CachedListNotifier<JellyfinItem, BaseItemDto>,
-      List<JellyfinItem>
-    >(
-      () => _CachedListNotifier<JellyfinItem, BaseItemDto>(
-        cacheKey: 'featured_pool_v1',
-        fetch: (ref) => ref.read(jellyfinClientProvider).featuredItems(),
-        encode: encodeBaseItemList,
-        decode: tryDecodeBaseItemList,
-        mapState: (dtos) => dtos.toDomainList(),
-      ),
-    );
-
-/// Jellyfin-only items for the hero carousel. Up to 6 items with Logo+Backdrop
-/// shuffled per session for variety. Seerr items are intentionally excluded —
-/// the hero is reserved for content the user already has access to in their
-/// library.
-///
-/// Defensive client-side Logo filter: even with `imageTypes=Logo,Backdrop`
-/// the server occasionally returns items whose Logo tag is on the parent
-/// (BoxSet / Series logo for an Episode). We need a real logo on the item
-/// itself so the hero's logo box doesn't fall back to a text title that
-/// contradicts the artwork.
-final featuredCarouselItemsProvider =
-    FutureProvider.autoDispose<List<HeroFeaturedItem>>((ref) async {
-      ref.keepAlive();
-      final pool = await ref.watch(featuredPoolProvider.future);
-      final jfPool = pool
-          .where((i) => i.imageTags.containsKey('Logo'))
-          .toList();
-      // Seed the shuffle off the pool's content so cache→network re-emit
-      // doesn't reorder the slides under the user.
-      final ids = jfPool.map((i) => i.id).toList()..sort();
-      final seed = Object.hashAll(ids);
-      jfPool.shuffle(Random(seed));
-      return jfPool.take(6).map(HeroJellyfinItem.new).toList();
-    });
+/// Failures are swallowed per-future: one broken Jellyfin rail must never
+/// block the whole Seerr block.
+final jellyfinHomeReadyProvider = FutureProvider.autoDispose<void>((ref) async {
+  ref.keepAlive();
+  Future<void> settle(Future<Object?> f) =>
+      f.then<void>((_) {}, onError: (Object _) {});
+  await Future.wait<void>([
+    settle(ref.watch(resumeItemsProvider.future)),
+    settle(ref.watch(latestItemsProvider.future)),
+    settle(ref.watch(nextUpItemsProvider.future)),
+    settle(ref.watch(userViewsProvider.future)),
+    // The heaviest Jellyfin payload (100 items + people/genres/studios),
+    // warmed in main(). Gating Seerr on it keeps the big download alone on
+    // the wire during the first wave.
+    settle(ref.watch(recentlyPlayedItemsProvider.future)),
+  ]);
+});
 
 // ---------------------------------------------------------------------------
 // Recommender providers
@@ -362,6 +348,10 @@ _seerrRailProvider({
     () => _CachedListNotifier<SeerrMedia, SeerrMedia>(
       cacheKey: cacheKey,
       fetch: (ref) async {
+        // Jellyfin-first: the cached payload was already painted before
+        // fetch() runs, so this only sequences the network revalidate
+        // after the Jellyfin head.
+        await ref.watch(jellyfinHomeReadyProvider.future);
         // Wait for the bridge services discovery before deciding to skip —
         // a synchronous read here would pick up the pre-resolution
         // `unavailable` state at cold start and silently overwrite the
@@ -451,6 +441,7 @@ typedef SimilarSeedKey = ({int tmdbId, SeerrMediaType type});
 final seerrSimilarBySeedProvider = FutureProvider.autoDispose
     .family<List<SeerrMedia>, SimilarSeedKey>((ref, key) async {
       ref.keepAlive();
+      await ref.watch(jellyfinHomeReadyProvider.future);
       final services = await ref.watch(bridgeServicesProvider.future);
       if (!services.jellyseerrAvailable) return const [];
       final client = ref.read(seerrClientProvider);
@@ -488,9 +479,12 @@ class _SeerMoodAggregateNotifier
     final cache = ref.read(cacheRepositoryProvider);
     final raw = await cache.read(_cacheKey);
     if (raw != null) {
-      final decoded = tryDecodeSeerMoodMap(raw);
+      final decoded = await compute(tryDecodeSeerMoodMap, raw);
       if (decoded != null) state = AsyncData(decoded);
     }
+    // Jellyfin-first: the 5 mood fetches are a burst of parallel discover
+    // calls, the worst offender to unleash while Jellyfin is still loading.
+    await ref.watch(jellyfinHomeReadyProvider.future);
     final services = await ref.watch(bridgeServicesProvider.future);
     if (!services.jellyseerrAvailable) return const {};
     final client = ref.read(seerrClientProvider);
@@ -504,7 +498,7 @@ class _SeerMoodAggregateNotifier
     final fresh = <SeerMoodId, List<SeerrMedia>>{
       for (final p in pairs) p.$1: p.$2,
     };
-    await cache.write(_cacheKey, encodeSeerMoodMap(fresh));
+    cache.write(_cacheKey, encodeSeerMoodMap(fresh)).ignore();
     return fresh;
   }
 
@@ -615,10 +609,11 @@ class _GenreSliderNotifier
       final decoded = tryDecodeSeerrGenreSlideList(raw);
       if (decoded != null) state = AsyncData(decoded);
     }
+    await ref.watch(jellyfinHomeReadyProvider.future);
     final client = ref.read(seerrClientProvider);
     if (!client.isLinked) return const [];
     final fresh = await fetch(client);
-    await cache.write(cacheKey, encodeSeerrGenreSlideList(fresh));
+    cache.write(cacheKey, encodeSeerrGenreSlideList(fresh)).ignore();
     return fresh;
   }
 }
@@ -641,10 +636,11 @@ class _WatchProvidersNotifier
       final decoded = tryDecodeSeerrWatchProviderList(raw);
       if (decoded != null) state = AsyncData(decoded);
     }
+    await ref.watch(jellyfinHomeReadyProvider.future);
     final client = ref.read(seerrClientProvider);
     if (!client.isLinked) return const [];
     final fresh = await fetch(client);
-    await cache.write(cacheKey, encodeSeerrWatchProviderList(fresh));
+    cache.write(cacheKey, encodeSeerrWatchProviderList(fresh)).ignore();
     return fresh;
   }
 }
@@ -734,6 +730,8 @@ _bridgeUpcomingRailProvider({
     () => _CachedListNotifier<UpcomingItem, UpcomingItem>(
       cacheKey: cacheKey,
       fetch: (ref) async {
+        // Jellyfin-first, same rationale as the Seerr rails.
+        await ref.watch(jellyfinHomeReadyProvider.future);
         final services = await ref.watch(bridgeServicesProvider.future);
         if (!available(services)) return const [];
         try {
@@ -792,16 +790,21 @@ final homeCatalogProvider = FutureProvider.autoDispose<List<HomeSection>>((
   // awaits below would invalidate this provider mid-build and re-run
   // every sub-fetch.
   final l10n = ref.watch(appLocalizationsProvider);
+  // Reco seeds are watched as an AsyncValue, NOT awaited: recoSeeds gates on
+  // recentlyPlayed (the heaviest Jellyfin fetch) AND the Seerr popular
+  // providers, so awaiting it here used to hold the ENTIRE catalog — the
+  // home stayed blank until Seerr answered. Instead we emit the catalog as
+  // soon as userViews+bridgeServices resolve, and re-emit once with the
+  // "Parce que vous avez regardé X" rails when the seeds land (they live far
+  // below the fold in the Seerr block, so the late insert is invisible).
+  final recoSeedsAsync = ref.watch(recoSeedsProvider);
   final views = await ref.watch(userViewsProvider.future);
   // Wait for the services discovery to resolve before building the catalog.
   // A synchronous read here would observe the pre-resolution `unavailable`
   // state at cold start and drop every Seerr section.
   final services = await ref.watch(bridgeServicesProvider.future);
-  // Reco seeds are only meaningful when Seerr is reachable. Awaiting before
-  // building the catalog keeps the rail order stable — otherwise the reco
-  // rails would pop in mid-scroll once the history finishes resolving.
   final recoSeeds = services.jellyseerrAvailable
-      ? await ref.watch(recoSeedsProvider.future)
+      ? recoSeedsAsync.valueOrNull ?? const <RecoSeed>[]
       : const <RecoSeed>[];
   return buildHomeCatalog(
     views: views,

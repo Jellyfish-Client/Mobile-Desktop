@@ -196,7 +196,8 @@ class JellyfinClient {
       includeItemTypes: kinds == null
           ? null
           : BuiltList<BaseItemKind>.of(kinds),
-      fields: BuiltList<ItemFields>.of(<ItemFields>[ItemFields.overview]),
+      // No extra fields: the resume rail renders poster+title+progress only;
+      // overview is refetched by the detail screen when needed.
     );
     return res.data?.items?.toList() ?? const [];
   }
@@ -207,7 +208,13 @@ class JellyfinClient {
     List<BaseItemKind>? includeItemTypes,
     List<ItemFields> extraFields = const [],
   }) async {
-    final fields = [ItemFields.overview, ...extraFields];
+    // Overview only rides along on the rich (recommender) path — the
+    // spotlight card displays it as a tagline. The plain home/library rails
+    // render poster+title only, so the default fetch skips it: it's the
+    // single biggest text contributor to the payload.
+    final fields = extraFields.isEmpty
+        ? const <ItemFields>[]
+        : [ItemFields.overview, ...extraFields];
     final res = await _api.getUserLibraryApi().getLatestMedia(
       userId: _userId,
       limit: limit,
@@ -220,43 +227,11 @@ class JellyfinClient {
     return res.data?.toList() ?? const [];
   }
 
-  /// Random unwatched Movies/Series that carry both a Logo and a Backdrop,
-  /// plus an overview. Mirrors the query the
-  /// `IAmParadox27/jellyfin-plugin-media-bar` plugin issues to fill its
-  /// featured slideshow, so the home hero ends up sampling the same pool
-  /// (everything you own with proper artwork, randomised, never anything you
-  /// already finished). The result is then client-side shuffled and consumed
-  /// by `featuredPoolProvider`.
-  Future<List<BaseItemDto>> featuredItems({int limit = 60}) async {
-    final res = await _api.getItemsApi().getItems(
-      userId: _userId,
-      includeItemTypes: BuiltList<BaseItemKind>.of(<BaseItemKind>[
-        BaseItemKind.movie,
-        BaseItemKind.series,
-      ]),
-      recursive: true,
-      hasOverview: true,
-      imageTypes: BuiltList<ImageType>.of(<ImageType>[
-        ImageType.logo,
-        ImageType.backdrop,
-      ]),
-      sortBy: BuiltList<ItemSortBy>.of(<ItemSortBy>[ItemSortBy.random]),
-      isPlayed: false,
-      enableUserData: true,
-      limit: limit,
-      fields: BuiltList<ItemFields>.of(<ItemFields>[
-        ItemFields.overview,
-        ItemFields.genres,
-      ]),
-    );
-    return res.data?.items?.toList() ?? const [];
-  }
-
   Future<List<BaseItemDto>> nextUp({int limit = 24}) async {
     final res = await _api.getTvShowsApi().getNextUp(
       userId: _userId,
       limit: limit,
-      fields: BuiltList<ItemFields>.of(<ItemFields>[ItemFields.overview]),
+      // No extra fields — same payload rationale as [resumeItems].
     );
     return res.data?.items?.toList() ?? const [];
   }
@@ -311,7 +286,13 @@ class JellyfinClient {
   // -- Library --------------------------------------------------------------
 
   Future<List<BaseItemDto>> userViews() async {
-    final res = await _api.getUserViewsApi().getUserViews(userId: _userId);
+    final res = await _api.getUserViewsApi().getUserViews(
+      userId: _userId,
+      // Channels / Live TV views are never surfaced by the home catalog or
+      // the library screens — skip them. This call sits on the critical path
+      // of homeCatalogProvider, so every byte counts.
+      includeExternalContent: false,
+    );
     return res.data?.items?.toList() ?? const [];
   }
 

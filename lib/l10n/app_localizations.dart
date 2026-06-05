@@ -4628,24 +4628,6 @@ abstract class AppLocalizations {
   /// **'Lecture'**
   String get commonPlay;
 
-  /// No description provided for @heroDetails.
-  ///
-  /// In fr, this message translates to:
-  /// **'Détails'**
-  String get heroDetails;
-
-  /// No description provided for @heroFavoriteAdd.
-  ///
-  /// In fr, this message translates to:
-  /// **'Ajouter aux favoris'**
-  String get heroFavoriteAdd;
-
-  /// No description provided for @heroFavoriteRemove.
-  ///
-  /// In fr, this message translates to:
-  /// **'Retirer des favoris'**
-  String get heroFavoriteRemove;
-
   /// No description provided for @commonErrorTitle.
   ///
   /// In fr, this message translates to:

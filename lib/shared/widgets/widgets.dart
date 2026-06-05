@@ -17,7 +17,6 @@ export 'jf_confirm_dialog.dart';
 export 'jf_detail_hero.dart';
 export 'jf_editorial_card.dart';
 export 'jf_episode_tile.dart';
-export 'jf_full_hero.dart';
 export 'jf_hero_carousel.dart';
 export 'jf_landscape_card.dart';
 export 'jf_loading.dart';

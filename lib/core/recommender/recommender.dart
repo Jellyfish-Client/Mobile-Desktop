@@ -130,11 +130,18 @@ class Recommender {
     // shows library rails (Derniers ajouts par bibliothèque) for fresh users.
     if (profile.sampleSize == 0) return const [];
 
+    final sources = profile.seenItemIds.take(2).toList();
+
     // Request genres, people and studios so the scoring functions have full
     // signal. Without these fields, _genreScore/_peopleScore/_studioScore all
     // return 0 and every item scores nearly identically — "Pour vous" and
     // "Pépites" then surface the same high-rated items in the same order.
-    final latestItems = await _client.latestItems(
+    //
+    // One parallel wave instead of four serial round-trips: latest(60) and
+    // one similar() per seed are all in flight together, and the first
+    // seed's similar list is shared between its "Parce que…" rail and
+    // "Pour vous" (which used to re-fetch the exact same list).
+    final latestFuture = _client.latestItems(
       limit: 60,
       extraFields: const [
         ItemFields.genres,
@@ -142,10 +149,27 @@ class Recommender {
         ItemFields.studios,
       ],
     );
+    final similarFutures = [
+      for (final sourceId in sources)
+        // Per-seed failures collapse to an empty list — the similar endpoint
+        // may be unavailable in some setups, and a malformed response can
+        // throw built_value `TypeError`s; neither should sink the wave.
+        _client
+            .similar(sourceId, limit: 24)
+            .then<List<BaseItemDto>>(
+              (items) => items,
+              onError: (Object _) => const <BaseItemDto>[],
+            ),
+    ];
+    final latestItems = await latestFuture;
+    final similarBySeed = await Future.wait(similarFutures);
 
-    // Compute derived rails (may involve additional network calls).
-    final similarRailsList = await _similarRails(profile);
-    final pourVousItems = await _pourVousItems(profile, latestItems);
+    final similarRailsList = _similarRails(profile, sources, similarBySeed);
+    final pourVousItems = _pourVousItems(
+      profile,
+      latestItems,
+      similarBySeed.isEmpty ? const [] : similarBySeed.first,
+    );
 
     final result = <RecommendationRail>[];
 
@@ -168,13 +192,19 @@ class Recommender {
     // rail dedup, any high-rated item that tops "Pour vous" would also appear
     // first in "Pépites" — the two sections look identical to the user.
     final alreadyShownIds = {
-      for (final item in pourVousItems) if (item.id != null) item.id!,
+      for (final item in pourVousItems)
+        if (item.id != null) item.id!,
       for (final rail in similarRailsList)
-        for (final item in rail.items) if (item.id != null) item.id!,
+        for (final item in rail.items)
+          if (item.id != null) item.id!,
     };
 
     // Rail — Pépites cachées.
-    final pepites = _pepitesItems(latestItems, profile, excludeIds: alreadyShownIds);
+    final pepites = _pepitesItems(
+      latestItems,
+      profile,
+      excludeIds: alreadyShownIds,
+    );
     if (pepites.isNotEmpty) {
       result.add(
         RecommendationRail(
@@ -189,9 +219,14 @@ class Recommender {
     // Rail — Vite vu (≤ 95 minutes).
     final alreadyShownForViteVu = {
       ...alreadyShownIds,
-      for (final item in pepites) if (item.id != null) item.id!,
+      for (final item in pepites)
+        if (item.id != null) item.id!,
     };
-    final vitevuItems = _vitevuItems(latestItems, profile, excludeIds: alreadyShownForViteVu);
+    final vitevuItems = _vitevuItems(
+      latestItems,
+      profile,
+      excludeIds: alreadyShownForViteVu,
+    );
     if (vitevuItems.isNotEmpty) {
       result.add(
         RecommendationRail(
@@ -222,20 +257,17 @@ class Recommender {
   // ---------------------------------------------------------------------------
 
   /// Pour vous: merge latest + similar(top played), score, dedup vs seenIds.
-  Future<List<BaseItemDto>> _pourVousItems(
+  ///
+  /// [topSimilar] is the pre-fetched similar list of the first seed — shared
+  /// with the first "Parce que…" rail so the seed isn't fetched twice.
+  List<BaseItemDto> _pourVousItems(
     TasteProfile profile,
     List<BaseItemDto> latestItems,
-  ) async {
+    List<BaseItemDto> topSimilar,
+  ) {
     var candidates = List<BaseItemDto>.from(latestItems);
-
-    if (profile.seenItemIds.isNotEmpty) {
-      try {
-        final topId = profile.seenItemIds.first;
-        final similar = await _client.similar(topId, limit: 24);
-        candidates = _dedup([...candidates, ...similar]);
-      } on Exception catch (_) {
-        // Ignore — similar endpoint may not be available in all setups.
-      }
+    if (topSimilar.isNotEmpty) {
+      candidates = _dedup([...candidates, ...topSimilar]);
     }
 
     final filtered =
@@ -246,49 +278,52 @@ class Recommender {
   }
 
   /// "Parce que vous avez aimé X" — up to 2 rails, one per top-played item.
-  Future<List<RecommendationRail>> _similarRails(TasteProfile profile) async {
-    if (profile.seenItemIds.isEmpty) return const [];
-
-    final sources = profile.seenItemIds.take(2).toList();
+  ///
+  /// Pure assembly over the pre-fetched [similarBySeed] lists (parallel
+  /// wave in [rails]); a seed whose fetch failed arrives as an empty list
+  /// and is simply skipped.
+  List<RecommendationRail> _similarRails(
+    TasteProfile profile,
+    List<String> sources,
+    List<List<BaseItemDto>> similarBySeed,
+  ) {
     final railsOut = <RecommendationRail>[];
 
-    for (final sourceId in sources) {
-      try {
-        final similar = await _client.similar(sourceId, limit: 24);
-        final filtered =
-            similar.where((i) => !profile.seenItemIds.contains(i.id)).toList()
-              ..sort((a, b) => score(b, profile).compareTo(score(a, profile)));
+    for (var i = 0; i < sources.length; i++) {
+      final sourceId = sources[i];
+      final filtered =
+          similarBySeed[i]
+              .where((item) => !profile.seenItemIds.contains(item.id))
+              .toList()
+            ..sort((a, b) => score(b, profile).compareTo(score(a, profile)));
 
-        if (filtered.isEmpty) continue;
+      if (filtered.isEmpty) continue;
 
-        // Source name comes from the taste profile — it was captured at
-        // history-parse time (`TasteProfile.fromHistory` resolves seriesName
-        // or name per seen id). Using a similar item's `seriesName` here
-        // was meaningless: it pointed at the *similar* item's parent show,
-        // not the seed's. Resulted in null almost always, so the rail
-        // collapsed to the generic "Parce que vous avez aimé…" title.
-        final sourceName = profile.seenItemNames[sourceId];
+      // Source name comes from the taste profile — it was captured at
+      // history-parse time (`TasteProfile.fromHistory` resolves seriesName
+      // or name per seen id). Using a similar item's `seriesName` here
+      // was meaningless: it pointed at the *similar* item's parent show,
+      // not the seed's. Resulted in null almost always, so the rail
+      // collapsed to the generic "Parce que vous avez aimé…" title.
+      final sourceName = profile.seenItemNames[sourceId];
 
-        railsOut.add(
-          RecommendationRail(
-            id: 'because_$sourceId',
-            // Inline the source title in the rail name so the user knows
-            // which watch this rail is anchored to. Falls back to the
-            // generic form when the similar response didn't carry a usable
-            // seriesName (rare, but the section would otherwise stay
-            // opaque).
-            title: sourceName != null
-                ? 'Parce que vous avez aimé $sourceName'
-                : 'Parce que vous avez aimé…',
-            reason: sourceName != null
-                ? RailReason(sourceItemId: sourceId)
-                : null,
-            items: filtered.take(24).toList(),
-          ),
-        );
-      } on Exception catch (_) {
-        // Skip rails where the similar call fails.
-      }
+      railsOut.add(
+        RecommendationRail(
+          id: 'because_$sourceId',
+          // Inline the source title in the rail name so the user knows
+          // which watch this rail is anchored to. Falls back to the
+          // generic form when the similar response didn't carry a usable
+          // seriesName (rare, but the section would otherwise stay
+          // opaque).
+          title: sourceName != null
+              ? 'Parce que vous avez aimé $sourceName'
+              : 'Parce que vous avez aimé…',
+          reason: sourceName != null
+              ? RailReason(sourceItemId: sourceId)
+              : null,
+          items: filtered.take(24).toList(),
+        ),
+      );
     }
 
     return railsOut;

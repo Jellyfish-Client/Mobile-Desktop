@@ -62,23 +62,28 @@ Future<void> main() async {
         audioHandlerProvider.overrideWithValue(audioHandler),
     ],
   );
-  await container.read(deviceIdProvider.future);
-  // Resolve the persisted session before runApp so the router sees a settled
-  // auth state on the first frame — otherwise the redirect briefly sends an
-  // already-logged-in user to /onboarding/server while secure storage reads.
+  // The three pre-runApp resolutions are independent IO reads (secure
+  // storage, accounts DB, SharedPreferences) — start them together and let
+  // the total cost be the slowest one instead of the sum of all three.
+  //  • deviceId — required by the Jellyfin client headers.
+  //  • auth — the router must see a settled session on the first frame,
+  //    otherwise the redirect briefly sends an already-logged-in user to
+  //    /onboarding/server while secure storage reads.
+  //  • locale — the first frame must already be in the right language; a
+  //    mid-build re-resolve can leave `MaterialApp.router`'s cached
+  //    `Localizations` widget stale on some platforms.
+  final deviceIdFuture = container.read(deviceIdProvider.future);
+  final authFuture = container.read(authControllerProvider.future);
+  final localeFuture = container.read(appLocaleSettingsProvider.future);
+  await deviceIdFuture;
   try {
-    await container.read(authControllerProvider.future);
+    await authFuture;
   } on Object {
     // Keychain locked or storage corrupt: fall through with no session.
     // The router will land on /onboarding/server, which is the correct fallback.
   }
-  // Resolve the app locale before runApp so the first frame is already in the
-  // right language. If we let the AsyncNotifier resolve mid-build, the initial
-  // frame uses the defaults (= follow device), then re-resolves to the saved
-  // preference — that transition can leave `MaterialApp.router`'s cached
-  // `Localizations` widget stale on some platforms.
   try {
-    await container.read(appLocaleSettingsProvider.future);
+    await localeFuture;
   } on Object {
     // SharedPreferences corrupt / unavailable: fall through to defaults.
   }
@@ -96,27 +101,30 @@ Future<void> main() async {
     );
   }
 
-  // Cast SDK init — best-effort. If natives aren't available (emulator
-  // without Play Services, non-mobile platform, denied permissions),
-  // CastService.ensureInitialized swallows and isSupported stays false,
-  // which makes every CastButton hide itself.
-  try {
-    await container.read(castInitProvider.future);
-  } on Object {
-    // Already logged inside CastService; the feature stays inert.
-  }
+  // Cast SDK init — best-effort and fire-and-forget: its result is only
+  // consumed by the Cast buttons, never by the first frame, so it has no
+  // business on the pre-runApp critical path. If natives aren't available
+  // (emulator without Play Services, non-mobile platform, denied
+  // permissions), CastService.ensureInitialized swallows and isSupported
+  // stays false, which makes every CastButton hide itself. `.ignore()`
+  // swallows the rare init throw — already logged inside CastService.
+  container.read(castInitProvider.future).ignore();
 
   // Warm the Home rails in parallel with the first frame: if a session is
   // already restored, kick the network fetches now so they're already in
   // flight (or done) by the time HomeScreen mounts. Fire-and-forget — we
   // never await these here. Each provider keepAlives itself so they survive
   // until HomeScreen's first watch.
+  //
+  // Only Jellyfin providers are warmed: the Seerr/bridge fetches all await
+  // `jellyfinHomeReadyProvider` internally, so the first network wave is
+  // pure Jellyfin and Seerr revalidates once that wave has landed.
   if (container.read(authControllerProvider).valueOrNull?.hasSession ?? false) {
     try {
       unawaited(container.read(resumeItemsProvider.future));
       unawaited(container.read(latestItemsProvider.future));
       unawaited(container.read(nextUpItemsProvider.future));
-      // recentlyPlayed is the slow fetch (200 items) feeding the taste
+      // recentlyPlayed is the slow fetch (100 items) feeding the taste
       // profile + recommendation rails — start it now so the cold-start
       // pipeline isn't gated on it.
       unawaited(container.read(recentlyPlayedItemsProvider.future));

@@ -2559,15 +2559,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonPlay => 'Lecture';
 
   @override
-  String get heroDetails => 'Détails';
-
-  @override
-  String get heroFavoriteAdd => 'Ajouter aux favoris';
-
-  @override
-  String get heroFavoriteRemove => 'Retirer des favoris';
-
-  @override
   String get commonErrorTitle => 'Une erreur est survenue';
 
   @override
