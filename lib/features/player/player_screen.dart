@@ -25,6 +25,7 @@ import '../../core/jellyfin/jellyfin_client.dart';
 import '../../core/jellyfin/jellyfin_url_service.dart';
 import '../../core/jellyfin/models/jellyfin_item.dart';
 import '../../core/network/offline_mode_provider.dart';
+import '../../core/platform/native_fullscreen.dart';
 import '../../core/platform/platform_capabilities.dart';
 import '../../core/playback/media_session_service.dart';
 import '../../core/playback/media_source_resolver.dart';
@@ -87,6 +88,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
   bool _locked = false;
 
+  // Desktop only: OS-window fullscreen state. media_kit's native channel has
+  // no "is fullscreen?" query, so we own the toggle state here.
+  bool _isFullscreen = false;
+
+  // Desktop only: holds keyboard focus for the player's shortcuts so they keep
+  // firing even after the user has clicked a control button. Null on mobile.
+  FocusNode? _keyboardFocusNode;
+
   Duration _resumeFrom = Duration.zero;
   bool _readyShown = false;
 
@@ -135,6 +144,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   void initState() {
     super.initState();
     _caps = ref.read(platformCapabilitiesProvider);
+    if (_caps.isDesktop) {
+      _keyboardFocusNode = FocusNode(debugLabel: 'PlayerKeyboardShortcuts');
+    }
     WidgetsBinding.instance.addObserver(this);
     _enterImmersive();
     WakelockPlus.enable();
@@ -685,6 +697,67 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     _dragStartVolume = null;
   }
 
+  /// Desktop: toggle the OS window in/out of fullscreen. No-op on mobile,
+  /// where immersive landscape already fills the screen.
+  ///
+  /// Intentionally NOT gated on `_locked`: the lock only inhibits playback
+  /// gestures (seek / play-pause), whereas fullscreen and Escape stay live so
+  /// a locked, chrome-less fullscreen window is never a dead end.
+  Future<void> _toggleFullscreen() async {
+    if (!_caps.supportsWindowFullscreen) return;
+    final fullscreen = ref.read(nativeFullscreenProvider);
+    final next = !_isFullscreen;
+    if (next) {
+      await fullscreen.enter();
+    } else {
+      await fullscreen.exit();
+    }
+    if (!mounted) return;
+    setState(() => _isFullscreen = next);
+  }
+
+  /// Desktop: a click on the video (or the Space key) toggles playback, the
+  /// native desktop convention. Keeps the chrome visible briefly so the user
+  /// sees the resulting state.
+  void _togglePlayPause() {
+    if (_locked) return;
+    // Clicking the video isn't focusable on its own, so pull keyboard focus
+    // back to the player after a click — keeps Space/F/arrows alive.
+    _keyboardFocusNode?.requestFocus();
+    final backend = ref.read(playerBackendProvider);
+    if (backend.isPlaying) {
+      backend.pause();
+    } else {
+      backend.play();
+    }
+    _controlsController.show();
+  }
+
+  /// Desktop keyboard: seek by [delta] from the current position, clamped at 0.
+  void _seekRelative(Duration delta) {
+    if (_locked) return;
+    final backend = ref.read(playerBackendProvider);
+    final target = backend.position + delta;
+    final clamped = target < Duration.zero ? Duration.zero : target;
+    unawaited(backend.seek(clamped));
+    _reporting?.onSeek();
+    _syncPlayBridge?.notifyLocalSeek(clamped);
+    _controlsController.show();
+  }
+
+  /// Desktop keyboard: Escape leaves fullscreen first (a fullscreen window
+  /// with no visible chrome is otherwise a trap), then pops the player.
+  void _onEscape() {
+    // A bottom sheet (subtitles / speed / chapters) sits on a modal route
+    // above us — let it handle its own dismissal instead of popping the player.
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+    if (_isFullscreen) {
+      unawaited(_toggleFullscreen());
+    } else {
+      context.pop();
+    }
+  }
+
   void _onLock() {
     _controlsController.hide();
     setState(() => _locked = true);
@@ -749,6 +822,15 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     // provider has already been autoDisposed. If _exitImmersive() is called
     // after an exception the screen stays locked in landscape.
     unawaited(_exitImmersive());
+    // Desktop: leave the OS window in windowed mode so the rest of the app
+    // isn't stuck fullscreen after the player is popped.
+    if (_isFullscreen) {
+      try {
+        unawaited(ref.read(nativeFullscreenProvider).exit());
+      } on Object {
+        // Provider may already be disposed mid-teardown; best-effort.
+      }
+    }
     if (_attachedToAudioHandler) {
       // Fire-and-forget — detach cancels its subs internally and emits an
       // idle PlaybackState that clears the system notification.
@@ -766,6 +848,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       // Same: pipService may have been disposed before us.
     }
     WidgetsBinding.instance.removeObserver(this);
+    _keyboardFocusNode?.dispose();
     _controlsController.dispose();
     _doubleTapController.dispose();
     _resumeToastController.dispose();
@@ -798,7 +881,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
         body: Center(child: CircularProgressIndicator(color: Colors.white)),
       );
     }
-    return Scaffold(
+    final scaffold = Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
@@ -810,20 +893,50 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
               const VideoSurface(),
               if (!_locked)
                 Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: _controlsController.toggle,
-                    onDoubleTapDown: (d) => _onDoubleTapDown(d, size),
-                    onDoubleTap: () {},
-                    onVerticalDragStart: _caps.supportsVolumeGesture
-                        ? (d) => _onVerticalDragStart(d, size)
-                        : null,
-                    onVerticalDragUpdate: _caps.supportsVolumeGesture
-                        ? (d) => _onVerticalDragUpdate(d, size)
-                        : null,
-                    onVerticalDragEnd: _caps.supportsVolumeGesture
-                        ? _onVerticalDragEnd
-                        : null,
+                  // Rebuilds only on chrome show/hide transitions (the
+                  // controller notifies on visibility change, not on every
+                  // hover) so the cursor can follow the chrome on desktop.
+                  child: ListenableBuilder(
+                    listenable: _controlsController,
+                    builder: (context, child) => MouseRegion(
+                      // Desktop: pointer movement reveals the chrome; the
+                      // cursor hides with it so an idle arrow never sits over
+                      // a fullscreen video. Mouse-only — touch is unaffected.
+                      onHover: _caps.tapTogglesPlayback
+                          ? (_) => _controlsController.show()
+                          : null,
+                      cursor:
+                          _caps.tapTogglesPlayback &&
+                              !_controlsController.visible
+                          ? SystemMouseCursors.none
+                          : MouseCursor.defer,
+                      child: child,
+                    ),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      // Desktop: a click toggles playback; mobile: a tap
+                      // toggles the chrome (no hover to reveal it otherwise).
+                      onTap: _caps.tapTogglesPlayback
+                          ? _togglePlayPause
+                          : _controlsController.toggle,
+                      // Desktop: double-click toggles fullscreen; mobile:
+                      // double-tap seeks ±10s on the tapped side.
+                      onDoubleTap: _caps.supportsWindowFullscreen
+                          ? () => unawaited(_toggleFullscreen())
+                          : () {},
+                      onDoubleTapDown: _caps.supportsWindowFullscreen
+                          ? null
+                          : (d) => _onDoubleTapDown(d, size),
+                      onVerticalDragStart: _caps.supportsVolumeGesture
+                          ? (d) => _onVerticalDragStart(d, size)
+                          : null,
+                      onVerticalDragUpdate: _caps.supportsVolumeGesture
+                          ? (d) => _onVerticalDragUpdate(d, size)
+                          : null,
+                      onVerticalDragEnd: _caps.supportsVolumeGesture
+                          ? _onVerticalDragEnd
+                          : null,
+                    ),
                   ),
                 ),
               _DoubleTapIndicatorScope(controller: _doubleTapController),
@@ -844,6 +957,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                   onPip: ref.read(pipServiceProvider).isSupported
                       ? _enterPip
                       : null,
+                  onFullscreen: _caps.supportsWindowFullscreen
+                      ? () => unawaited(_toggleFullscreen())
+                      : null,
+                  isFullscreen: _isFullscreen,
                 ),
               if (_activeSkipSegment != null && !_locked)
                 SkipSegmentButton(
@@ -863,6 +980,27 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
             ],
           );
         },
+      ),
+    );
+    // Desktop: keyboard shortcuts (Space, ←/→, F, Esc). Touch platforms have
+    // no keyboard, so we skip the focus wrapper entirely there.
+    if (!_caps.isDesktop) return scaffold;
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.space): _togglePlayPause,
+        const SingleActivator(LogicalKeyboardKey.keyK): _togglePlayPause,
+        const SingleActivator(LogicalKeyboardKey.keyF): () =>
+            unawaited(_toggleFullscreen()),
+        const SingleActivator(LogicalKeyboardKey.escape): _onEscape,
+        const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
+            _seekRelative(const Duration(seconds: -10)),
+        const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
+            _seekRelative(const Duration(seconds: 10)),
+      },
+      child: Focus(
+        focusNode: _keyboardFocusNode,
+        autofocus: true,
+        child: scaffold,
       ),
     );
   }
@@ -985,12 +1123,16 @@ class _ControlsVisibilityScope extends StatefulWidget {
     required this.itemId,
     required this.onLock,
     required this.onPip,
+    required this.onFullscreen,
+    required this.isFullscreen,
   });
 
   final _ControlsVisibilityController controller;
   final String itemId;
   final VoidCallback onLock;
   final Future<void> Function()? onPip;
+  final VoidCallback? onFullscreen;
+  final bool isFullscreen;
 
   @override
   State<_ControlsVisibilityScope> createState() =>
@@ -1031,6 +1173,8 @@ class _ControlsVisibilityScopeState extends State<_ControlsVisibilityScope> {
         visible: widget.controller.visible,
         onLock: widget.onLock,
         onPip: widget.onPip,
+        onFullscreen: widget.onFullscreen,
+        isFullscreen: widget.isFullscreen,
       ),
     );
   }

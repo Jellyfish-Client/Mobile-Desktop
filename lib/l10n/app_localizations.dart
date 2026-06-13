@@ -2660,6 +2660,18 @@ abstract class AppLocalizations {
   /// **'Picture-in-Picture non disponible sur iOS pour cette version'**
   String get playerPipUnavailableIos;
 
+  /// No description provided for @playerFullscreen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plein écran'**
+  String get playerFullscreen;
+
+  /// No description provided for @playerExitFullscreen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter le plein écran'**
+  String get playerExitFullscreen;
+
   /// No description provided for @playerDismiss.
   ///
   /// In fr, this message translates to:

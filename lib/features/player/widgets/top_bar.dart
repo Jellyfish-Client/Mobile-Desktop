@@ -17,12 +17,18 @@ class TopBar extends ConsumerWidget {
     required this.itemId,
     required this.onLock,
     this.onPip,
+    this.onFullscreen,
+    this.isFullscreen = false,
     super.key,
   });
 
   final String itemId;
   final VoidCallback onLock;
   final VoidCallback? onPip;
+
+  /// Null on platforms without an OS-window fullscreen toggle (mobile).
+  final VoidCallback? onFullscreen;
+  final bool isFullscreen;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -99,6 +105,17 @@ class TopBar extends ConsumerWidget {
                     color: Colors.white.withValues(alpha: 0.38),
                   ),
                 ),
+              ),
+            if (onFullscreen != null)
+              IconButton(
+                onPressed: onFullscreen,
+                icon: Icon(
+                  isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+                  color: Colors.white,
+                ),
+                tooltip: isFullscreen
+                    ? context.l10n.playerExitFullscreen
+                    : context.l10n.playerFullscreen,
               ),
             IconButton(
               onPressed: onLock,

@@ -45,6 +45,18 @@ class PlatformCapabilities {
   /// (Workmanager-style). Desktop background work would need a different
   /// abstraction and is out of scope for the MVP.
   bool get supportsBackgroundWork => isMobile;
+
+  /// True on desktop, where the player exposes an OS-window fullscreen toggle
+  /// (driven through media_kit_video's native channel — see
+  /// [NativeFullscreen]). On mobile the immersive landscape mode already
+  /// fills the screen, so a dedicated toggle is redundant.
+  bool get supportsWindowFullscreen => isDesktop;
+
+  /// True on desktop, where a single click on the video toggles play/pause
+  /// and the control chrome is revealed by pointer movement — the native
+  /// desktop video-player convention (VLC, YouTube, …). On mobile a tap
+  /// toggles the chrome instead, since there is no hover to reveal it.
+  bool get tapTogglesPlayback => isDesktop;
 }
 
 final platformCapabilitiesProvider = Provider<PlatformCapabilities>(

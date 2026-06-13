@@ -1471,6 +1471,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Picture-in-Picture not available on iOS for this version';
 
   @override
+  String get playerFullscreen => 'Fullscreen';
+
+  @override
+  String get playerExitFullscreen => 'Exit fullscreen';
+
+  @override
   String get playerDismiss => 'Dismiss';
 
   @override
