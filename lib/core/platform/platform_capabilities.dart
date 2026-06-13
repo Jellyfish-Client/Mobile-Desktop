@@ -47,9 +47,9 @@ class PlatformCapabilities {
   bool get supportsBackgroundWork => isMobile;
 
   /// True on desktop, where the player exposes an OS-window fullscreen toggle
-  /// (driven through media_kit_video's native channel — see
-  /// [NativeFullscreen]). On mobile the immersive landscape mode already
-  /// fills the screen, so a dedicated toggle is redundant.
+  /// (driven through media_kit_video's native channel — see the
+  /// `NativeFullscreen` helper). On mobile the immersive landscape mode
+  /// already fills the screen, so a dedicated toggle is redundant.
   bool get supportsWindowFullscreen => isDesktop;
 
   /// True on desktop, where a single click on the video toggles play/pause
